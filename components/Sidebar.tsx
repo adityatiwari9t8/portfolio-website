@@ -8,17 +8,13 @@ import {
   Linkedin, 
   Github, 
   Code2, 
-  Send,
-  Moon,
-  Sun
+  Send
 } from 'lucide-react';
 
 interface SidebarProps {
   activeSection: string;
   isMobile?: boolean;
   onNavClick?: () => void;
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
   onOpenContact: () => void;
 }
 
@@ -26,8 +22,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   activeSection, 
   isMobile, 
   onNavClick, 
-  darkMode, 
-  onToggleDarkMode,
   onOpenContact 
 }) => {
   const navItems = [
@@ -57,19 +51,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className={`
-      h-full w-full flex flex-col transition-all duration-1000
-      ${darkMode 
-        ? 'bg-slate-950 text-slate-100' 
-        : 'bg-gradient-to-b from-slate-800 via-slate-600 to-slate-400 text-white shadow-2xl'}
-    `}>
+    <div className="h-full w-full flex flex-col transition-all duration-1000 bg-gradient-to-b from-slate-800 via-slate-600 to-slate-400 text-white shadow-2xl">
       {/* 1. Header: Intro (Fixed) */}
       <div className="flex-none p-6 pt-12 text-center">
         <div className="flex flex-col items-center mb-6">
-          <p className={`
-            text-xs leading-relaxed transition-colors duration-500 max-w-[200px]
-            ${darkMode ? 'text-slate-400' : 'text-slate-200 font-medium'}
-          `}>
+          <p className="text-xs leading-relaxed transition-colors duration-500 max-w-[200px] text-slate-200 font-medium">
             Hi, my name is Aditya Tiwari and I'm a software engineer. Welcome to my personal website!
           </p>
         </div>
@@ -82,10 +68,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               href={social.url} 
               target="_blank" 
               rel="noopener noreferrer"
-              className={`
-                p-2 rounded-lg transition-all duration-300
-                ${darkMode ? 'bg-slate-900 hover:bg-slate-800 text-slate-300' : 'bg-white/10 hover:bg-white/20 text-white'}
-              `}
+              className="p-2 rounded-lg transition-all duration-300 bg-white/10 hover:bg-white/20 text-white"
             >
               <social.icon className="w-4 h-4" />
             </a>
@@ -103,8 +86,8 @@ const Sidebar: React.FC<SidebarProps> = ({
               className={`
                 w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300
                 ${activeSection === item.id 
-                  ? (darkMode ? 'bg-slate-800 text-blue-400 font-semibold' : 'bg-white/10 text-white font-bold border border-white/10') 
-                  : (darkMode ? 'text-slate-500 hover:text-slate-200 hover:bg-slate-900' : 'text-slate-300 hover:text-white hover:bg-white/5')}
+                  ? 'bg-white/10 text-white font-bold border border-white/10' 
+                  : 'text-slate-300 hover:text-white hover:bg-white/5'}
               `}
             >
               <span className="shrink-0">{item.icon}</span>
@@ -115,28 +98,10 @@ const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* 3. Footer: Actions (Sticky at bottom) */}
-      <div className={`
-        flex-none p-6 space-y-4 border-t transition-colors duration-500
-        ${darkMode ? 'border-slate-800' : 'border-white/10'}
-      `}>
-        {/* ADDED: Dark Mode Toggle to use the imported icons */}
-        <button 
-          onClick={onToggleDarkMode}
-          className={`
-            w-full flex items-center justify-center space-x-2 py-2 rounded-lg font-medium transition-all duration-300 mb-2
-            ${darkMode ? 'bg-slate-900 text-slate-300 hover:bg-slate-800' : 'bg-white/10 text-white hover:bg-white/20'}
-          `}
-        >
-          {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-          <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
-        </button>
-
+      <div className="flex-none p-6 space-y-4 border-t transition-colors duration-500 border-white/10">
         <button 
           onClick={onOpenContact}
-          className={`
-            w-full flex items-center justify-center space-x-2 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 shadow-lg
-            ${darkMode ? 'bg-[#5d678d] hover:bg-[#4a5375] text-white shadow-slate-950/40' : 'bg-slate-900 hover:bg-black text-white shadow-black/30 border border-white/5'}
-          `}
+          className="w-full flex items-center justify-center space-x-2 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 shadow-lg bg-slate-900 hover:bg-black text-white shadow-black/30 border border-white/5"
         >
           <Send className="w-4 h-4 rotate-[-45deg]" />
           <span>Hire Me</span>

@@ -15,19 +15,6 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('about');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeDemoId, setActiveDemoId] = useState<string | null>(null);
-  
-  // ADDED: Real Dark Mode State
-  const [darkMode, setDarkMode] = useState(false);
-
-  // ADDED: Toggle Function
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
-    if (!darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,22 +40,20 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <div className={`flex min-h-screen transition-colors duration-500 ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-100 text-[#1e293b]'}`}>
+      {/* LOCKED TO LIGHT MODE STYLES */}
+      <div className="flex min-h-screen transition-colors duration-500 bg-slate-100 text-[#1e293b]">
         
         <ContactModal isOpen={isContactModalOpen} onClose={closeContactModal} />
         
         <DemoOverlay 
           activeDemoId={activeDemoId}
-          onClose={() => setActiveDemoId(null)}
-          // Removed unused props passing to fix build error in DemoOverlay
+          onClose={() => setActiveDemoId(null)} 
         />
 
         <div className="hidden md:block w-[280px] fixed h-screen z-50">
           <Sidebar 
             activeSection={activeSection}
             onOpenContact={openContactModal} 
-            darkMode={darkMode} 
-            onToggleDarkMode={toggleDarkMode}
           />
         </div>
 
@@ -88,8 +73,6 @@ const App: React.FC = () => {
             isMobile
             onNavClick={() => setIsSidebarOpen(false)}
             onOpenContact={openContactModal} 
-            darkMode={darkMode} 
-            onToggleDarkMode={toggleDarkMode}
           />
         </div>
 

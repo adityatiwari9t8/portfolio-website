@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import MobileHeader from './components/MobileHeader';
@@ -14,7 +13,6 @@ import DemoOverlay from './components/DemoOverlay';
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
-  const [darkMode, setDarkMode] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeDemoId, setActiveDemoId] = useState<string | null>(null);
 
@@ -37,13 +35,12 @@ const App: React.FC = () => {
   }, []);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const toggleDarkMode = () => setDarkMode(!darkMode);
   const openContactModal = () => setIsContactModalOpen(true);
   const closeContactModal = () => setIsContactModalOpen(false);
 
   return (
-    <div className={darkMode ? 'dark' : ''}>
-      <div className="flex min-h-screen bg-slate-100 dark:bg-slate-900 text-[#1e293b] dark:text-slate-100 transition-colors duration-500">
+    <div>
+      <div className="flex min-h-screen bg-slate-100 text-[#1e293b] transition-colors duration-500">
         
         <ContactModal isOpen={isContactModalOpen} onClose={closeContactModal} />
         
@@ -51,16 +48,12 @@ const App: React.FC = () => {
         <DemoOverlay 
           activeDemoId={activeDemoId} 
           onClose={() => setActiveDemoId(null)} 
-          darkMode={darkMode}
-          onToggleDarkMode={toggleDarkMode}
         />
 
         {/* Sidebar - Desktop & Tablet */}
         <div className="hidden md:block w-[280px] fixed h-screen z-50">
           <Sidebar 
             activeSection={activeSection} 
-            darkMode={darkMode}
-            onToggleDarkMode={toggleDarkMode}
             onOpenContact={openContactModal}
           />
         </div>
@@ -82,8 +75,6 @@ const App: React.FC = () => {
             activeSection={activeSection} 
             isMobile 
             onNavClick={() => setIsSidebarOpen(false)} 
-            darkMode={darkMode}
-            onToggleDarkMode={toggleDarkMode}
             onOpenContact={openContactModal}
           />
         </div>
@@ -114,7 +105,7 @@ const App: React.FC = () => {
               <Contact />
             </section>
 
-            <footer className="pt-12 pb-8 border-t border-slate-200 dark:border-slate-800 text-center text-slate-400 text-sm">
+            <footer className="pt-12 pb-8 border-t border-slate-200 text-center text-slate-400 text-sm">
               &copy; {new Date().getFullYear()} Aditya Tiwari. All rights reserved.
             </footer>
           </main>

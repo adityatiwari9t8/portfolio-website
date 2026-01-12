@@ -1,4 +1,7 @@
 
+// Import React to ensure React namespace is available for ReactNode types
+import React from 'react';
+
 export interface Project {
   id: string;
   title: string;

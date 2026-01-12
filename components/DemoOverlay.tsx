@@ -8,11 +8,11 @@ import SudokuVisualizerDemo from './demos/SudokuVisualizerDemo';
 interface DemoOverlayProps {
   activeDemoId: string | null;
   onClose: () => void;
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
 }
 
-const DemoOverlay: React.FC<DemoOverlayProps> = ({ activeDemoId, onClose, darkMode, onToggleDarkMode }) => {
+const DemoOverlay: React.FC<DemoOverlayProps> = ({ activeDemoId, onClose, darkMode = false, onToggleDarkMode }) => {
   if (!activeDemoId) return null;
 
   const renderDemo = () => {

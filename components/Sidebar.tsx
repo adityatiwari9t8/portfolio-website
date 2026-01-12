@@ -17,18 +17,18 @@ interface SidebarProps {
   activeSection: string;
   isMobile?: boolean;
   onNavClick?: () => void;
-  darkMode: boolean;
-  onToggleDarkMode: () => void;
+  darkMode?: boolean;
+  onToggleDarkMode?: () => void;
   onOpenContact: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ 
-  activeSection, 
-  isMobile, 
-  onNavClick, 
-  darkMode, 
+const Sidebar: React.FC<SidebarProps> = ({
+  activeSection,
+  isMobile,
+  onNavClick,
+  darkMode = false,
   onToggleDarkMode,
-  onOpenContact 
+  onOpenContact
 }) => {
   const navItems = [
     { id: 'about', label: 'About Me', icon: <User className="w-5 h-5" /> },

@@ -1,0 +1,159 @@
+import React from 'react';
+import { 
+  User, 
+  Briefcase, 
+  FileText, 
+  Mail, 
+  Instagram, 
+  Linkedin, 
+  Github, 
+  Code2, 
+  Send,
+  Moon,
+  Sun
+} from 'lucide-react';
+
+interface SidebarProps {
+  activeSection: string;
+  isMobile?: boolean;
+  onNavClick?: () => void;
+  darkMode: boolean;
+  onToggleDarkMode: () => void;
+  onOpenContact: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ 
+  activeSection, 
+  isMobile, 
+  onNavClick, 
+  darkMode, 
+  onToggleDarkMode,
+  onOpenContact 
+}) => {
+  const navItems = [
+    { id: 'about', label: 'About Me', icon: <User className="w-5 h-5" /> },
+    { id: 'portfolio', label: 'Portfolio', icon: <Briefcase className="w-5 h-5" /> },
+    { id: 'resume', label: 'Resume', icon: <FileText className="w-5 h-5" /> },
+    { id: 'contact', label: 'Contact', icon: <Mail className="w-5 h-5" /> },
+  ];
+
+  const socialLinks = [
+    { icon: Instagram, url: 'https://www.instagram.com/adityatiwari_98?igsh=MWprcHhuM2NxbWIycA%3D%3D&utm_source=qr' },
+    { icon: Linkedin, url: 'https://www.linkedin.com/in/adityatiwari9t8' },
+    { icon: Github, url: 'https://github.com/adityatiwari9t8' },
+    { icon: Code2, url: 'https://leetcode.com/Aditya_Tiwari_98/' },
+  ];
+
+  const handleNavClick = (id: string) => {
+    if (id === 'contact' && !isMobile) {
+      onOpenContact();
+      return;
+    }
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+      onNavClick?.();
+    }
+  };
+
+  return (
+    <div className={`
+      h-full w-full flex flex-col transition-all duration-1000
+      ${darkMode 
+        ? 'bg-slate-950 text-slate-100' 
+        : 'bg-gradient-to-b from-slate-800 via-slate-600 to-slate-400 text-white shadow-2xl'}
+    `}>
+      {/* 1. Header: Intro (Fixed) */}
+      <div className="flex-none p-6 pt-12 text-center">
+        <div className="flex flex-col items-center mb-6">
+          <p className={`
+            text-xs leading-relaxed transition-colors duration-500 max-w-[200px]
+            ${darkMode ? 'text-slate-400' : 'text-slate-200 font-medium'}
+          `}>
+            Hi, my name is Aditya Tiwari and I'm a software engineer. Welcome to my personal website!
+          </p>
+        </div>
+
+        {/* Social Icons */}
+        <div className="flex justify-center space-x-3 mb-2">
+          {socialLinks.map((social, i) => (
+            <a 
+              key={i} 
+              href={social.url} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className={`
+                p-2 rounded-lg transition-all duration-300
+                ${darkMode ? 'bg-slate-900 hover:bg-slate-800 text-slate-300' : 'bg-white/10 hover:bg-white/20 text-white'}
+              `}
+            >
+              <social.icon className="w-4 h-4" />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* 2. Body: Navigation (Scrollable) */}
+      <div className="flex-1 overflow-y-auto custom-scrollbar px-6 py-4">
+        <nav className="space-y-1.5">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleNavClick(item.id)}
+              className={`
+                w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300
+                ${activeSection === item.id 
+                  ? (darkMode ? 'bg-slate-800 text-blue-400 font-semibold' : 'bg-white/10 text-white font-bold border border-white/10') 
+                  : (darkMode ? 'text-slate-500 hover:text-slate-200 hover:bg-slate-900' : 'text-slate-300 hover:text-white hover:bg-white/5')}
+              `}
+            >
+              <span className="shrink-0">{item.icon}</span>
+              <span className="text-sm">{item.label}</span>
+            </button>
+          ))}
+        </nav>
+      </div>
+
+      {/* 3. Footer: Actions (Sticky at bottom) */}
+      <div className={`
+        flex-none p-6 space-y-4 border-t transition-colors duration-500
+        ${darkMode ? 'border-slate-800' : 'border-white/10'}
+      `}>
+        <button 
+          onClick={onOpenContact}
+          className={`
+            w-full flex items-center justify-center space-x-2 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 shadow-lg
+            ${darkMode ? 'bg-[#5d678d] hover:bg-[#4a5375] text-white shadow-slate-950/40' : 'bg-slate-900 hover:bg-black text-white shadow-black/30 border border-white/5'}
+          `}
+        >
+          <Send className="w-4 h-4 rotate-[-45deg]" />
+          <span>Hire Me</span>
+        </button>
+
+        <div className="flex items-center justify-between pt-2">
+          <div className={`flex items-center space-x-2 text-xs transition-colors duration-500 ${darkMode ? 'text-slate-400' : 'text-slate-200'}`}>
+            {darkMode ? <Sun className="w-4 h-4 text-yellow-500" /> : <Moon className="w-4 h-4" />}
+            <span className={darkMode ? 'text-slate-200' : 'font-medium'}>Dark Mode</span>
+          </div>
+          <button 
+            onClick={onToggleDarkMode}
+            aria-label="Toggle Dark Mode"
+            className={`
+              w-12 h-6 rounded-full p-1 transition-all duration-500 relative border
+              ${darkMode ? 'bg-slate-800 border-slate-700 shadow-inner' : 'bg-slate-700/50 border-white/10 shadow-inner'}
+            `}
+          >
+            <div className={`
+              w-4 h-4 rounded-full shadow-lg transform transition-all duration-500 ease-in-out
+              ${darkMode 
+                ? 'translate-x-6 bg-blue-400 scale-110 shadow-blue-500/50' 
+                : 'translate-x-0 bg-white scale-100 shadow-slate-900/40'}
+            `} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Sidebar;

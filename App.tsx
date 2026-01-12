@@ -15,6 +15,19 @@ const App: React.FC = () => {
   const [activeSection, setActiveSection] = useState('about');
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeDemoId, setActiveDemoId] = useState<string | null>(null);
+  
+  // ADDED: Real Dark Mode State
+  const [darkMode, setDarkMode] = useState(false);
+
+  // ADDED: Toggle Function
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+    if (!darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,25 +53,25 @@ const App: React.FC = () => {
 
   return (
     <div>
-      <div className="flex min-h-screen bg-slate-100 text-[#1e293b] transition-colors duration-500">
+      <div className={`flex min-h-screen transition-colors duration-500 ${darkMode ? 'bg-slate-900 text-white' : 'bg-slate-100 text-[#1e293b]'}`}>
         
         <ContactModal isOpen={isContactModalOpen} onClose={closeContactModal} />
         
-        {/* Project Demo Overlay */}
         <DemoOverlay 
-          activeDemoId={activeDemoId} 
-          onClose={() => setActiveDemoId(null)} 
+          activeDemoId={activeDemoId}
+          onClose={() => setActiveDemoId(null)}
+          // Removed unused props passing to fix build error in DemoOverlay
         />
 
-        {/* Sidebar - Desktop & Tablet */}
         <div className="hidden md:block w-[280px] fixed h-screen z-50">
           <Sidebar 
-            activeSection={activeSection} 
-            onOpenContact={openContactModal}
+            activeSection={activeSection}
+            onOpenContact={openContactModal} 
+            darkMode={darkMode} 
+            onToggleDarkMode={toggleDarkMode}
           />
         </div>
 
-        {/* Mobile Sidebar Overlay */}
         {isSidebarOpen && (
           <div 
             className="md:hidden fixed inset-0 bg-black/50 z-[60]"
@@ -66,20 +79,20 @@ const App: React.FC = () => {
           />
         )}
 
-        {/* Mobile Sidebar Drawer (Phones only) */}
         <div className={`
           md:hidden fixed top-0 left-0 bottom-0 w-[280px] z-[70] transform transition-transform duration-300
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <Sidebar 
-            activeSection={activeSection} 
-            isMobile 
-            onNavClick={() => setIsSidebarOpen(false)} 
-            onOpenContact={openContactModal}
+            activeSection={activeSection}
+            isMobile
+            onNavClick={() => setIsSidebarOpen(false)}
+            onOpenContact={openContactModal} 
+            darkMode={darkMode} 
+            onToggleDarkMode={toggleDarkMode}
           />
         </div>
 
-        {/* Main Content */}
         <div className="flex-1 md:ml-[280px]">
           <MobileHeader onToggleSidebar={toggleSidebar} />
           
@@ -100,7 +113,6 @@ const App: React.FC = () => {
               <Education />
             </section>
             
-            {/* Contact section only visible on mobile at bottom */}
             <section id="contact" className="md:hidden">
               <Contact />
             </section>

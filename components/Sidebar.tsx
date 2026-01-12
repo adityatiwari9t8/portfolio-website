@@ -119,6 +119,18 @@ const Sidebar: React.FC<SidebarProps> = ({
         flex-none p-6 space-y-4 border-t transition-colors duration-500
         ${darkMode ? 'border-slate-800' : 'border-white/10'}
       `}>
+        {/* ADDED: Dark Mode Toggle to use the imported icons */}
+        <button 
+          onClick={onToggleDarkMode}
+          className={`
+            w-full flex items-center justify-center space-x-2 py-2 rounded-lg font-medium transition-all duration-300 mb-2
+            ${darkMode ? 'bg-slate-900 text-slate-300 hover:bg-slate-800' : 'bg-white/10 text-white hover:bg-white/20'}
+          `}
+        >
+          {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
+        </button>
+
         <button 
           onClick={onOpenContact}
           className={`
@@ -129,8 +141,6 @@ const Sidebar: React.FC<SidebarProps> = ({
           <Send className="w-4 h-4 rotate-[-45deg]" />
           <span>Hire Me</span>
         </button>
-
-
       </div>
     </div>
   );

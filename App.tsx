@@ -39,9 +39,36 @@ const App: React.FC = () => {
   const closeContactModal = () => setIsContactModalOpen(false);
 
   return (
-    <div>
+    <div className="relative">
+      {/* Full-bleed responsive background layer (behind content) */}
+      <div className="absolute inset-0 -z-10">
+        {/* base soft gradient */}
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'linear-gradient(90deg, #f1f5f9 0%, #f8fafc 48%, #ffffff 100%)'
+          }}
+        />
+
+        {/* subtle left accent to blend with sidebar on wider screens */}
+        <div
+          className="hidden md:block absolute left-0 top-0 bottom-0 w-[240px] lg:w-[280px] pointer-events-none"
+          style={{
+            backgroundImage: 'linear-gradient(180deg, rgba(15,23,36,0.12) 0%, rgba(30,41,59,0.08) 40%, rgba(59,130,246,0.00) 100%)'
+          }}
+        />
+
+        {/* faint vertical center stripe (responsive) - narrower */}
+        <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 w-14 sm:w-20 pointer-events-none opacity-20">
+          <div className="h-full w-full bg-white/60 rounded-full blur-sm mix-blend-overlay" />
+        </div>
+
+        {/* soft vignette on the right for depth on very wide screens */}
+        <div className="hidden xl:block absolute right-0 top-0 bottom-0 w-72 pointer-events-none opacity-30" style={{ backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(226,232,240,0.6) 100%)' }} />
+      </div>
+
       {/* LOCKED TO LIGHT MODE STYLES */}
-      <div className="flex min-h-screen transition-colors duration-500 bg-slate-100 text-[#1e293b]">
+      <div className="flex min-h-screen transition-colors duration-500 text-[#1e293b]">
         
         <ContactModal isOpen={isContactModalOpen} onClose={closeContactModal} />
         
@@ -50,7 +77,7 @@ const App: React.FC = () => {
           onClose={() => setActiveDemoId(null)} 
         />
 
-        <div className="hidden md:block w-[280px] fixed h-screen z-50">
+        <div className="hidden md:block w-[240px] lg:w-[280px] fixed h-screen z-50">
           <Sidebar 
             activeSection={activeSection}
             onOpenContact={openContactModal} 
@@ -65,7 +92,7 @@ const App: React.FC = () => {
         )}
 
         <div className={`
-          md:hidden fixed top-0 left-0 bottom-0 w-[280px] z-[70] transform transition-transform duration-300
+          md:hidden fixed top-0 left-0 bottom-0 w-[85vw] max-w-[280px] z-[70] transform transition-transform duration-300
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <Sidebar 
@@ -76,11 +103,11 @@ const App: React.FC = () => {
           />
         </div>
 
-        <div className="flex-1 md:ml-[280px]">
+        <div className="flex-1 md:ml-[240px] lg:ml-[280px]">
           <MobileHeader onToggleSidebar={toggleSidebar} />
-          
-          <main className="px-6 py-8 md:px-12 lg:px-16 max-w-7xl mx-auto space-y-24">
-            <section id="about" className="pt-16 md:pt-0">
+
+          <main className="pt-16 md:pt-0 px-4 sm:px-6 py-8 md:px-12 lg:px-16 md:pl-8 lg:pl-12 md:pr-8 lg:pr-12 max-w-7xl mx-auto space-y-24" style={{ paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>
+            <section id="about">
               <Hero />
             </section>
             

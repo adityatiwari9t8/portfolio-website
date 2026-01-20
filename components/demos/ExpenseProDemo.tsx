@@ -39,6 +39,8 @@ const ExpenseProDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [currency, setCurrency] = useState(CURRENCIES[0]);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [showEditForm, setShowEditForm] = useState(false);
 
   // Transaction State
   const [transactions, setTransactions] = useState<Transaction[]>([
@@ -50,6 +52,14 @@ const ExpenseProDemo: React.FC = () => {
 
   // New Transaction Form State
   const [newTx, setNewTx] = useState({
+    name: '',
+    amount: '',
+    cat: 'Tech',
+    type: 'expense' as 'income' | 'expense'
+  });
+
+  // Edit Transaction Form State
+  const [editTx, setEditTx] = useState({
     name: '',
     amount: '',
     cat: 'Tech',
@@ -92,6 +102,36 @@ const ExpenseProDemo: React.FC = () => {
     setNewTx({ name: '', amount: '', cat: 'Tech', type: 'expense' });
     setShowAddForm(false);
     setForecast(null);
+  };
+
+  const handleEditTransaction = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingId || !editTx.name || !editTx.amount) return;
+
+    setTransactions(transactions.map(t =>
+      t.id === editingId
+        ? { ...t, name: editTx.name, amount: parseFloat(editTx.amount), cat: editTx.cat, type: editTx.type }
+        : t
+    ));
+    setEditingId(null);
+    setShowEditForm(false);
+    setForecast(null);
+  };
+
+  const handleDeleteTransaction = (id: string) => {
+    setTransactions(transactions.filter(t => t.id !== id));
+    setForecast(null);
+  };
+
+  const startEdit = (tx: Transaction) => {
+    setEditingId(tx.id);
+    setEditTx({
+      name: tx.name,
+      amount: tx.amount.toString(),
+      cat: tx.cat,
+      type: tx.type
+    });
+    setShowEditForm(true);
   };
 
   const formatCurrency = (val: number) => {
@@ -305,8 +345,8 @@ const ExpenseProDemo: React.FC = () => {
         
         <div className="divide-y divide-slate-50 dark:divide-slate-700">
           {filteredTransactions.length > 0 ? filteredTransactions.map((t) => (
-            <div key={t.id} className="p-6 md:p-8 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors animate-in fade-in slide-in-from-left-4 duration-300">
-              <div className="flex items-center space-x-4">
+            <div key={t.id} className="p-6 md:p-8 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors animate-in fade-in slide-in-from-left-4 duration-300 group">
+              <div className="flex items-center space-x-4 flex-1">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border ${t.type === 'income' ? 'bg-green-50 dark:bg-green-900/10 border-green-100 dark:border-green-900/20 text-green-600' : 'bg-slate-50 dark:bg-slate-900 border-slate-100 dark:border-slate-700 text-slate-400'}`}>
                   {t.type === 'income' ? <ArrowDownRight className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
                 </div>
@@ -319,8 +359,24 @@ const ExpenseProDemo: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <div className={`text-lg font-black tracking-tight ${t.type === 'income' ? 'text-green-500' : 'text-slate-800 dark:text-white'}`}>
-                {t.type === 'income' ? '+' : '-'}{currency.symbol}{formatCurrency(t.amount)}
+              <div className="flex items-center space-x-4">
+                <div className={`text-lg font-black tracking-tight ${t.type === 'income' ? 'text-green-500' : 'text-slate-800 dark:text-white'}`}>
+                  {t.type === 'income' ? '+' : '-'}{currency.symbol}{formatCurrency(t.amount)}
+                </div>
+                <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => startEdit(t)}
+                    className="px-3 py-1.5 text-xs font-bold bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-all"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteTransaction(t.id)}
+                    className="px-3 py-1.5 text-xs font-bold bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/40 transition-all"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           )) : (
@@ -333,6 +389,97 @@ const ExpenseProDemo: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Modal / Form for Editing Transaction */}
+      {showEditForm && editingId && (
+        <div className="fixed inset-0 z-[120] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => { setShowEditForm(false); setEditingId(null); }} />
+          <div className="relative bg-white dark:bg-slate-800 w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="p-8 md:p-10 space-y-8">
+              <div className="flex justify-between items-center">
+                <h3 className="text-2xl font-black text-slate-900 dark:text-white">Edit Transaction</h3>
+                <button onClick={() => { setShowEditForm(false); setEditingId(null); }} className="text-slate-400 hover:text-slate-600 transition-colors">
+                  <Plus className="w-6 h-6 rotate-45" />
+                </button>
+              </div>
+
+              <form onSubmit={handleEditTransaction} className="space-y-6">
+                <div className="space-y-4">
+                  <div className="flex p-1 bg-slate-100 dark:bg-slate-900 rounded-xl">
+                    <button 
+                      type="button"
+                      onClick={() => setEditTx({...editTx, type: 'expense'})}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${editTx.type === 'expense' ? 'bg-white dark:bg-slate-800 text-rose-500 shadow-sm' : 'text-slate-400'}`}
+                    >
+                      Expense
+                    </button>
+                    <button 
+                      type="button"
+                      onClick={() => setEditTx({...editTx, type: 'income'})}
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${editTx.type === 'income' ? 'bg-white dark:bg-slate-800 text-green-500 shadow-sm' : 'text-slate-400'}`}
+                    >
+                      Income
+                    </button>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Description</label>
+                    <input 
+                      type="text" 
+                      placeholder="e.g., Monthly Rent, Freelance Payment"
+                      required
+                      className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:text-white"
+                      value={editTx.name}
+                      onChange={(e) => setEditTx({...editTx, name: e.target.value})}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Amount ({currency.code})</label>
+                      <input 
+                        type="number" 
+                        step="0.01"
+                        placeholder="0.00"
+                        required
+                        className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:text-white"
+                        value={editTx.amount}
+                        onChange={(e) => setEditTx({...editTx, amount: e.target.value})}
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Category</label>
+                      <select 
+                        className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-700 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:text-white font-bold"
+                        value={editTx.cat}
+                        onChange={(e) => setEditTx({...editTx, cat: e.target.value})}
+                      >
+                        {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <button 
+                    type="button"
+                    onClick={() => { setShowEditForm(false); setEditingId(null); handleDeleteTransaction(editingId); }}
+                    className="py-5 bg-rose-500 hover:bg-rose-600 text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-xl transition-all active:scale-95"
+                  >
+                    Delete
+                  </button>
+                  <button 
+                    type="submit"
+                    className="py-5 bg-slate-900 dark:bg-white dark:text-slate-900 text-white font-black text-sm uppercase tracking-widest rounded-2xl shadow-xl hover:scale-[1.02] transition-all active:scale-95"
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer Info */}
       <div className="flex justify-center">

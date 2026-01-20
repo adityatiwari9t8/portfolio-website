@@ -67,6 +67,7 @@ const shuffleBoard = (board: number[][]): number[][] => {
   return newBoard;
 };
 
+
 const SudokuVisualizerDemo: React.FC = () => {
   const [startingGrid, setStartingGrid] = useState<number[][]>(PRESETS.easy.map(row => [...row]));
   const [grid, setGrid] = useState<number[][]>(PRESETS.easy.map(row => [...row]));
@@ -79,7 +80,7 @@ const SudokuVisualizerDemo: React.FC = () => {
   const [statusMsg, setStatusMsg] = useState('Select a cell to begin or press Solve.');
   const [conflicts, setConflicts] = useState<Set<string>>(new Set());
   const [currentDifficulty, setCurrentDifficulty] = useState<keyof typeof PRESETS>('easy');
-  
+
   const terminateRef = useRef(false);
   const speedRef = useRef(speed);
   const timerRef = useRef<number | null>(null);
@@ -87,6 +88,34 @@ const SudokuVisualizerDemo: React.FC = () => {
   useEffect(() => {
     speedRef.current = speed;
   }, [speed]);
+
+  // Helper to check if a cell is editable (not a preset cell)
+  const isEditable = (r: number, c: number) => startingGrid[r][c] === 0;
+
+  // Handle number pad input (mobile/onscreen)
+  const handleNumberPadInput = (num: number) => {
+    if (!selectedCell) return;
+    const [r, c] = selectedCell;
+    if (!isEditable(r, c)) return;
+    setGrid(prev => {
+      const newGrid = prev.map(row => [...row]);
+      newGrid[r][c] = num;
+      return newGrid;
+    });
+    setConflicts(findConflicts(grid));
+  };
+
+  const handleNumberPadClear = () => {
+    if (!selectedCell) return;
+    const [r, c] = selectedCell;
+    if (!isEditable(r, c)) return;
+    setGrid(prev => {
+      const newGrid = prev.map(row => [...row]);
+      newGrid[r][c] = 0;
+      return newGrid;
+    });
+    setConflicts(findConflicts(grid));
+  };
 
   // Helper to check if a position is in the same row, col, or 3x3 box
   const isRelated = useCallback((r: number, c: number, sr: number, sc: number) => {
@@ -356,6 +385,30 @@ const SudokuVisualizerDemo: React.FC = () => {
               })
             ))}
           </div>
+
+          {/* On-screen Number Pad for Mobile/Touch Input */}
+          {selectedCell && !isSolving && (
+            <div className="mt-4 flex flex-col items-center animate-in fade-in zoom-in duration-200">
+              <div className="grid grid-cols-5 gap-2 mb-2">
+                {[1,2,3,4,5,6,7,8,9].map(n => (
+                  <button
+                    key={n}
+                    onClick={() => handleNumberPadInput(n)}
+                    className="w-10 h-10 md:w-12 md:h-12 bg-slate-700 text-white font-bold rounded-xl shadow hover:bg-blue-500 active:scale-95 transition-all text-lg focus:outline-none"
+                  >
+                    {n}
+                  </button>
+                ))}
+                <button
+                  onClick={handleNumberPadClear}
+                  className="col-span-2 w-full h-10 md:h-12 bg-rose-600 text-white font-bold rounded-xl shadow hover:bg-rose-700 active:scale-95 transition-all text-base focus:outline-none"
+                >
+                  Clear
+                </button>
+              </div>
+              <span className="text-xs text-slate-400">Tap a number to fill the cell</span>
+            </div>
+          )}
         </div>
 
         {/* Controls */}

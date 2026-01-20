@@ -21,6 +21,7 @@ const AcademicPathDemo: React.FC = () => {
   const [showResult, setShowResult] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeDetailModule, setActiveDetailModule] = useState<RoadmapModule | null>(null);
+  const [roadmapModulesState, setRoadmapModulesState] = useState<RoadmapModule[]>([]);
 
   const skillCategories = useMemo(() => [
     {
@@ -49,12 +50,13 @@ const AcademicPathDemo: React.FC = () => {
     }
   ], []);
 
-  const roadmapModules: RoadmapModule[] = [
-    { 
-      phase: 'Bridge Phase', 
-      subject: 'Advanced Discrete Systems & Formal Verification', 
-      effort: 'High', 
-      color: 'blue', 
+  // Default static modules used if no selection mapping occurs
+  const defaultModules: RoadmapModule[] = [
+    {
+      phase: 'Bridge Phase',
+      subject: 'Advanced Discrete Systems & Formal Verification',
+      effort: 'High',
+      color: 'blue',
       desc: 'Closing gaps in formal logic and distributed consensus logic.',
       details: {
         objectives: [
@@ -74,58 +76,132 @@ const AcademicPathDemo: React.FC = () => {
           'TLA+ Video Course (Microsoft Research)'
         ]
       }
-    },
-    { 
-      phase: 'Accelerator', 
-      subject: 'High-Performance Neural Computing', 
-      effort: 'Critical', 
-      color: 'indigo', 
-      desc: 'Leveraging your background to build custom CUDA kernels for transformers.',
-      details: {
-        objectives: [
-          'Optimize GPU memory bandwidth utilization for large-scale training.',
-          'Develop custom fused operators in C++ and CUDA/Triton.',
-          'Understand the hardware-software co-design for AI accelerators.'
-        ],
-        topics: [
-          'GPU Architecture & Memory Hierarchy',
-          'SIMD/SIMT Programming Models',
-          'Kernel Fusion & Tensor Cores',
-          'Distributed Data Parallelism (DDP) Internals'
-        ],
-        resources: [
-          'Programming Massively Parallel Processors (Kirk & Hwu)',
-          'NVIDIA CUDA Programming Guide',
-          'OpenAI Triton Documentation'
-        ]
-      }
-    },
-    { 
-      phase: 'Architectural', 
-      subject: 'Cloud-Native Distributed AI Orchestration', 
-      effort: 'Advanced', 
-      color: 'purple', 
-      desc: 'Designing multi-agent systems using Kubernetes and custom gRPC backplanes.',
-      details: {
-        objectives: [
-          'Architect robust multi-agent orchestration layers for LLM workflows.',
-          'Design high-throughput gRPC communication channels between model workers.',
-          'Build auto-scaling inference clusters using Kubernetes and KServe.'
-        ],
-        topics: [
-          'Service Mesh for AI Workloads (Istio/Linkerd)',
-          'Dynamic Model Routing & Load Balancing',
-          'Distributed Tracing with OpenTelemetry',
-          'Vector Database Partitioning & Sharding'
-        ],
-        resources: [
-          'Designing Data-Intensive Applications (Martin Kleppmann)',
-          'Google Site Reliability Engineering (SRE) Book',
-          'Ray: A Distributed Framework for Emerging AI Applications'
-        ]
-      }
     }
   ];
+
+  const findCategorySkills = (name: string) => skillCategories.find(c => c.name === name)?.skills ?? [];
+  const aiSkills = findCategorySkills('AI & Machine Learning');
+  const devopsSkills = findCategorySkills('DevOps & Systems');
+  const csFundSkills = findCategorySkills('CS Fundamentals');
+  const mathSkills = findCategorySkills('Mathematics');
+  const seSkills = findCategorySkills('Software Engineering');
+
+  const generateRoadmap = (sel: string[]): RoadmapModule[] => {
+    if (!sel || sel.length === 0) return defaultModules;
+
+    const modules: RoadmapModule[] = [];
+
+    const hasAI = sel.some(s => aiSkills.includes(s));
+    const hasDevOps = sel.some(s => devopsSkills.includes(s));
+    const hasCSFund = sel.some(s => csFundSkills.includes(s));
+    const hasMath = sel.some(s => mathSkills.includes(s));
+    const hasSE = sel.some(s => seSkills.includes(s));
+
+    // Bridge module: fill gaps based on CS fundamentals or math
+    if (hasCSFund || hasMath) {
+      modules.push({
+        phase: 'Bridge Phase',
+        subject: 'Foundations Reinforcement: Algorithms & Systems',
+        effort: 'High',
+        color: 'blue',
+        desc: 'Solidify fundamentals to prepare for advanced system and AI work.',
+        details: {
+          objectives: [
+            `Strengthen ${sel.filter(s => csFundSkills.includes(s)).join(', ') || 'core CS fundamentals'}.`,
+            'Practice algorithmic problem solving with systems-oriented exercises.',
+            'Apply math concepts to probabilistic and ML problems.'
+          ],
+          topics: [
+            ...(sel.filter(s => csFundSkills.includes(s))),
+            ...(sel.filter(s => mathSkills.includes(s))),
+            'Algorithmic Complexity',
+            'Concurrency Primitives & Memory Models'
+          ],
+          resources: [
+            'CLRS (Algorithms)',
+            'MIT 6.006 Algorithms',
+            'Operating Systems: Three Easy Pieces'
+          ]
+        }
+      });
+    }
+
+    // AI module
+    if (hasAI) {
+      modules.push({
+        phase: 'Accelerator',
+        subject: 'Applied Deep Learning & Productionization',
+        effort: 'Critical',
+        color: 'indigo',
+        desc: `From model building to production: focus on ${sel.filter(s => aiSkills.includes(s)).join(', ')} and applied workflows.`,
+        details: {
+          objectives: [
+            'Build and fine-tune deep learning models for real tasks.',
+            'Deploy models reliably using containerized inference pipelines.',
+            'Optimize training and inference performance for cost-effectiveness.'
+          ],
+          topics: [
+            ...(sel.filter(s => aiSkills.includes(s))),
+            'Model Serving',
+            'Transfer Learning & Fine-tuning',
+            'Data Pipelines & Feature Stores'
+          ],
+          resources: [
+            'Deep Learning Book (Goodfellow)',
+            'Fast.ai Practical Deep Learning',
+            'TensorFlow & PyTorch Documentation'
+          ]
+        }
+      });
+    }
+
+    // DevOps/System module
+    if (hasDevOps || hasSE) {
+      modules.push({
+        phase: 'Architectural',
+        subject: 'Cloud-Native Engineering & Reliability',
+        effort: 'Advanced',
+        color: 'purple',
+        desc: 'Design and operate scalable services with strong reliability and deployment practices.',
+        details: {
+          objectives: [
+            'Design resilient microservices and deployment pipelines.',
+            'Implement monitoring, tracing, and SLO-driven development.',
+            'Automate infra with IaC and scalable orchestration.'
+          ],
+          topics: [
+            ...(sel.filter(s => devopsSkills.includes(s))),
+            ...(sel.filter(s => seSkills.includes(s))),
+            'Kubernetes Patterns',
+            'CI/CD Best Practices'
+          ],
+          resources: [
+            'Kubernetes Patterns',
+            'The Site Reliability Workbook',
+            'Terraform & CI/CD Tutorials'
+          ]
+        }
+      });
+    }
+
+    // If none of the above flagged, add a gentle learning path
+    if (modules.length === 0) {
+      modules.push({
+        phase: 'Foundational',
+        subject: 'Personalized Learning Path',
+        effort: 'Medium',
+        color: 'green',
+        desc: 'A curated start based on your selected skills.',
+        details: {
+          objectives: [`Deepen ${sel.join(', ')} knowledge and connect concepts across domains.`],
+          topics: [...sel.slice(0, 6)],
+          resources: ['Curated articles and beginner courses tailored to your skills']
+        }
+      });
+    }
+
+    return modules;
+  };
 
   const allSkills = useMemo(() => skillCategories.flatMap(cat => cat.skills), [skillCategories]);
 
@@ -149,9 +225,11 @@ const AcademicPathDemo: React.FC = () => {
     setIsGenerating(true);
     setShowResult(false);
     setTimeout(() => {
+      const generated = generateRoadmap(selectedSkills);
+      setRoadmapModulesState(generated);
       setIsGenerating(false);
       setShowResult(true);
-    }, 1800);
+    }, 1200);
   };
 
   const reset = () => {
@@ -371,7 +449,7 @@ const AcademicPathDemo: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {roadmapModules.map((node, i) => (
+            {(roadmapModulesState.length ? roadmapModulesState : defaultModules).map((node, i) => (
               <div key={i} className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl md:rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-lg group hover:border-blue-400 transition-all hover:shadow-2xl">
                 <div className="flex justify-between items-start mb-6">
                   <div className={`w-10 h-10 md:w-12 md:h-12 bg-${node.color}-50 dark:bg-${node.color}-900/30 rounded-xl flex items-center justify-center text-${node.color}-600`}>

@@ -7,7 +7,10 @@ interface MobileHeaderProps {
 
 const MobileHeader: React.FC<MobileHeaderProps> = ({ onToggleSidebar }) => {
   return (
-    <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-slate-800 text-white flex items-center justify-end px-6 z-40 shadow-lg border-b border-white/5">
+    <div
+      className="md:hidden fixed top-0 left-0 right-0 bg-slate-800 text-white flex items-center justify-end px-4 sm:px-6 z-40 shadow-lg border-b border-white/5"
+      style={{ paddingTop: 'env(safe-area-inset-top)', minHeight: '3.5rem' }}
+    >
       <button 
         onClick={onToggleSidebar}
         className="p-2 bg-white/10 rounded-lg active:scale-95 transition-transform hover:bg-white/20"

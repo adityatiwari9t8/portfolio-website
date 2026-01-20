@@ -43,6 +43,21 @@ const Sidebar: React.FC<SidebarProps> = ({
       onOpenContact();
       return;
     }
+
+    if (id === 'resume') {
+      // Open resume PDF in a new tab (use anchor to ensure rel attributes)
+      const a = document.createElement('a');
+      a.href = '/resume.pdf';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      // Append to body, click, then remove to trigger navigation
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      onNavClick?.();
+      return;
+    }
+
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -54,8 +69,8 @@ const Sidebar: React.FC<SidebarProps> = ({
     <div className="h-full w-full flex flex-col transition-all duration-1000 bg-gradient-to-b from-slate-800 via-slate-600 to-slate-400 text-white shadow-2xl">
       {/* 1. Header: Intro (Fixed) */}
       <div className="flex-none p-6 pt-12 text-center">
-        <div className="flex flex-col items-center mb-6">
-          <p className="text-xs leading-relaxed transition-colors duration-500 max-w-[200px] text-slate-200 font-medium">
+          <div className="flex flex-col items-center mb-6">
+          <p className="text-xs leading-relaxed transition-colors duration-500 max-w-xs sm:max-w-[220px] text-slate-200 font-medium">
             Hi, my name is Aditya Tiwari and I'm a software engineer. Welcome to my personal website!
           </p>
         </div>
@@ -91,7 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({
               `}
             >
               <span className="shrink-0">{item.icon}</span>
-              <span className="text-sm">{item.label}</span>
+              <span className="text-sm md:text-base">{item.label}</span>
             </button>
           ))}
         </nav>

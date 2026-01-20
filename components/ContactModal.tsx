@@ -19,7 +19,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
       />
       
       {/* Modal Content */}
-      <div className="relative bg-white dark:bg-slate-800 w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[90vh] scrollbar-hide animate-in fade-in zoom-in duration-300">
+      <div className="relative bg-white dark:bg-slate-800 w-full max-w-full sm:max-w-2xl md:max-w-4xl rounded-[2.5rem] shadow-2xl overflow-y-auto max-h-[90vh] scrollbar-hide animate-in fade-in zoom-in duration-300">
         <button 
           onClick={onClose}
           className="absolute top-8 right-8 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-400 z-10"

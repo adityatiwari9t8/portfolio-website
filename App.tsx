@@ -42,11 +42,11 @@ const App: React.FC = () => {
     <div className="relative">
       {/* Full-bleed responsive background layer (behind content) */}
       <div className="absolute inset-0 -z-10">
-        {/* base soft gradient */}
+        {/* base soft gradient (more subtle to avoid visible center band) */}
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'linear-gradient(90deg, #f1f5f9 0%, #f8fafc 48%, #ffffff 100%)'
+            backgroundImage: 'linear-gradient(90deg, #eef2f6 0%, #f5f7fb 100%)'
           }}
         />
 
@@ -58,13 +58,9 @@ const App: React.FC = () => {
           }}
         />
 
-        {/* faint vertical center stripe (responsive) - narrower */}
-        <div className="absolute inset-y-0 left-1/2 transform -translate-x-1/2 w-14 sm:w-20 pointer-events-none opacity-20">
-          <div className="h-full w-full bg-white/60 rounded-full blur-sm mix-blend-overlay" />
-        </div>
 
-        {/* soft vignette on the right for depth on very wide screens */}
-        <div className="hidden xl:block absolute right-0 top-0 bottom-0 w-72 pointer-events-none opacity-30" style={{ backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(226,232,240,0.6) 100%)' }} />
+        {/* soft vignette on the right for depth on very wide screens (show only on 2xl) */}
+        <div className="hidden 2xl:block absolute right-0 top-0 bottom-0 w-48 pointer-events-none opacity-20" style={{ backgroundImage: 'linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(226,232,240,0.45) 100%)' }} />
       </div>
 
       {/* LOCKED TO LIGHT MODE STYLES */}

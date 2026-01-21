@@ -66,7 +66,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="h-full w-full flex flex-col transition-all duration-1000 bg-gradient-to-b from-slate-800 via-slate-600 to-slate-400 text-white shadow-2xl">
+    <div className="h-full w-full flex flex-col transition-all duration-1000 bg-gradient-to-b from-slate-800 via-slate-600 to-slate-400 text-white shadow-2xl border-r border-white/10">
       {/* 1. Header: Intro (Fixed) */}
       <div className="flex-none p-6 pt-12 text-center">
           <div className="flex flex-col items-center mb-6">

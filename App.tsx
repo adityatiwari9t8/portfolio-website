@@ -99,7 +99,7 @@ const App: React.FC = () => {
           />
         </div>
 
-        <div className="flex-1 md:ml-[240px] lg:ml-[280px]">
+        <div className="flex-1 md:ml-[240px] lg:ml-[280px] md:pl-6 lg:pl-8">
           <MobileHeader onToggleSidebar={toggleSidebar} />
 
           <main className="pt-16 md:pt-0 px-4 sm:px-6 py-8 md:px-12 lg:px-16 md:pl-8 lg:pl-12 md:pr-8 lg:pr-12 max-w-7xl mx-auto space-y-24" style={{ paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>

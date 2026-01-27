@@ -41,7 +41,8 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
         <h2 className={`font-extrabold text-[#1e293b] dark:text-white ${isModal ? 'text-4xl' : 'text-5xl lg:text-7xl'}`}>Contact</h2>
         <div className="space-y-4 max-w-2xl mx-auto">
           <p className="text-xl text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-            Interested in hiring me for your project? Fill in the form or send me an email to{' '}
+            Interested in collaborating on technology, analytics, or strategy-driven projects?
+            I’m always open to conversations around learning, building, and impact. Fill in the form or send me an email to{' '}
             <span className="text-[#1e293b] dark:text-white font-bold">adityatiwari98@gmail.com</span>
           </p>
         </div>

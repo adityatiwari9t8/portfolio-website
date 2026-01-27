@@ -12,7 +12,8 @@ const Hero: React.FC = () => {
         </div>
         
         <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
-          I'm a software engineer specialized in distributed systems and artificial intelligence. 
+          Computer Science undergraduate building data-driven systems at the intersection 
+          of technology, finance, and decision-making — with  an interest in growing into leadership roles within technology-driven organizations.           
           Want to know how I may help your project?
         </p>
 

@@ -8,7 +8,6 @@ import {
   Linkedin, 
   Github, 
   Code2, 
-  Send
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -71,7 +70,8 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex-none p-6 pt-12 text-center">
           <div className="flex flex-col items-center mb-6">
           <p className="text-xs leading-relaxed transition-colors duration-500 max-w-xs sm:max-w-[220px] text-slate-200 font-medium">
-            Hi, my name is Aditya Tiwari and I'm a software engineer. Welcome to my personal website!
+            Hi, my name is Aditya Tiwari and I’m a Computer Science undergraduate focused on building scalable systems and 
+            learning how technology shapes strategic business decisions.
           </p>
         </div>
 
@@ -118,8 +118,8 @@ const Sidebar: React.FC<SidebarProps> = ({
           onClick={onOpenContact}
           className="w-full flex items-center justify-center space-x-2 py-3 rounded-lg font-bold transition-all duration-300 transform hover:-translate-y-1 shadow-lg bg-slate-900 hover:bg-black text-white shadow-black/30 border border-white/5"
         >
-          <Send className="w-4 h-4 rotate-[-45deg]" />
-          <span>Hire Me</span>
+          <Mail className="w-4 h-4" />
+          <span>Let’s Connect</span>
         </button>
       </div>
     </div>

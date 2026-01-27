@@ -11,7 +11,9 @@ const WhatIDo: React.FC = () => {
           <h2 className="text-4xl font-extrabold text-[#1e293b] dark:text-white">What I do</h2>
         </div>
         <p className="text-lg text-slate-600 dark:text-slate-400 max-w-4xl leading-relaxed">
-          I specialize in architecting scalable systems and intelligent solutions. Below is a deep dive into my core technical competencies.
+          I build data-driven systems that support better decision-making in education, finance,
+          and technology. My work focuses on translating complex technical models into practical
+          tools that help people and organizations choose more effectively.
         </p>
       </div>
 

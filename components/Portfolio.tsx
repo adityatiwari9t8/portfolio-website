@@ -12,7 +12,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
     <div className="space-y-12">
       <div className="flex items-center space-x-4">
         <div className="w-1.5 h-12 bg-[#3d4977] rounded-full" />
-        <h2 className="text-4xl font-extrabold text-[#1e293b] dark:text-white">Engineering Portfolio(Projects)</h2>
+        <h2 className="text-4xl font-extrabold text-[#1e293b] dark:text-white">Selected Engineering Projects</h2>
       </div>
 
       <div className="space-y-8">

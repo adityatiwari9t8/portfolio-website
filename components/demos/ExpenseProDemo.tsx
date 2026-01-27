@@ -481,15 +481,6 @@ const ExpenseProDemo: React.FC = () => {
         </div>
       )}
 
-      {/* Footer Info */}
-      <div className="flex justify-center">
-        <div className="flex items-center space-x-4 px-6 py-3 bg-slate-100 dark:bg-slate-800/50 rounded-full border border-slate-200 dark:border-slate-700">
-          <div className="flex -space-x-2">
-            {[1, 2, 3].map(i => <div key={i} className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 border-2 border-white dark:border-slate-800" />)}
-          </div>
-          <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">Used by 2.4k users globally</p>
-        </div>
-      </div>
     </div>
   );
 };

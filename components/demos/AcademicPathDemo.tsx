@@ -15,6 +15,174 @@ interface RoadmapModule {
   };
 }
 
+/* Default modules shown when no roadmap is generated */
+const defaultModules: RoadmapModule[] = [
+  {
+    phase: 'Bridge Phase',
+    subject: 'Programming Foundations',
+    effort: 'High',
+    color: 'green',
+    desc: 'Brush up on foundational programming skills.',
+    details: {
+      objectives: ['Understand core programming concepts'],
+      topics: ['Programming Foundations'],
+      resources: ['MIT OpenCourseWare', 'CS50']
+    }
+  },
+  {
+    phase: 'Core Track',
+    subject: 'Frontend Engineering Foundations',
+    effort: 'Critical',
+    color: 'indigo',
+    desc: 'Solidify web fundamentals and modern frontend tooling.',
+    details: {
+      objectives: ['Build interactive UIs'],
+      topics: ['HTML/CSS', 'JavaScript', 'TypeScript'],
+      resources: ['Frontend Masters', 'MDN']
+    }
+  },
+  {
+    phase: 'Core Track',
+    subject: 'Backend & API Development',
+    effort: 'Critical',
+    color: 'blue',
+    desc: 'Learn server-side development and API design.',
+    details: {
+      objectives: ['Design robust APIs'],
+      topics: ['REST API Design', 'SQL'],
+      resources: ['Coursera', 'System Design Primer']
+    }
+  }
+];
+
+/* ================= SUBJECT INTELLIGENCE ================= */
+
+interface SubjectModel {
+  name: string;
+  level: 'bridge' | 'core' | 'advanced';
+  requires: string[];
+  triggers: string[];
+  color: string;
+}
+
+const SUBJECT_MODELS: SubjectModel[] = [
+  /* ---------- Programming ---------- */
+  {
+    name: 'Programming Foundations',
+    level: 'bridge',
+    requires: [],
+    triggers: ['Python', 'C++', 'Java', 'JavaScript', 'TypeScript', 'Go', 'Rust'],
+    color: 'green'
+  },
+
+  /* ---------- Frontend ---------- */
+  {
+    name: 'Frontend Engineering Foundations',
+    level: 'core',
+    requires: ['Web Basics (HTML/CSS)'],
+    triggers: ['Web Basics (HTML/CSS)', 'JavaScript', 'TypeScript'],
+    color: 'indigo'
+  },
+
+  /* ---------- Backend & APIs ---------- */
+  {
+    name: 'Backend & API Development',
+    level: 'core',
+    requires: ['Programming Foundations'],
+    triggers: ['REST API Design', 'GraphQL', 'SQL'],
+    color: 'blue'
+  },
+
+  /* ---------- Data Structures ---------- */
+  {
+    name: 'Algorithms & Data Structures Foundations',
+    level: 'bridge',
+    requires: [],
+    triggers: ['Data Structures', 'Algorithms'],
+    color: 'yellow'
+  },
+
+  /* ---------- Systems ---------- */
+  {
+    name: 'Operating Systems & Concurrency',
+    level: 'core',
+    requires: ['Data Structures'],
+    triggers: ['Operating Systems', 'Computer Architecture'],
+    color: 'purple'
+  },
+  {
+    name: 'Computer Networks & Distributed Thinking',
+    level: 'core',
+    requires: ['Operating Systems'],
+    triggers: ['Computer Networks', 'Kafka', 'gRPC'],
+    color: 'pink'
+  },
+
+  /* ---------- Databases ---------- */
+  {
+    name: 'Database Systems & Data Modeling',
+    level: 'core',
+    requires: [],
+    triggers: ['Database Systems', 'SQL', 'Redis'],
+    color: 'cyan'
+  },
+
+  /* ---------- Mathematics ---------- */
+  {
+    name: 'Probability & Statistical Reasoning',
+    level: 'bridge',
+    requires: [],
+    triggers: ['Probability', 'Statistics', 'Information Theory'],
+    color: 'emerald'
+  },
+
+  /* ---------- ML / AI ---------- */
+  {
+    name: 'Machine Learning Foundations',
+    level: 'core',
+    requires: ['Linear Algebra', 'Probability'],
+    triggers: ['Scikit-Learn', 'Reinforcement Learning'],
+    color: 'orange'
+  },
+  {
+    name: 'Deep Learning & Representation Learning',
+    level: 'advanced',
+    requires: ['Machine Learning Foundations'],
+    triggers: ['Neural Networks', 'Deep Learning', 'PyTorch', 'TensorFlow'],
+    color: 'red'
+  },
+  {
+    name: 'LLMs & Generative Systems',
+    level: 'advanced',
+    requires: ['Deep Learning & Representation Learning'],
+    triggers: ['Generative AI', 'LLMs', 'NLP'],
+    color: 'violet'
+  },
+
+  /* ---------- DevOps ---------- */
+  {
+    name: 'Cloud-Native & DevOps Engineering',
+    level: 'core',
+    requires: ['Operating Systems'],
+    triggers: ['Docker', 'Kubernetes', 'AWS', 'Terraform', 'CI/CD'],
+    color: 'sky'
+  },
+
+  /* ---------- System Design ---------- */
+  {
+    name: 'Scalable System Design',
+    level: 'advanced',
+    requires: ['Algorithms', 'Operating Systems'],
+    triggers: ['System Design', 'Microservices'],
+    color: 'slate'
+  }
+];
+
+const missingFrom = (have: string[], need: string[]) =>
+  need.filter(n => !have.includes(n));
+
+/* ================= COMPONENT ================= */
+
 const AcademicPathDemo: React.FC = () => {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -50,160 +218,53 @@ const AcademicPathDemo: React.FC = () => {
     }
   ], []);
 
-  // Default static modules used if no selection mapping occurs
-  const defaultModules: RoadmapModule[] = [
-    {
-      phase: 'Bridge Phase',
-      subject: 'Advanced Discrete Systems & Formal Verification',
-      effort: 'High',
-      color: 'blue',
-      desc: 'Closing gaps in formal logic and distributed consensus logic.',
-      details: {
-        objectives: [
-          'Master TLA+ for specification and verification of concurrent systems.',
-          'Understand the mathematical foundations of Paxos and Raft consensus protocols.',
-          'Implement formal model checking for critical system components.'
-        ],
-        topics: [
-          'Set Theory & Logic Foundations',
-          'Safety and Liveness Properties',
-          'Temporal Logic of Actions (TLA)',
-          'Byzantine Fault Tolerance (BFT) Mathematics'
-        ],
-        resources: [
-          'Specifying Systems (Leslie Lamport)',
-          'MIT 6.824: Distributed Systems',
-          'TLA+ Video Course (Microsoft Research)'
-        ]
-      }
-    }
-  ];
-
-  const findCategorySkills = (name: string) => skillCategories.find(c => c.name === name)?.skills ?? [];
-  const aiSkills = findCategorySkills('AI & Machine Learning');
-  const devopsSkills = findCategorySkills('DevOps & Systems');
-  const csFundSkills = findCategorySkills('CS Fundamentals');
-  const mathSkills = findCategorySkills('Mathematics');
-  const seSkills = findCategorySkills('Software Engineering');
-
   const generateRoadmap = (sel: string[]): RoadmapModule[] => {
-    if (!sel || sel.length === 0) return defaultModules;
+    if (!sel.length) return [];
+
+    const activated = SUBJECT_MODELS.filter(m =>
+      m.triggers.some(t => sel.includes(t))
+    );
 
     const modules: RoadmapModule[] = [];
 
-    const hasAI = sel.some(s => aiSkills.includes(s));
-    const hasDevOps = sel.some(s => devopsSkills.includes(s));
-    const hasCSFund = sel.some(s => csFundSkills.includes(s));
-    const hasMath = sel.some(s => mathSkills.includes(s));
-    const hasSE = sel.some(s => seSkills.includes(s));
+    activated.forEach(model => {
+      const missing = missingFrom(sel, model.requires);
 
-    // Bridge module: fill gaps based on CS fundamentals or math
-    if (hasCSFund || hasMath) {
-      modules.push({
-        phase: 'Bridge Phase',
-        subject: 'Foundations Reinforcement: Algorithms & Systems',
-        effort: 'High',
-        color: 'blue',
-        desc: 'Solidify fundamentals to prepare for advanced system and AI work.',
-        details: {
-          objectives: [
-            `Strengthen ${sel.filter(s => csFundSkills.includes(s)).join(', ') || 'core CS fundamentals'}.`,
-            'Practice algorithmic problem solving with systems-oriented exercises.',
-            'Apply math concepts to probabilistic and ML problems.'
-          ],
-          topics: [
-            ...(sel.filter(s => csFundSkills.includes(s))),
-            ...(sel.filter(s => mathSkills.includes(s))),
-            'Algorithmic Complexity',
-            'Concurrency Primitives & Memory Models'
-          ],
-          resources: [
-            'CLRS (Algorithms)',
-            'MIT 6.006 Algorithms',
-            'Operating Systems: Three Easy Pieces'
-          ]
-        }
-      });
-    }
+      if (missing.length > 0) {
+        modules.push({
+          phase: 'Bridge Phase',
+          subject: `Foundations for ${model.name}`,
+          effort: 'High',
+          color: model.color,
+          desc: 'Strengthen prerequisites before progressing.',
+          details: {
+            objectives: ['Close conceptual gaps'],
+            topics: missing,
+            resources: ['MIT OpenCourseWare', 'Coursera Foundations']
+          }
+        });
+      } else {
+        modules.push({
+          phase: model.level === 'advanced' ? 'Advanced Track' : 'Core Track',
+          subject: model.name,
+          effort: model.level === 'advanced' ? 'Advanced' : 'Critical',
+          color: model.color,
+          desc: 'Next logical step based on your current skill profile.',
+          details: {
+            objectives: [`Master ${model.name}`],
+            topics: model.triggers,
+            resources: ['Top University Courses', 'Industry Playbooks']
+          }
+        });
+      }
+    });
 
-    // AI module
-    if (hasAI) {
-      modules.push({
-        phase: 'Accelerator',
-        subject: 'Applied Deep Learning & Productionization',
-        effort: 'Critical',
-        color: 'indigo',
-        desc: `From model building to production: focus on ${sel.filter(s => aiSkills.includes(s)).join(', ')} and applied workflows.`,
-        details: {
-          objectives: [
-            'Build and fine-tune deep learning models for real tasks.',
-            'Deploy models reliably using containerized inference pipelines.',
-            'Optimize training and inference performance for cost-effectiveness.'
-          ],
-          topics: [
-            ...(sel.filter(s => aiSkills.includes(s))),
-            'Model Serving',
-            'Transfer Learning & Fine-tuning',
-            'Data Pipelines & Feature Stores'
-          ],
-          resources: [
-            'Deep Learning Book (Goodfellow)',
-            'Fast.ai Practical Deep Learning',
-            'TensorFlow & PyTorch Documentation'
-          ]
-        }
-      });
-    }
-
-    // DevOps/System module
-    if (hasDevOps || hasSE) {
-      modules.push({
-        phase: 'Architectural',
-        subject: 'Cloud-Native Engineering & Reliability',
-        effort: 'Advanced',
-        color: 'purple',
-        desc: 'Design and operate scalable services with strong reliability and deployment practices.',
-        details: {
-          objectives: [
-            'Design resilient microservices and deployment pipelines.',
-            'Implement monitoring, tracing, and SLO-driven development.',
-            'Automate infra with IaC and scalable orchestration.'
-          ],
-          topics: [
-            ...(sel.filter(s => devopsSkills.includes(s))),
-            ...(sel.filter(s => seSkills.includes(s))),
-            'Kubernetes Patterns',
-            'CI/CD Best Practices'
-          ],
-          resources: [
-            'Kubernetes Patterns',
-            'The Site Reliability Workbook',
-            'Terraform & CI/CD Tutorials'
-          ]
-        }
-      });
-    }
-
-    // If none of the above flagged, add a gentle learning path
-    if (modules.length === 0) {
-      modules.push({
-        phase: 'Foundational',
-        subject: 'Personalized Learning Path',
-        effort: 'Medium',
-        color: 'green',
-        desc: 'A curated start based on your selected skills.',
-        details: {
-          objectives: [`Deepen ${sel.join(', ')} knowledge and connect concepts across domains.`],
-          topics: [...sel.slice(0, 6)],
-          resources: ['Curated articles and beginner courses tailored to your skills']
-        }
-      });
-    }
-
-    return modules;
+    return Array.from(
+      new Map(modules.map(m => [m.subject, m])).values()
+    ).slice(0, 3);
   };
 
-  const allSkills = useMemo(() => skillCategories.flatMap(cat => cat.skills), [skillCategories]);
+  const allSkills = useMemo(() => skillCategories.flatMap(c => c.skills), [skillCategories]);
 
   const filteredCategories = useMemo(() => {
     if (!searchQuery) return skillCategories;
@@ -214,19 +275,16 @@ const AcademicPathDemo: React.FC = () => {
   }, [searchQuery, skillCategories]);
 
   const toggleSkill = (skill: string) => {
-    if (selectedSkills.includes(skill)) {
-      setSelectedSkills(selectedSkills.filter(s => s !== skill));
-    } else {
-      setSelectedSkills([...selectedSkills, skill]);
-    }
+    setSelectedSkills(prev =>
+      prev.includes(skill) ? prev.filter(s => s !== skill) : [...prev, skill]
+    );
   };
 
   const handleGenerate = () => {
     setIsGenerating(true);
     setShowResult(false);
     setTimeout(() => {
-      const generated = generateRoadmap(selectedSkills);
-      setRoadmapModulesState(generated);
+      setRoadmapModulesState(generateRoadmap(selectedSkills));
       setIsGenerating(false);
       setShowResult(true);
     }, 1200);
@@ -449,7 +507,7 @@ const AcademicPathDemo: React.FC = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            {(roadmapModulesState.length ? roadmapModulesState : defaultModules).map((node, i) => (
+            {(roadmapModulesState.length ? roadmapModulesState : defaultModules).map((node: RoadmapModule, i: number) => (
               <div key={i} className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl md:rounded-[2rem] border border-slate-100 dark:border-slate-700 shadow-lg group hover:border-blue-400 transition-all hover:shadow-2xl">
                 <div className="flex justify-between items-start mb-6">
                   <div className={`w-10 h-10 md:w-12 md:h-12 bg-${node.color}-50 dark:bg-${node.color}-900/30 rounded-xl flex items-center justify-center text-${node.color}-600`}>

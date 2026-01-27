@@ -123,9 +123,6 @@ const App: React.FC = () => {
               <Contact />
             </section>
 
-            <footer className="pt-12 pb-8 border-t border-slate-200 text-center text-slate-400 text-sm">
-              &copy; {new Date().getFullYear()} Aditya Tiwari. All rights reserved.
-            </footer>
           </main>
         </div>
       </div>

@@ -5,15 +5,11 @@ const Hero: React.FC = () => {
   return (
     <div className="flex flex-col md:flex-row items-center justify-between gap-8 md:gap-12">
       <div className="flex-1 space-y-8">
-        <div>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-[#1e293b] dark:text-white leading-tight mb-2">
-            Aditya Tiwari
-          </h1>
-        </div>
+        {/* Name Removed - It is now in the Navbar */}
         
-        <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl">
+        <p className="text-base sm:text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl mt-4">
           Computer Science undergraduate building data-driven systems at the intersection 
-          of technology, finance, and decision-making — with  an interest in growing into leadership roles within technology-driven organizations.           
+          of technology, finance, and decision-making — with an interest in growing into leadership roles within technology-driven organizations.           
           Want to know how I may help your project?
         </p>
 

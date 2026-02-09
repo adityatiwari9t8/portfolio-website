@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, X, Github, Linkedin, Mail, Code2, ChevronRight } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Menu, X, Github, Linkedin, Mail, Code2, ChevronRight, Sun, Moon } from 'lucide-react';
 
 interface NavbarProps {
   onOpenContact: () => void;
@@ -8,6 +8,32 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Initialize Dark Mode
+  useEffect(() => {
+    // Only enable dark mode if explicitly stored in local storage.
+    // Removed the system preference check to ensure light mode is the default.
+    if (localStorage.theme === 'dark') {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setIsDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  const toggleTheme = () => {
+    if (isDarkMode) {
+      document.documentElement.classList.remove('dark');
+      localStorage.theme = 'light';
+      setIsDarkMode(false);
+    } else {
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+      setIsDarkMode(true);
+    }
+  };
 
   const navItems = [
     { id: 'home', label: 'Home' },
@@ -49,14 +75,14 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   return (
     <>
       {/* MAIN NAVBAR */}
-      {/* Uses bg-slate-900 (Solid Navy Blue) */}
-      <nav className="fixed top-0 left-0 right-0 z-40 py-4 bg-slate-900 shadow-lg border-b border-white/10">
+      {/* Updated background to support Light/Dark mode while keeping your original layout */}
+      <nav className="fixed top-0 left-0 right-0 z-40 py-4 bg-slate-900 dark:bg-slate-950 shadow-lg border-b border-white/10 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-white">
           
-          {/* LEFT: Logo / Name */}
+          {/* LEFT: Logo / Name - Updated Font */}
           <div 
               onClick={() => handleNavClick('home')}
-              className="cursor-pointer font-serif italic text-2xl font-bold tracking-tight text-slate-100"
+              className="cursor-pointer text-2xl font-extrabold tracking-tight text-slate-100 hover:text-white transition-colors"
           >
             Aditya Tiwari
           </div>
@@ -80,6 +106,18 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
           {/* RIGHT: Social Icons (Desktop) */}
           <div className="hidden md:flex items-center space-x-4">
+            
+            {/* Dark Mode Toggle */}
+            <button 
+              onClick={toggleTheme}
+              className="p-2 text-slate-300 hover:text-yellow-400 transition-colors"
+              aria-label="Toggle Dark Mode"
+            >
+              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            
+            <div className="h-4 w-px bg-white/20 mx-2"></div>
+
             <a href="https://github.com/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-white"><Github className="w-5 h-5" /></a>
             <a href="https://linkedin.com/in/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-white"><Linkedin className="w-5 h-5" /></a>
             <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-white"><Code2 className="w-5 h-5" /></a>
@@ -87,7 +125,14 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
           </div>
 
           {/* MOBILE MENU TOGGLE (Hamburger) */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-4">
+            <button 
+              onClick={toggleTheme}
+              className="text-slate-300 hover:text-yellow-400 transition-colors"
+            >
+              {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+
             <button 
               onClick={() => setIsMobileMenuOpen(true)} 
               className="p-2 -mr-2 text-white hover:bg-white/10 rounded-full transition-colors"
@@ -99,8 +144,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
       </nav>
 
       {/* --- MOBILE SIDEBAR DRAWER --- */}
-      
-      {/* 1. Backdrop Overlay */}
       <div 
         className={`fixed inset-0 bg-black/60 z-40 transition-opacity duration-300 md:hidden backdrop-blur-sm ${
           isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
@@ -109,16 +152,13 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
         aria-hidden="true"
       />
 
-      {/* 2. Sliding Sidebar Panel */}
       <div 
-        // UPDATED: bg-slate-900 creates the SOLID NAVY BLUE background (matches Navbar)
-        className={`fixed top-0 left-0 bottom-0 w-72 bg-slate-900 z-50 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden border-r border-white/10 flex flex-col ${
+        className={`fixed top-0 left-0 bottom-0 w-72 bg-slate-900 dark:bg-slate-950 z-50 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden border-r border-white/10 flex flex-col ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
-        {/* Sidebar Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10">
-          <span className="font-serif italic text-xl font-bold text-slate-100">Menu</span>
+          <span className="text-xl font-bold text-slate-100">Menu</span>
           <button 
             onClick={() => setIsMobileMenuOpen(false)} 
             className="p-2 -mr-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
@@ -127,7 +167,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
           </button>
         </div>
 
-        {/* Sidebar Links */}
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {navItems.map((item) => (
             <button
@@ -148,7 +187,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
           ))}
         </div>
 
-        {/* Mobile Social Icons Footer */}
         <div className="p-6 border-t border-white/10">
           <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Let's Connect</p>
           <div className="flex items-center gap-4">

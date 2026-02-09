@@ -17,11 +17,13 @@ const App: React.FC = () => {
   const closeContactModal = () => setIsContactModalOpen(false);
 
   return (
-    <div className="relative min-h-screen font-sans text-[#1e293b]">
+    // UPDATED: Added 'dark:bg-slate-950' and 'dark:text-slate-200' for global dark mode
+    <div className="relative min-h-screen font-sans text-[#1e293b] dark:text-slate-200 bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
       
       {/* BACKGROUND LAYERS */}
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50" />
+        {/* UPDATED: Added dark gradients (dark:from-slate-950...) so the background dims */}
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 opacity-100 dark:opacity-50" />
       </div>
 
       <ContactModal isOpen={isContactModalOpen} onClose={closeContactModal} />
@@ -55,7 +57,6 @@ const App: React.FC = () => {
           <Education />
         </section>
         
-        {/* UPDATED: Added md:hidden to hide this on desktop */}
         <section id="contact" className="md:hidden">
           <Contact />
         </section>
@@ -63,7 +64,7 @@ const App: React.FC = () => {
       </main>
 
       {/* FOOTER */}
-      <footer className="w-full py-6 text-center text-slate-500 text-sm border-t border-slate-200/50">
+      <footer className="w-full py-6 text-center text-slate-500 dark:text-slate-400 text-sm border-t border-slate-200/50 dark:border-slate-800/50">
         <p>© 2026 Aditya Tiwari. All Rights Reserved.</p>
       </footer>
     </div>

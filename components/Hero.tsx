@@ -36,7 +36,7 @@ const Hero: React.FC = () => {
             <img
               src="/img.png"
               alt="Aditya Tiwari"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover transition-all duration-500 dark:brightness-90 dark:opacity-90"
               style={{ imageRendering: 'auto', objectPosition: '1% 1%', transform: 'scale(1.1)' }}
             />
           </div>

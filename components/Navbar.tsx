@@ -8,18 +8,21 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  
+  // UPDATED: Default state is now true (Dark Mode)
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
   // Initialize Dark Mode
   useEffect(() => {
-    // Only enable dark mode if explicitly stored in local storage.
-    // Removed the system preference check to ensure light mode is the default.
-    if (localStorage.theme === 'dark') {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
+    // UPDATED: Check if user has explicitly opted for light mode.
+    // If localStorage is 'light', we use light mode.
+    // Otherwise (if 'dark' or undefined/null), we default to DARK mode.
+    if (localStorage.theme === 'light') {
       setIsDarkMode(false);
       document.documentElement.classList.remove('dark');
+    } else {
+      setIsDarkMode(true);
+      document.documentElement.classList.add('dark');
     }
   }, []);
 

@@ -21,27 +21,18 @@ const Hero: React.FC = () => {
 
         {/* Paragraphs - Left Aligned */}
         <div className="space-y-6 text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-400 leading-relaxed text-justify md:text-left">
-            <p>
-            I am a Computer Science undergraduate with a strong interest in how
-            technology and data drive better decision-making within organizations.
-            My academic and project work focuses on building data-driven systems,
-            particularly in contexts related to finance, analytics, and strategic
-            problem-solving.
-            </p>
-            
-            <p>
-            Beyond technical execution, I’m deeply interested in understanding why
-            systems are built, who they create value for, and how they scale inside
-            real organizations. I enjoy approaching problems end-to-end — from
-            framing the decision to designing and implementing the solution.
-            </p>
+          <p>
+          I build data-driven systems that help organizations make better decisions
+          through technology, analytics, and structured problem-solving.
+          </p>
 
-            <p>
-            My long-term goal is to grow into leadership roles within
-            technology-driven companies, combining strong technical foundations
-            with business and strategic insight. This portfolio represents my
-            journey as a builder today and a future leader in the making.
-            </p>
+          <p>
+          I am interested in how technical systems scale within organizations and shape
+          decision-making and long-term strategy. My goal is to grow into leadership
+          roles within technology-driven companies by combining strong technical
+          foundations with strategic thinking.
+          </p>
+
         </div>
       </div>
 

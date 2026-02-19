@@ -8,15 +8,10 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
-  
-  // UPDATED: Default state is now true (Dark Mode)
   const [isDarkMode, setIsDarkMode] = useState(true);
 
   // Initialize Dark Mode
   useEffect(() => {
-    // UPDATED: Check if user has explicitly opted for light mode.
-    // If localStorage is 'light', we use light mode.
-    // Otherwise (if 'dark' or undefined/null), we default to DARK mode.
     if (localStorage.theme === 'light') {
       setIsDarkMode(false);
       document.documentElement.classList.remove('dark');
@@ -38,10 +33,13 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
     }
   };
 
+  // ⭐ UPDATED NAV FLOW (Narrative-Based)
   const navItems = [
     { id: 'home', label: 'Home' },
     { id: 'about', label: 'About' },
-    { id: 'portfolio', label: 'Portfolio' },
+    { id: 'portfolio', label: 'Projects' },
+    { id: 'exploration', label: 'Exploration' },
+    { id: 'insights', label: 'Insights' },
     { id: 'resume', label: 'Resume' },
     { id: 'contact', label: 'Contact' },
   ];
@@ -49,10 +47,10 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const handleNavClick = (id: string) => {
     setIsMobileMenuOpen(false);
     setActiveSection(id);
-    
+
     if (id === 'contact') {
-        onOpenContact();
-        return; 
+      onOpenContact();
+      return;
     }
 
     if (id === 'resume') {
@@ -77,29 +75,28 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
   return (
     <>
-      {/* MAIN NAVBAR */}
-      {/* Updated background to support Light/Dark mode while keeping your original layout */}
+      {/* NAVBAR */}
       <nav className="fixed top-0 left-0 right-0 z-40 py-4 bg-slate-900 dark:bg-slate-950 shadow-lg border-b border-white/10 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between text-white">
-          
-          {/* LEFT: Logo / Name - Updated Font */}
-          <div 
-              onClick={() => handleNavClick('home')}
-              className="cursor-pointer text-2xl font-extrabold tracking-tight text-slate-100 hover:text-white transition-colors"
+
+          {/* Logo */}
+          <div
+            onClick={() => handleNavClick('home')}
+            className="cursor-pointer text-2xl font-extrabold tracking-tight text-slate-100 hover:text-white transition-colors"
           >
             Aditya Tiwari
           </div>
 
-          {/* CENTER: Desktop Navigation */}
+          {/* Desktop Nav */}
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
                 className={`text-sm font-medium transition-colors ${
-                  activeSection === item.id 
-                    ? 'text-white font-bold' 
-                    : 'text-slate-300 hover:text-white' 
+                  activeSection === item.id
+                    ? 'text-white font-bold'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 {item.label}
@@ -107,18 +104,17 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             ))}
           </div>
 
-          {/* RIGHT: Social Icons (Desktop) */}
+          {/* Right Icons */}
           <div className="hidden md:flex items-center space-x-4">
-            
-            {/* Dark Mode Toggle */}
-            <button 
+
+            <button
               onClick={toggleTheme}
               className="p-2 text-slate-300 hover:text-yellow-400 transition-colors"
               aria-label="Toggle Dark Mode"
             >
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            
+
             <div className="h-4 w-px bg-white/20 mx-2"></div>
 
             <a href="https://github.com/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="text-slate-300 hover:text-white"><Github className="w-5 h-5" /></a>
@@ -127,18 +123,15 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             <button onClick={onOpenContact} className="text-slate-300 hover:text-white"><Mail className="w-5 h-5" /></button>
           </div>
 
-          {/* MOBILE MENU TOGGLE (Hamburger) */}
+          {/* Mobile Toggle */}
           <div className="md:hidden flex items-center gap-4">
-            <button 
-              onClick={toggleTheme}
-              className="text-slate-300 hover:text-yellow-400 transition-colors"
-            >
+            <button onClick={toggleTheme} className="text-slate-300 hover:text-yellow-400">
               {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
 
-            <button 
-              onClick={() => setIsMobileMenuOpen(true)} 
-              className="p-2 -mr-2 text-white hover:bg-white/10 rounded-full transition-colors"
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 -mr-2 text-white hover:bg-white/10 rounded-full"
             >
               <Menu className="w-6 h-6" />
             </button>
@@ -146,25 +139,25 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
         </div>
       </nav>
 
-      {/* --- MOBILE SIDEBAR DRAWER --- */}
-      <div 
+      {/* Overlay */}
+      <div
         className={`fixed inset-0 bg-black/60 z-40 transition-opacity duration-300 md:hidden backdrop-blur-sm ${
           isMobileMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsMobileMenuOpen(false)}
-        aria-hidden="true"
       />
 
-      <div 
+      {/* Mobile Drawer */}
+      <div
         className={`fixed top-0 left-0 bottom-0 w-72 bg-slate-900 dark:bg-slate-950 z-50 shadow-2xl transform transition-transform duration-300 ease-in-out md:hidden border-r border-white/10 flex flex-col ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex items-center justify-between p-6 border-b border-white/10">
           <span className="text-xl font-bold text-slate-100">Menu</span>
-          <button 
-            onClick={() => setIsMobileMenuOpen(false)} 
-            className="p-2 -mr-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-colors"
+          <button
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="p-2 text-slate-400 hover:text-white"
           >
             <X className="w-5 h-5" />
           </button>
@@ -175,29 +168,12 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             <button
               key={item.id}
               onClick={() => handleNavClick(item.id)}
-              className="group w-full flex items-center justify-between px-4 py-3 rounded-xl 
-                         text-slate-400 font-medium border border-transparent
-                         hover:bg-white/10 hover:text-white hover:border-white/10 hover:shadow-lg
-                         transition-all duration-200"
+              className="group w-full flex items-center justify-between px-4 py-3 rounded-xl text-slate-400 font-medium hover:bg-white/10 hover:text-white transition-all"
             >
               <span>{item.label}</span>
-              <ChevronRight 
-                className="w-4 h-4 text-slate-600 opacity-50 
-                           group-hover:opacity-100 group-hover:text-white group-hover:translate-x-1 
-                           transition-all duration-200" 
-              />
+              <ChevronRight className="w-4 h-4 opacity-50 group-hover:translate-x-1 transition-all" />
             </button>
           ))}
-        </div>
-
-        <div className="p-6 border-t border-white/10">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4">Let's Connect</p>
-          <div className="flex items-center gap-4">
-            <a href="https://github.com/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="p-2 -ml-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"><Github className="w-5 h-5" /></a>
-            <a href="https://linkedin.com/in/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"><Linkedin className="w-5 h-5" /></a>
-            <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank" rel="noopener noreferrer" className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"><Code2 className="w-5 h-5" /></a>
-            <button onClick={onOpenContact} className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-lg transition-all"><Mail className="w-5 h-5" /></button>
-          </div>
         </div>
       </div>
     </>

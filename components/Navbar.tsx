@@ -34,15 +34,16 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   };
 
   // ⭐ UPDATED NAV FLOW (Narrative-Based)
-  const navItems = [
-    { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'portfolio', label: 'Projects' },
-    { id: 'exploration', label: 'Exploration' },
-    { id: 'insights', label: 'Insights' },
-    { id: 'resume', label: 'Resume' },
-    { id: 'contact', label: 'Contact' },
-  ];
+const navItems = [
+  { id: 'home', label: 'Home' },
+  { id: 'portfolio', label: 'Projects' },
+  { id: 'about', label: 'About' },
+  { id: 'insights', label: 'Insights' },
+  { id: 'exploration', label: 'Exploration' },
+  { id: 'resume', label: 'Resume' },
+  { id: 'contact', label: 'Contact' },
+];
+
 
   const handleNavClick = (id: string) => {
     setIsMobileMenuOpen(false);

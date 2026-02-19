@@ -13,27 +13,26 @@ const Hero: React.FC = () => {
         
         {/* Headline - Left Aligned for strong visual anchor */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 leading-tight text-center md:text-left">
-          Computer Science undergraduate building at the intersection of{" "}
+          Computer Science undergraduate designing data-driven systems
+          at the intersection of{" "}
           <span className="text-slate-700 dark:text-slate-300">
-            technology, data, and business leadership.
+          technology, analytics, and business leadership.
           </span>.
         </h1>
 
         {/* Paragraphs - Left Aligned */}
         <div className="space-y-6 text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-400 leading-relaxed text-justify md:text-left">
           <p>
-          I design data-driven systems that help organizations make better decisions
-          by combining software, analytics, and structured problem-solving.
+          I design interactive and data-driven systems — from curriculum intelligence tools to financial analytics platforms — that help users and organizations make clearer decisions through structured data and thoughtful engineering.
           </p>
 
           <p>
-          I am deeply interested in how technology scales within organizations and 
-          influences strategy, operations, and long-term growth. My goal is to develop
-          into a technology and product leader who bridges technical execution with 
-          business decision-making.
+          I am deeply interested in how technology scales within organizations and influences strategy, operations, and long-term growth. My goal is to develop into a technology and product leader who bridges technical execution with business decision-making.
+
           </p>
           <p className="italic text-slate-500 dark:text-slate-400">
           Long-term, I aim to build technology-driven solutions that create meaningful economic and organizational impact.
+
           </p>
 
         </div>

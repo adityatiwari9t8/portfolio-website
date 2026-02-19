@@ -93,13 +93,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
                   {project.description}
                 </p>
 
-                {/* ⭐ Decision Impact (MBA SIGNAL) */}
-                <p className="text-sm text-slate-400 dark:text-slate-500 leading-relaxed">
-                  <strong>Decision Impact:</strong> This system was designed to improve
-                  decision-making by transforming structured data into actionable insights,
-                  reducing manual analysis and enabling clearer outcomes.
-                </p>
-
                 {/* CTA */}
                 <div className="pt-4 flex items-center gap-6">
                   <button

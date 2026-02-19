@@ -16,26 +16,19 @@ const WhatIDo: React.FC = () => {
 
         {/* Primary Philosophy */}
         <p className="text-xl text-slate-500 dark:text-slate-400 max-w-4xl leading-relaxed font-light">
-          I approach technology as a tool for improving decision-making and enabling
-          meaningful outcomes. My work focuses on understanding problems deeply,
-          structuring them clearly, and designing systems that translate data into
-          actionable insight.
+          I approach technology as a way to understand complex problems and build
+          systems that make information clearer and more useful. My work focuses on
+          breaking challenges into structured components and designing solutions that
+          combine strong engineering fundamentals with thoughtful user experience.
         </p>
 
         {/* Strategic Framing */}
         <p className="text-lg text-slate-500 dark:text-slate-400 max-w-4xl leading-relaxed font-light">
-          I am particularly interested in challenges at the intersection of technology,
-          analytics, and organizational strategy — where engineering decisions influence
-          how individuals, teams, and institutions operate and grow. My goal is to
-          develop solutions that combine strong technical execution with long-term
-          strategic thinking.
-        </p>
-
-        {/* Vision Line (MBA Signal) */}
-        <p className="italic text-slate-400 dark:text-slate-500 max-w-3xl leading-relaxed">
-          Long-term, I aim to bridge technical systems and business leadership by
-          building technology that drives scalable impact and better organizational
-          decision-making.
+          I am particularly interested in problems at the intersection of software
+          engineering, data, and real-world decision processes — where technical
+          systems influence how people learn, manage resources, and interact with
+          information. I enjoy building products that transform complexity into
+          intuitive and practical tools.
         </p>
       </div>
 

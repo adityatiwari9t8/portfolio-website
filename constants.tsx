@@ -89,8 +89,9 @@ export const PROJECTS: Project[] = [
     id: '1',
     title: 'Academic Path Intelligence',
     category: 'CORE ENGINEERING',
-    tags: ['PYTHON', 'SCIKIT-LEARN', 'PANDAS', 'REACT'],
-    description: 'Implemented a content-based filtering system to architect academic trajectories based on historical performance data and competency profiling. The engine utilizes weighted vector similarity to map user skills to curriculum requirements.',
+    tags: ['TYPESCRIPT', 'REACT', 'SYSTEM DESIGN', 'EDTECH'],
+    description:
+      'Designed and built an intelligent curriculum recommendation engine that models prerequisite dependencies across computer science domains to generate personalized learning roadmaps based on a user’s existing technical skills.',
     icon: <BookOpen className="w-10 h-10 text-slate-500" />,
     githubUrl: '#',
     liveUrl: '#',
@@ -100,8 +101,9 @@ export const PROJECTS: Project[] = [
     id: '2',
     title: 'Expense Insight Pro',
     category: 'FULL STACK',
-    tags: ['TYPESCRIPT', 'NODE.JS', 'MONGODB', 'DATAVIS'],
-    description: 'A financial intelligence suite featuring predictive liquidity forecasting and category-specific budget orchestration. Engineered with a low-latency transactional ledger and dual-axis cash flow visualization.',
+    tags: ['TYPESCRIPT', 'REACT', 'DATA VISUALIZATION', 'FINTECH'],
+    description:
+      'Developed a financial intelligence dashboard that tracks multi-currency transactions and generates predictive balance forecasts, helping users understand spending behavior and make data-informed financial decisions.',
     icon: <PieChart className="w-10 h-10 text-slate-500" />,
     githubUrl: '#',
     liveUrl: '#',
@@ -109,16 +111,18 @@ export const PROJECTS: Project[] = [
   },
   {
     id: '3',
-    title: 'Backtrack Sudoku Visualizer',
+    title: 'Sudoku Algorithm Visualizer',
     category: 'ALGORITHMS',
-    tags: ['ALGORITHMS', 'REACT', 'FRAMER MOTION'],
-    description: 'A real-time visualization tool for the Sudoku backtracking algorithm. Features controllable execution speed, state tracking, and a recursive step-by-step breakdown of the solving process.',
+    tags: ['ALGORITHMS', 'REACT', 'DFS', 'BACKTRACKING'],
+    description:
+      'Built an interactive algorithm visualization platform implementing depth-first search and backtracking to demonstrate real-time problem solving, constraint validation, and computational efficiency in solving Sudoku puzzles.',
     icon: <Grid className="w-10 h-10 text-slate-500" />,
     githubUrl: '#',
     liveUrl: '#',
     quickView: false
   }
 ];
+
 
 export const EDUCATION: EducationItem[] = [
   {

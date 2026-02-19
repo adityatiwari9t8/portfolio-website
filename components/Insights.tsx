@@ -7,7 +7,7 @@ const Insights: React.FC = () => {
       category: "Technology & Strategy",
       readTime: "4 min read",
       description:
-        "Modern software systems are less about automation and more about enabling better human decisions. This reflection explores how data infrastructure influences judgment, strategy, and organizational outcomes.",
+        "Modern software systems increasingly shape how people interpret information and make choices. This reflection explores how data infrastructure influences judgment, strategy, and organizational outcomes.",
     },
     {
       title: "Engineering vs Problem Solving",
@@ -21,7 +21,7 @@ const Insights: React.FC = () => {
       category: "Technology & Business",
       readTime: "5 min read",
       description:
-        "As technical systems increasingly shape financial models and organizational strategy, engineers must think beyond code and understand broader business implications.",
+        "As technical systems increasingly shape financial models and organizational strategy, engineers benefit from understanding the broader business context behind the systems they build.",
     },
   ];
 
@@ -37,10 +37,10 @@ const Insights: React.FC = () => {
 
       {/* Section Intro */}
       <p className="text-xl text-slate-500 dark:text-slate-400 max-w-4xl leading-relaxed font-light">
-        I write about technology, decision-making, and the evolving relationship
-        between software, data, and organizational leadership. These reflections
-        capture how I think about problems beyond code — at the intersection of
-        engineering, strategy, and long-term impact.
+        I write about technology, systems thinking, and how software shapes the
+        way people learn, decide, and organize work. These reflections capture my
+        curiosity beyond implementation — exploring the broader implications of
+        engineering in real-world contexts.
       </p>
 
       {/* Insights Grid */}
@@ -68,11 +68,12 @@ const Insights: React.FC = () => {
         ))}
       </div>
 
-      {/* Closing Thought (MBA positioning signal) */}
+      {/* Closing Thought */}
       <div className="pt-6 text-center">
         <p className="italic text-slate-400 dark:text-slate-500 max-w-2xl mx-auto">
-          Currently thinking about AI adoption, decision-making systems, and how
-          technology shapes organizational leadership.
+          Currently exploring how AI adoption, data systems, and human decision
+          processes evolve together as technology becomes more deeply embedded in
+          organizations.
         </p>
       </div>
     </div>

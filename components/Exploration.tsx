@@ -11,16 +11,17 @@ const Exploration: React.FC = () => {
       </div>
 
       <p className="text-xl text-slate-500 dark:text-slate-400 max-w-4xl leading-relaxed font-light">
-        My current interests lie at the intersection of technology, data, and
-        organizational decision-making. I am particularly curious about how
-        technical systems scale inside companies and influence strategy.
+        I’m currently exploring how software systems influence real-world
+        decisions — from learning platforms and financial tools to organizational
+        workflows. My curiosity focuses on understanding how technical design,
+        data, and human behavior interact as systems scale.
       </p>
 
       <ul className="space-y-3 text-slate-500 dark:text-slate-400 text-lg">
-        <li>• Technology and financial decision systems</li>
-        <li>• Data-driven strategy and analytics</li>
-        <li>• Scalable system design in real organizations</li>
-        <li>• Leadership in technology-driven companies</li>
+        <li>• Decision-making systems built on data and analytics</li>
+        <li>• Product and system design for scalable organizations</li>
+        <li>• Technology’s role in financial and operational strategy</li>
+        <li>• The intersection of engineering, product thinking, and leadership</li>
       </ul>
     </div>
   );

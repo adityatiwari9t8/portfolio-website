@@ -13,24 +13,27 @@ const Hero: React.FC = () => {
         
         {/* Headline - Left Aligned for strong visual anchor */}
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-slate-100 leading-tight text-center md:text-left">
-          Computer Science undergraduate exploring the intersection of{" "}
+          Computer Science undergraduate building at the intersection of{" "}
           <span className="text-slate-700 dark:text-slate-300">
-            technology, data, and leadership
+            technology, data, and business leadership.
           </span>.
         </h1>
 
         {/* Paragraphs - Left Aligned */}
         <div className="space-y-6 text-lg sm:text-xl md:text-2xl text-slate-600 dark:text-slate-400 leading-relaxed text-justify md:text-left">
           <p>
-          I build data-driven systems that help organizations make better decisions
-          through technology, analytics, and structured problem-solving.
+          I design data-driven systems that help organizations make better decisions
+          by combining software, analytics, and structured problem-solving.
           </p>
 
           <p>
-          I am interested in how technical systems scale within organizations and shape
-          decision-making and long-term strategy. My goal is to grow into leadership
-          roles within technology-driven companies by combining strong technical
-          foundations with strategic thinking.
+          I am deeply interested in how technology scales within organizations and 
+          influences strategy, operations, and long-term growth. My goal is to develop
+          into a technology and product leader who bridges technical execution with 
+          business decision-making.
+          </p>
+          <p className="italic text-slate-500 dark:text-slate-400">
+          Long-term, I aim to build technology-driven solutions that create meaningful economic and organizational impact.
           </p>
 
         </div>

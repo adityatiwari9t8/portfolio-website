@@ -14,21 +14,32 @@ const WhatIDo: React.FC = () => {
           </h2>
         </div>
 
+        {/* Primary Philosophy */}
         <p className="text-xl text-slate-500 dark:text-slate-400 max-w-4xl leading-relaxed font-light">
-          I focus on building systems that enable better decision-making through data.
-          My approach combines strong technical execution with structured thinking —
-          understanding the problem deeply, designing scalable solutions, and delivering
-          systems that create measurable value.
+          I approach technology as a tool for improving decision-making and enabling
+          meaningful outcomes. My work focuses on understanding problems deeply,
+          structuring them clearly, and designing systems that translate data into
+          actionable insight.
         </p>
 
+        {/* Strategic Framing */}
         <p className="text-lg text-slate-500 dark:text-slate-400 max-w-4xl leading-relaxed font-light">
-          I am particularly interested in problems at the intersection of technology,
-          analytics, and strategy, where engineering solutions directly influence how
-          individuals or organizations make decisions.
+          I am particularly interested in challenges at the intersection of technology,
+          analytics, and organizational strategy — where engineering decisions influence
+          how individuals, teams, and institutions operate and grow. My goal is to
+          develop solutions that combine strong technical execution with long-term
+          strategic thinking.
+        </p>
+
+        {/* Vision Line (MBA Signal) */}
+        <p className="italic text-slate-400 dark:text-slate-500 max-w-3xl leading-relaxed">
+          Long-term, I aim to bridge technical systems and business leadership by
+          building technology that drives scalable impact and better organizational
+          decision-making.
         </p>
       </div>
 
-      {/* Services Grid */}
+      {/* Capability Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {SERVICES.map((service, idx) => (
           <div

@@ -282,9 +282,15 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             </div>
 
             {/* Social Icons - Hidden on mobile, visible on desktop */}
-            <Github className="hidden sm:block w-5 h-5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"/>
-            <Linkedin className="hidden sm:block w-5 h-5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"/>
-            <Code2 className="hidden sm:block w-5 h-5 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer"/>
+            <a href="https://github.com/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+              <Github className="w-5 h-5" />
+            </a>
+            <a href="https://www.linkedin.com/in/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+              <Linkedin className="w-5 h-5" />
+            </a>
+            <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+              <Code2 className="w-5 h-5" />
+            </a>
 
             {/* Hamburger Button */}
             <button
@@ -352,9 +358,15 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
         {/* Drawer Footer (Social Icons) */}
         <div className="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-center space-x-6">
-          <Github className="w-6 h-6 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer" />
-          <Linkedin className="w-6 h-6 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer" />
-          <Code2 className="w-6 h-6 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer" />
+          <a href="https://github.com/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+            <Github className="w-6 h-6" />
+          </a>
+          <a href="https://www.linkedin.com/in/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+            <Linkedin className="w-6 h-6" />
+          </a>
+          <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+            <Code2 className="w-6 h-6" />
+          </a>
         </div>
       </div>
 

@@ -246,7 +246,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
                     absolute top-16 left-1/2 -translate-x-1/2
                     backdrop-blur-2xl
                     bg-white/90 dark:bg-slate-900/90
-                    p-1.5 rounded-2xl
+                    p-1 sm:p-1.5 rounded-2xl
                     ring-2 ring-blue-400/60
                     shadow-[0_0_25px_rgba(59,130,246,0.5)] dark:shadow-[0_0_25px_rgba(59,130,246,0.3)]
                     transition-all duration-500
@@ -258,20 +258,20 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white dark:bg-slate-800 rounded-tl-sm border-l border-t border-slate-200/60 dark:border-slate-700/60 rotate-45 z-0" />
 
                   {/* Inner Card Content */}
-                  <div className="relative z-10 flex items-center gap-4 px-5 py-3 rounded-xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900/80 border border-slate-100/50 dark:border-slate-700/50">
+                  <div className="relative z-10 flex items-center gap-3 sm:gap-4 px-3 py-2 sm:px-5 sm:py-3 rounded-xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900/80 border border-slate-100/50 dark:border-slate-700/50">
                     
                     {/* Icon Container with Wiggle */}
-                    <div className="relative flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-blue-100 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 shadow-inner">
-                      <Moon className="w-5 h-5 text-[#3d4977] dark:text-blue-400 animate-[wiggle_2.5s_ease-in-out_infinite]" />
-                      <div className="absolute top-0 right-0 w-2.5 h-2.5 bg-blue-500 rounded-full border-2 border-white dark:border-slate-800" />
+                    <div className="relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-blue-100 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 shadow-inner">
+                      <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-[#3d4977] dark:text-blue-400 animate-[wiggle_2.5s_ease-in-out_infinite]" />
+                      <div className="absolute top-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-blue-500 rounded-full border-2 border-white dark:border-slate-800" />
                     </div>
 
                     {/* Text Container */}
-                    <div className="flex flex-col pr-2 text-left whitespace-nowrap">
-                      <span className="text-sm font-extrabold bg-gradient-to-r from-[#3d4977] to-blue-500 dark:from-blue-400 dark:to-indigo-300 bg-clip-text text-transparent">
+                    <div className="flex flex-col pr-1 sm:pr-2 text-left whitespace-nowrap">
+                      <span className="text-xs sm:text-sm font-extrabold bg-gradient-to-r from-[#3d4977] to-blue-500 dark:from-blue-400 dark:to-indigo-300 bg-clip-text text-transparent">
                         Try Dark Mode
                       </span>
-                      <span className="text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-0.5">
+                      <span className="text-[11px] sm:text-[13px] font-medium text-slate-500 dark:text-slate-400 mt-0 sm:mt-0.5">
                         For a stunning experience ✨
                       </span>
                     </div>
@@ -315,12 +315,12 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
       {/* ================= MOBILE MENU DRAWER ================= */}
       <div
         className={`
-          fixed top-0 right-0 bottom-0 w-[280px] z-50
+          fixed top-0 left-0 bottom-0 w-[280px] z-50
           bg-white dark:bg-slate-950 shadow-2xl
-          border-l border-slate-200 dark:border-slate-800
+          border-r border-slate-200 dark:border-slate-800
           transition-transform duration-300 ease-in-out md:hidden
           flex flex-col
-          ${isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}
+          ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         {/* Drawer Header */}

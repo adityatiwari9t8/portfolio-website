@@ -9,7 +9,7 @@ interface ContactModalProps {
 
 const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 
-  // ⭐ Lock background scroll + ESC close
+  /* ================= SCROLL LOCK + ESC ================= */
   useEffect(() => {
     if (!isOpen) return;
 
@@ -31,41 +31,76 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+      className="
+        fixed inset-0 z-[100]
+        flex items-center justify-center
+        p-4
+      "
       role="dialog"
       aria-modal="true"
     >
-      {/* Backdrop */}
+
+      {/* ================= BACKDROP ================= */}
       <div
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        className="
+          absolute inset-0
+          bg-slate-900/60
+          backdrop-blur-md
+          transition-opacity duration-300
+        "
         onClick={onClose}
       />
 
-      {/* Modal Content */}
-      <div className="
-        relative
-        bg-white dark:bg-slate-800
-        w-full max-w-full sm:max-w-2xl md:max-w-4xl
-        rounded-[2.5rem]
-        shadow-2xl
-        overflow-y-auto
-        max-h-[90vh]
-        scrollbar-hide
-        animate-in fade-in zoom-in duration-300
-      ">
-        
-        {/* Close Button */}
+      {/* ================= MODAL ================= */}
+      <div
+        className="
+          relative w-full
+          max-w-full sm:max-w-2xl md:max-w-4xl
+
+          rounded-[2.5rem]
+          overflow-y-auto
+          max-h-[90vh]
+          scrollbar-hide
+
+          border border-slate-200 dark:border-white/10
+
+          bg-white
+          dark:bg-gradient-to-b
+          dark:from-slate-900
+          dark:to-slate-950
+
+          shadow-2xl
+
+          animate-in fade-in zoom-in duration-300
+        "
+      >
+
+        {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
           aria-label="Close contact form"
-          className="absolute top-8 right-8 p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors text-slate-400 z-10"
+          className="
+            absolute top-8 right-8 z-10
+            p-2 rounded-full
+
+            bg-slate-100
+            dark:bg-white/5
+
+            hover:bg-slate-200
+            dark:hover:bg-white/10
+
+            transition-colors
+            text-slate-500 dark:text-slate-300
+          "
         >
           <X className="w-6 h-6" />
         </button>
 
-        <div className="p-4">
+        {/* CONTENT */}
+        <div className="p-6 md:p-10">
           <Contact isModal />
         </div>
+
       </div>
     </div>
   );

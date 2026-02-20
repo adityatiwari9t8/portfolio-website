@@ -21,12 +21,13 @@ const Education: React.FC = () => {
         </h2>
 
         <p className="text-lg text-slate-500 dark:text-slate-400 leading-relaxed">
-          My academic journey focuses on building strong computer science
-          foundations while exploring how technical systems translate into
-          real-world impact. I treat coursework as a framework for developing
-          structured thinking, problem-solving intuition, and long-term
-          technical depth.
+          My academic experience builds rigorous computer science foundations while
+          exploring how technical systems influence decision-making, organizations,
+          and real-world outcomes. I approach coursework as a platform for developing
+          analytical thinking, structured problem solving, and long-term intellectual
+          discipline.
         </p>
+
       </div>
 
       {/* ---------- TIMELINE ---------- */}

@@ -14,7 +14,7 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
   });
 
   const socialLinks = [
-    { icon: Instagram, url: 'https://www.instagram.com/adityatiwari_98?igsh=MWprcHhuM2NxbWIycA%3D%3D&utm_source=qr' },
+    { icon: Instagram, url: 'https://www.instagram.com/adityatiwari_98' },
     { icon: Linkedin, url: 'https://www.linkedin.com/in/adityatiwari9t8' },
     { icon: Github, url: 'https://github.com/adityatiwari9t8' },
     { icon: Code2, url: 'https://leetcode.com/Aditya_Tiwari_98/' },
@@ -35,98 +35,204 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
   };
 
   return (
-    <div className={`space-y-20 ${isModal ? 'py-4' : 'py-12'}`}>
+    <section className={`space-y-20 ${isModal ? 'py-4' : 'py-12'}`}>
+
+      {/* ================= HEADER ================= */}
       <div className="text-center space-y-6">
-        <h2 className={`font-extrabold text-[#1e293b] dark:text-white ${isModal ? 'text-4xl' : 'text-5xl lg:text-7xl'}`}>
+
+        <h2 className={`
+          font-extrabold
+          text-[#1e293b] dark:text-white
+          ${isModal ? 'text-4xl' : 'text-5xl lg:text-7xl'}
+        `}>
           Contact
         </h2>
 
-        <div className="space-y-4 max-w-2xl mx-auto">
-          <p className="text-xl text-slate-500 dark:text-slate-400 leading-relaxed font-medium">
-            I’m always open to thoughtful conversations around technology,
-            systems, learning, and building meaningful projects. If you’d like
-            to collaborate, exchange ideas, or simply connect — feel free to
-            reach out using the form below or email me at{' '}
-            <span className="text-[#1e293b] dark:text-white font-bold">
-              adityatiwari98@gmail.com
-            </span>.
-          </p>
-        </div>
+        <p className="
+          text-xl text-slate-500 dark:text-slate-400
+          leading-relaxed font-medium
+          max-w-2xl mx-auto
+        ">
+          I’m always open to thoughtful conversations around technology,
+          systems, learning, and building meaningful projects. If you’d like
+          to collaborate or exchange ideas — reach out below or email me at{' '}
+          <span className="text-[#1e293b] dark:text-white font-bold">
+            adityatiwari98@gmail.com
+          </span>.
+        </p>
 
-        <div className="flex justify-center space-x-6 pt-4">
+        {/* SOCIAL LINKS */}
+        <div className="flex justify-center gap-5 pt-4">
           {socialLinks.map((social, i) => (
-            <a 
+            <a
               key={i}
               href={social.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-3 bg-white dark:bg-slate-700 text-slate-400 rounded-xl hover:text-[#3d4977] dark:hover:text-white hover:shadow-lg transition-all border border-slate-100 dark:border-slate-600"
+              className="
+                p-3 rounded-xl
+
+                bg-white
+                dark:bg-white/5
+
+                border border-slate-200
+                dark:border-white/10
+
+                text-slate-400
+                hover:text-[#3d4977]
+                dark:hover:text-white
+
+                transition-all duration-300
+                hover:-translate-y-1
+                hover:shadow-md
+              "
             >
-              <social.icon className="w-6 h-6" />
+              <social.icon className="w-5 h-5" />
             </a>
           ))}
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] p-8 lg:p-16 shadow-xl shadow-slate-200/50 dark:shadow-none border border-slate-100 dark:border-slate-800 max-w-5xl mx-auto space-y-12">
-        <h3 className="text-4xl lg:text-5xl font-extrabold text-[#1e293b] dark:text-white text-center">
+      {/* ================= FORM CARD ================= */}
+      <div className="
+        max-w-5xl mx-auto
+        rounded-[2.5rem]
+        p-8 lg:p-16
+        space-y-12
+
+        border border-slate-200 dark:border-white/10
+
+        bg-white
+        dark:bg-gradient-to-b
+        dark:from-slate-900
+        dark:to-slate-950
+
+        shadow-sm
+      ">
+
+        <h3 className="
+          text-4xl lg:text-5xl
+          font-extrabold text-center
+          text-[#1e293b] dark:text-white
+        ">
           Get In Touch
         </h3>
-        
+
         <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+          {/* NAME + EMAIL */}
+          <div className="grid md:grid-cols-2 gap-8">
             <input
               type="text"
               placeholder="Name"
               required
-              className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3d4977]/20 focus:border-[#3d4977] transition-all text-lg placeholder:text-slate-400 dark:text-white"
               value={formData.name}
-              onChange={(e) => setFormData({...formData, name: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="
+                w-full px-6 py-4 rounded-xl
+                bg-slate-50 dark:bg-white/5
+                border border-slate-200 dark:border-white/10
+                focus:outline-none focus:ring-2
+                focus:ring-[#3d4977]/20
+                text-lg dark:text-white
+              "
             />
 
             <input
               type="email"
               placeholder="Email"
               required
-              className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3d4977]/20 focus:border-[#3d4977] transition-all text-lg placeholder:text-slate-400 dark:text-white"
               value={formData.email}
-              onChange={(e) => setFormData({...formData, email: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              className="
+                w-full px-6 py-4 rounded-xl
+                bg-slate-50 dark:bg-white/5
+                border border-slate-200 dark:border-white/10
+                focus:outline-none focus:ring-2
+                focus:ring-[#3d4977]/20
+                text-lg dark:text-white
+              "
             />
           </div>
 
+          {/* SELECT */}
           <div className="relative">
             <select
               required
-              className="w-full px-8 py-5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 appearance-none focus:outline-none focus:ring-2 focus:ring-[#3d4977]/20 focus:border-[#3d4977] transition-all text-lg text-slate-700 dark:text-slate-300"
               value={formData.interest}
-              onChange={(e) => setFormData({...formData, interest: e.target.value})}
+              onChange={(e) =>
+                setFormData({ ...formData, interest: e.target.value })
+              }
+              className="
+                w-full px-6 py-4 rounded-xl
+                appearance-none
+                bg-slate-50 dark:bg-white/5
+                border border-slate-200 dark:border-white/10
+                text-lg text-slate-700 dark:text-slate-300
+                focus:outline-none focus:ring-2
+                focus:ring-[#3d4977]/20
+              "
             >
-              <option value="" disabled>Select what you're interested in...</option>
+              <option value="" disabled>
+                Select what you're interested in...
+              </option>
               {interests.map(opt => (
                 <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
-            <ChevronDown className="absolute right-8 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+
+            <ChevronDown className="
+              absolute right-6 top-1/2 -translate-y-1/2
+              text-slate-400 pointer-events-none
+            " />
           </div>
 
+          {/* MESSAGE */}
           <textarea
+            rows={6}
             placeholder="Enter your message"
             required
-            rows={6}
-            className="w-full px-8 py-6 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-[#3d4977]/20 focus:border-[#3d4977] transition-all text-lg placeholder:text-slate-400 resize-none dark:text-white"
             value={formData.message}
-            onChange={(e) => setFormData({...formData, message: e.target.value})}
+            onChange={(e) =>
+              setFormData({ ...formData, message: e.target.value })
+            }
+            className="
+              w-full px-6 py-5 rounded-xl
+              resize-none
+              bg-slate-50 dark:bg-white/5
+              border border-slate-200 dark:border-white/10
+              focus:outline-none focus:ring-2
+              focus:ring-[#3d4977]/20
+              text-lg dark:text-white
+            "
           />
 
+          {/* BUTTON */}
           <button
             type="submit"
-            className="px-12 py-5 bg-[#5d678d] hover:bg-[#3d4977] text-white rounded-xl font-bold text-xl shadow-lg transition-all hover:-translate-y-1 active:scale-95"
+            className="
+              px-10 py-4 rounded-xl
+              font-semibold text-lg
+              text-white
+              bg-[#3d4977]
+              hover:bg-[#2d365a]
+              transition-all
+              hover:-translate-y-1
+              active:scale-95
+              shadow-lg
+            "
           >
             Send Message
           </button>
+
         </form>
       </div>
-    </div>
+
+    </section>
   );
 };
 

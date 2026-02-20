@@ -14,45 +14,121 @@ const DemoOverlay: React.FC<DemoOverlayProps> = ({ activeDemoId, onClose }) => {
 
   const renderDemo = () => {
     switch (activeDemoId) {
-      case '1': return <AcademicPathDemo />;
-      case '2': return <ExpenseProDemo />;
-      case '3': return <SudokuVisualizerDemo />;
-      default: return <div className="p-20 text-center text-slate-500 dark:text-slate-400">Demo not found.</div>;
+      case '1':
+        return <AcademicPathDemo />;
+      case '2':
+        return <ExpenseProDemo />;
+      case '3':
+        return <SudokuVisualizerDemo />;
+      default:
+        return (
+          <div className="p-20 text-center text-slate-500 dark:text-slate-400">
+            Demo not found.
+          </div>
+        );
     }
   };
 
   return (
-    // UPDATED: Added 'dark:bg-slate-950' so the modal isn't white in dark mode
-    <div className="fixed inset-0 z-[100] bg-white dark:bg-slate-950 transition-all duration-500 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-8">
-      {/* Mini Nav Bar */}
-      <div className="flex-none h-16 md:h-20 border-b border-slate-100 dark:border-slate-800 px-4 md:px-12 flex items-center justify-between">
-        <button 
+    <div
+      className="
+        fixed inset-0 z-[100]
+        flex flex-col overflow-hidden
+
+        bg-white
+        dark:bg-gradient-to-b
+        dark:from-slate-950
+        dark:via-slate-950
+        dark:to-black
+
+        animate-in fade-in slide-in-from-bottom-6
+        duration-500
+      "
+    >
+
+      {/* ================= TOP BAR ================= */}
+      <div
+        className="
+          flex-none
+          h-16 md:h-20
+          px-4 md:px-12
+
+          flex items-center justify-between
+
+          border-b border-slate-200 dark:border-white/10
+          backdrop-blur-sm
+        "
+      >
+        {/* Back Button */}
+        <button
           onClick={onClose}
-          className="flex items-center space-x-2 text-slate-500 hover:text-[#3d4977] dark:text-slate-400 dark:hover:text-white transition-colors"
+          className="
+            flex items-center space-x-2
+            text-slate-500
+            hover:text-[#3d4977]
+            dark:text-slate-400
+            dark:hover:text-white
+            transition-colors
+          "
         >
           <ArrowLeft className="w-5 h-5" />
-          <span className="font-bold hidden sm:inline">Back to Portfolio</span>
-          <span className="font-bold sm:hidden text-xs">Back</span>
+          <span className="font-semibold hidden sm:inline">
+            Back to Portfolio
+          </span>
+          <span className="font-semibold sm:hidden text-xs">
+            Back
+          </span>
         </button>
-        
+
+        {/* Right Side */}
         <div className="flex items-center space-x-4 md:space-x-8">
+
           <div className="hidden lg:block text-center">
-            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500">Live Production Demo</span>
+            <span className="
+              text-[10px] font-black uppercase
+              tracking-[0.3em]
+              text-slate-400 dark:text-slate-500
+            ">
+              Live Production Demo
+            </span>
           </div>
 
-          <button 
+          <button
             onClick={onClose}
-            className="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300"
+            className="
+              p-2.5 rounded-xl
+              bg-slate-100
+              dark:bg-white/5
+
+              hover:bg-slate-200
+              dark:hover:bg-white/10
+
+              border border-slate-200
+              dark:border-white/10
+
+              transition-colors
+              text-slate-600 dark:text-slate-300
+            "
           >
             <X className="w-5 h-5" />
           </button>
         </div>
       </div>
 
-      {/* Demo Content Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar bg-white dark:bg-slate-900">
+      {/* ================= DEMO CONTENT ================= */}
+      <div
+        className="
+          flex-1 overflow-y-auto custom-scrollbar
+
+          bg-slate-50
+          dark:bg-gradient-to-b
+          dark:from-slate-900
+          dark:to-slate-950
+        "
+      >
         {renderDemo()}
       </div>
+
     </div>
   );
 };

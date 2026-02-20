@@ -14,7 +14,7 @@ interface NavbarProps {
   onOpenContact: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = () => {
+const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('home');
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -49,7 +49,7 @@ const Navbar: React.FC<NavbarProps> = () => {
     { id: 'portfolio', label: 'Projects' },
     { id: 'exploration', label: 'Exploration' },
     { id: 'insights', label: 'Insights' },
-    { id: 'resume', label: 'Education' }
+    { id: 'contact', label: 'Contact' }
   ];
 
   /* ================= ACTIVE SECTION TRACKING ================= */
@@ -82,6 +82,11 @@ const Navbar: React.FC<NavbarProps> = () => {
   /* ================= SCROLL HANDLER ================= */
   const handleNavClick = (id: string) => {
     setIsMobileMenuOpen(false);
+
+    if (id === 'contact') {
+      onOpenContact();
+      return;
+    }
 
     const element = document.getElementById(id);
     if (!element) return;
@@ -125,37 +130,28 @@ const Navbar: React.FC<NavbarProps> = () => {
               <button
                 key={item.id}
                 onClick={() => handleNavClick(item.id)}
-                className={`
-                  relative text-sm font-medium transition-all
-                  ${
-                    activeSection === item.id
-                      ? 'text-[#3d4977] dark:text-blue-400'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-                  }
-                `}
+                className={`relative text-sm font-medium transition-all ${
+                  activeSection === item.id
+                    ? 'text-[#3d4977] dark:text-blue-400'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
               >
                 {item.label}
 
-                {/* Active underline */}
                 {activeSection === item.id && (
-                  <span className="
-                    absolute -bottom-2 left-0 right-0
-                    h-[2px]
-                    bg-gradient-to-r from-[#3d4977] to-blue-400
-                    rounded-full
-                  " />
+                  <span className="absolute -bottom-2 left-0 right-0 h-[2px] bg-gradient-to-r from-[#3d4977] to-blue-400 rounded-full" />
                 )}
               </button>
             ))}
           </div>
 
-          {/* RIGHT ICONS */}
-          <div className="hidden md:flex items-center space-x-4">
+          {/* RIGHT SIDE */}
+          <div className="flex items-center space-x-3">
 
-            {/* Theme Toggle */}
+            {/* ✅ MOBILE THEME BUTTON */}
             <button
               onClick={toggleTheme}
-              className="p-2 text-slate-500 dark:text-slate-400 hover:text-yellow-400 transition-colors"
+              className="md:hidden p-2 text-slate-500 dark:text-slate-400"
             >
               {isDarkMode ? (
                 <Sun className="w-5 h-5" />
@@ -164,28 +160,44 @@ const Navbar: React.FC<NavbarProps> = () => {
               )}
             </button>
 
-            <div className="h-4 w-px bg-slate-300 dark:bg-white/20 mx-2" />
+            {/* DESKTOP ICONS */}
+            <div className="hidden md:flex items-center space-x-4">
 
-            <a href="https://github.com/adityatiwari9t8" target="_blank">
-              <Github className="w-5 h-5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" />
-            </a>
+              <button
+                onClick={toggleTheme}
+                className="p-2 text-slate-500 dark:text-slate-400 hover:text-yellow-400"
+              >
+                {isDarkMode ? (
+                  <Sun className="w-5 h-5" />
+                ) : (
+                  <Moon className="w-5 h-5" />
+                )}
+              </button>
 
-            <a href="https://linkedin.com/in/adityatiwari9t8" target="_blank">
-              <Linkedin className="w-5 h-5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" />
-            </a>
+              <div className="h-4 w-px bg-slate-300 dark:bg-white/20 mx-2" />
 
-            <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank">
-              <Code2 className="w-5 h-5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" />
-            </a>
+              <a href="https://github.com/adityatiwari9t8" target="_blank">
+                <Github className="w-5 h-5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" />
+              </a>
+
+              <a href="https://linkedin.com/in/adityatiwari9t8" target="_blank">
+                <Linkedin className="w-5 h-5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" />
+              </a>
+
+              <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank">
+                <Code2 className="w-5 h-5 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white" />
+              </a>
+            </div>
+
+            {/* MOBILE MENU BUTTON */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="md:hidden text-slate-700 dark:text-white"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+
           </div>
-
-          {/* MOBILE MENU BUTTON */}
-          <button
-            onClick={() => setIsMobileMenuOpen(true)}
-            className="md:hidden text-slate-700 dark:text-white"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
         </div>
       </nav>
 

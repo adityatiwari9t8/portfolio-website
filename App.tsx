@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import WhatIDo from './components/WhatIDo';
@@ -12,17 +13,21 @@ import Insights from './components/Insights';
 import Exploration from './components/Exploration';
 
 const App: React.FC = () => {
+
+  /* ================= STATE ================= */
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeDemoId, setActiveDemoId] = useState<string | null>(null);
 
   return (
-    <div className="
-      relative min-h-screen font-sans
-      text-[#1e293b] dark:text-slate-200
-      bg-slate-50 dark:bg-slate-950
-      transition-colors duration-300
-      overflow-x-hidden
-    ">
+    <div
+      className="
+        relative min-h-screen font-sans
+        text-[#1e293b] dark:text-slate-200
+        bg-slate-50 dark:bg-slate-950
+        transition-colors duration-300
+        overflow-x-hidden
+      "
+    >
 
       {/* ================= BACKGROUND SYSTEM ================= */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
@@ -36,25 +41,22 @@ const App: React.FC = () => {
           opacity-90 dark:opacity-50
         " />
 
-        {/* Soft glow layer (depth effect) */}
+        {/* Glow blobs */}
         <div className="
           absolute top-[-20%] left-[-10%]
           w-[700px] h-[700px]
-          bg-[#3d4977]/10
-          blur-[140px]
-          rounded-full
+          bg-[#3d4977]/10 blur-[140px] rounded-full
         " />
 
         <div className="
           absolute bottom-[-20%] right-[-10%]
           w-[700px] h-[700px]
-          bg-blue-400/10
-          blur-[140px]
-          rounded-full
+          bg-blue-400/10 blur-[140px] rounded-full
         " />
       </div>
 
       {/* ================= MODALS ================= */}
+
       <ContactModal
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
@@ -66,15 +68,16 @@ const App: React.FC = () => {
       />
 
       {/* ================= NAVBAR ================= */}
-      <Navbar onOpenContact={() => setIsContactModalOpen(true)} />
+      <Navbar
+        onOpenContact={() => setIsContactModalOpen(true)}
+      />
 
       {/* ================= MAIN CONTENT ================= */}
       <main
         className="
           pt-28
           px-4 sm:px-6 md:px-8
-          max-w-6xl
-          mx-auto
+          max-w-6xl mx-auto
           space-y-32
           pb-28
           relative
@@ -107,7 +110,7 @@ const App: React.FC = () => {
           <Education />
         </section>
 
-        {/* Mobile-only contact */}
+        {/* Mobile-only contact fallback */}
         <section id="contact" className="md:hidden">
           <Contact />
         </section>
@@ -115,15 +118,14 @@ const App: React.FC = () => {
       </main>
 
       {/* ================= FOOTER ================= */}
-      <footer className="
-        relative
-        py-10
-        text-center
-        text-sm
-        text-slate-500 dark:text-slate-400
-        border-t border-slate-200/50 dark:border-slate-800/50
-        backdrop-blur-sm
-      ">
+      <footer
+        className="
+          relative py-10 text-center text-sm
+          text-slate-500 dark:text-slate-400
+          border-t border-slate-200/50 dark:border-slate-800/50
+          backdrop-blur-sm
+        "
+      >
         <p className="font-medium tracking-wide">
           © 2026 Aditya Tiwari · Built with React & Systems Thinking
         </p>

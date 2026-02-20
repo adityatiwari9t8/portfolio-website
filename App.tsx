@@ -127,7 +127,7 @@ const App: React.FC = () => {
         "
       >
         <p className="font-medium tracking-wide">
-          © 2026 Aditya Tiwari · Built with React & Systems Thinking
+          © 2026 Aditya Tiwari. All rights reserved.
         </p>
       </footer>
 

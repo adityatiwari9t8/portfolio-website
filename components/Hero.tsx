@@ -2,6 +2,17 @@ import React from 'react';
 import { FileText, ArrowRight } from 'lucide-react';
 
 const Hero: React.FC = () => {
+
+  // Smooth scroll handler with offset for the fixed navbar
+  const handleScrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const element = document.getElementById('portfolio');
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.pageYOffset - 90;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center gap-16 mb-24 lg:mb-32 px-4 sm:px-6">
 
@@ -52,7 +63,8 @@ const Hero: React.FC = () => {
 
           <a
             href="#portfolio"
-            className="flex items-center space-x-2 px-7 py-3.5 rounded-xl font-semibold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
+            onClick={handleScrollToPortfolio}
+            className="flex items-center space-x-2 px-7 py-3.5 rounded-xl font-semibold border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all cursor-pointer"
           >
             <span>Explore My Work</span>
             <ArrowRight className="w-5 h-5" />

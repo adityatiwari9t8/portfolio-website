@@ -39,7 +39,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
         sm:grid-cols-1
         lg:grid-cols-2
         max-w-6xl mx-auto
-        auto-rows-fr
       ">
         {PROJECTS.map((project) => (
           <div
@@ -60,43 +59,54 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
               transition-all duration-300
               hover:shadow-xl hover:-translate-y-1
 
-              grid grid-rows-2
+              flex flex-col
               h-[520px] md:h-[560px]
             "
           >
 
-            {/* ================= IMAGE ================= */}
-            <div className="overflow-hidden relative">
+            {/* ================= IMAGE SUB-CARD ================= */}
+            {/* Minimal bottom padding (pb-1 / pb-2) to bring the text extremely close */}
+            <div className="p-4 md:p-5 pb-1 md:pb-2 h-[250px] md:h-[280px] shrink-0">
+              
+              {/* Inner div acting as the sub-card */}
+              <div className="
+                relative w-full h-full 
+                rounded-2xl overflow-hidden 
+                border border-slate-100 dark:border-slate-800
+                shadow-sm
+                bg-slate-50 dark:bg-slate-800/50
+              ">
+                {/* Light Mode Image */}
+                <img
+                  src={project.imageLight}
+                  alt={project.title}
+                  className="
+                    w-full h-full
+                    object-cover object-top
+                    dark:hidden
+                    transition-transform duration-500
+                    group-hover:scale-[1.03]
+                  "
+                />
 
-              {/* Light Mode Image */}
-              <img
-                src={project.imageLight}
-                alt={project.title}
-                className="
-                  w-full h-full
-                  object-cover object-top
-                  dark:hidden
-                  transition-transform duration-500
-                  group-hover:scale-[1.03]
-                "
-              />
-
-              {/* Dark Mode Image */}
-              <img
-                src={project.imageDark}
-                alt={project.title}
-                className="
-                  hidden dark:block
-                  w-full h-full
-                  object-cover object-top
-                  transition-transform duration-500
-                  group-hover:scale-[1.03]
-                "
-              />
+                {/* Dark Mode Image */}
+                <img
+                  src={project.imageDark}
+                  alt={project.title}
+                  className="
+                    hidden dark:block
+                    w-full h-full
+                    object-cover object-top
+                    transition-transform duration-500
+                    group-hover:scale-[1.03]
+                  "
+                />
+              </div>
             </div>
 
             {/* ================= CONTENT ================= */}
-            <div className="p-8 flex flex-col justify-between">
+            {/* Minimal top padding (pt-2) to close the gap from the bottom up */}
+            <div className="px-5 md:px-6 pt-2 pb-6 md:pb-8 flex flex-col justify-between grow">
 
               <div className="space-y-4">
                 <h3 className="

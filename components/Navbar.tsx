@@ -58,7 +58,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
         setTimeout(() => {
           setShowDarkModeHint(false);
           sessionHintDisabled.current = true;
-        }, 8000);
+        }, 6000);
       }
     }, 10000);
 

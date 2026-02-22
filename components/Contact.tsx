@@ -49,7 +49,7 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
         </h2>
 
         <p className="
-          text-xl text-slate-500 dark:text-slate-400
+          text-base sm:text-xl text-slate-500 dark:text-slate-400
           leading-relaxed font-medium
           max-w-2xl mx-auto
         ">
@@ -97,8 +97,8 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
       <div className="
         max-w-5xl mx-auto
         rounded-[2.5rem]
-        p-8 lg:p-16
-        space-y-12
+        p-6 sm:p-8 lg:p-16
+        space-y-10 lg:space-y-12
 
         border border-slate-200 dark:border-white/10
 
@@ -111,17 +111,17 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
       ">
 
         <h3 className="
-          text-4xl lg:text-5xl
+          text-3xl sm:text-4xl lg:text-5xl
           font-extrabold text-center
           text-[#1e293b] dark:text-white
         ">
           Get In Touch
         </h3>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
 
           {/* NAME + EMAIL */}
-          <div className="grid md:grid-cols-2 gap-8">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
             <input
               type="text"
               placeholder="Name"
@@ -131,12 +131,12 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
                 setFormData({ ...formData, name: e.target.value })
               }
               className="
-                w-full px-6 py-4 rounded-xl
+                w-full px-4 sm:px-6 py-4 rounded-xl
                 bg-slate-50 dark:bg-white/5
                 border border-slate-200 dark:border-white/10
                 focus:outline-none focus:ring-2
                 focus:ring-[#3d4977]/20
-                text-lg dark:text-white
+                text-base sm:text-lg dark:text-white
               "
             />
 
@@ -149,12 +149,12 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
                 setFormData({ ...formData, email: e.target.value })
               }
               className="
-                w-full px-6 py-4 rounded-xl
+                w-full px-4 sm:px-6 py-4 rounded-xl
                 bg-slate-50 dark:bg-white/5
                 border border-slate-200 dark:border-white/10
                 focus:outline-none focus:ring-2
                 focus:ring-[#3d4977]/20
-                text-lg dark:text-white
+                text-base sm:text-lg dark:text-white
               "
             />
           </div>
@@ -168,15 +168,16 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
                 setFormData({ ...formData, interest: e.target.value })
               }
               className="
-                w-full px-6 py-4 rounded-xl
-                appearance-none
+                w-full px-4 sm:px-6 py-4 rounded-xl
+                appearance-none truncate pr-12
                 bg-slate-50 dark:bg-white/5
                 border border-slate-200 dark:border-white/10
-                text-lg text-slate-700 dark:text-slate-300
+                text-base sm:text-lg text-slate-700 dark:text-slate-300
                 focus:outline-none focus:ring-2
                 focus:ring-[#3d4977]/20
               "
             >
+              {/* Consider changing this text to "Select an interest..." if it still feels too long */}
               <option value="" disabled>
                 Select what you're interested in...
               </option>
@@ -186,8 +187,8 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
             </select>
 
             <ChevronDown className="
-              absolute right-6 top-1/2 -translate-y-1/2
-              text-slate-400 pointer-events-none
+              absolute right-4 sm:right-6 top-1/2 -translate-y-1/2
+              text-slate-400 pointer-events-none shrink-0
             " />
           </div>
 
@@ -201,13 +202,13 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
               setFormData({ ...formData, message: e.target.value })
             }
             className="
-              w-full px-6 py-5 rounded-xl
+              w-full px-4 sm:px-6 py-5 rounded-xl
               resize-none
               bg-slate-50 dark:bg-white/5
               border border-slate-200 dark:border-white/10
               focus:outline-none focus:ring-2
               focus:ring-[#3d4977]/20
-              text-lg dark:text-white
+              text-base sm:text-lg dark:text-white
             "
           />
 
@@ -215,6 +216,7 @@ const Contact: React.FC<ContactProps> = ({ isModal }) => {
           <button
             type="submit"
             className="
+              w-full sm:w-auto
               px-10 py-4 rounded-xl
               font-semibold text-lg
               text-white

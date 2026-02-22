@@ -6,10 +6,13 @@
 
   <title>Aditya Tiwari</title>
 
-  <!-- ================= THEME INIT (NO FLICKER) ================= -->
   <script>
     (function () {
-      const theme = localStorage.getItem('theme');
+      // 1. Delete the old localStorage so it stops forcing dark mode
+      localStorage.removeItem('theme'); 
+      
+      // 2. Check the new sessionStorage instead to match your Navbar
+      const theme = sessionStorage.getItem('theme');
 
       // Light mode = default
       if (theme === 'dark') {
@@ -20,7 +23,6 @@
     })();
   </script>
 
-  <!-- ================= TAILWIND CDN ================= -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <script>
@@ -32,13 +34,11 @@
     };
   </script>
 
-  <!-- ================= FONTS ================= -->
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet"
   />
 
-  <!-- ================= GLOBAL BASE STYLE ================= -->
   <style>
     html, body {
       font-family: "Inter", sans-serif;
@@ -53,7 +53,6 @@
     }
   </style>
 
-  <!-- ================= IMPORT MAP ================= -->
   <script type="importmap">
   {
     "imports": {
@@ -65,16 +64,12 @@
   }
   </script>
 
-  <!-- (Optional — keep only if you actually have this file) -->
-  <!-- <link rel="stylesheet" href="/index.css"> -->
-
-</head>
+  </head>
 
 <body class="bg-[#f8fafc] text-[#1e293b] transition-colors duration-300">
 
   <div id="root"></div>
 
-  <!-- ================= REACT ENTRY ================= -->
   <script type="module" src="/index.tsx"></script>
 
 </body>

@@ -32,11 +32,16 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
   /* ================= DARK MODE INIT ================= */
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = sessionStorage.getItem('theme');
 
+    // If they explicitly chose dark mode in this session, apply it
     if (savedTheme === 'dark') {
       document.documentElement.classList.add('dark');
       setIsDarkMode(true);
+    } else {
+      // FORCE light mode on first visit or if they chose light
+      document.documentElement.classList.remove('dark');
+      setIsDarkMode(false);
     }
   }, []);
 
@@ -90,11 +95,11 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const toggleTheme = () => {
     if (isDarkMode) {
       document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
+      sessionStorage.setItem('theme', 'light');
       setIsDarkMode(false);
     } else {
       document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
+      sessionStorage.setItem('theme', 'dark');
       setIsDarkMode(true);
 
       sessionHintDisabled.current = true;

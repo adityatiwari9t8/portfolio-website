@@ -375,8 +375,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
         </div>
       </div>
 
-      {/* ANIMATIONS */}
-
     </>
   );
 };

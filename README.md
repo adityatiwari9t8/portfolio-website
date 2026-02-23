@@ -1,4 +1,4 @@
-# Personal Portfolio & Systems Sandbox
+# Personal Portfolio 
 
 A high-performance, interactive portfolio built to showcase frontend engineering, algorithm visualization, and system design concepts. 
 

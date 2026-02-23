@@ -376,23 +376,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
       </div>
 
       {/* ANIMATIONS */}
-      <style>{`
-        @keyframes float {
-          0% { transform: translate(-50%,0); }
-          50% { transform: translate(-50%,-6px); }
-          100% { transform: translate(-50%,0); }
-        }
 
-        @keyframes badgeEnter {
-          0% { opacity:0; transform:translate(-50%,-10px) scale(.90); }
-          100% { opacity:1; transform:translate(-50%,0) scale(1); }
-        }
-
-        @keyframes wiggle {
-          0%, 100% { transform: rotate(-8deg); }
-          50% { transform: rotate(8deg); }
-        }
-      `}</style>
     </>
   );
 };

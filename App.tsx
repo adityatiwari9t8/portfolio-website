@@ -118,6 +118,7 @@ const App: React.FC = () => {
       </main>
 
       {/* ================= FOOTER ================= */}
+
       <footer
         className="
           relative py-10 text-center text-sm
@@ -127,7 +128,7 @@ const App: React.FC = () => {
         "
       >
         <p className="font-medium tracking-wide">
-          © 2026 Aditya Tiwari. All rights reserved.
+          © {new Date().getFullYear()} Aditya Tiwari. All rights reserved.
         </p>
       </footer>
 

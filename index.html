@@ -5,16 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Aditya Tiwari</title>
+  <meta name="title" content="Aditya Tiwari | Software Engineer & Systems Designer">
+  <meta name="description" content="Designing data-driven systems at the intersection of technology, analytics, and business strategy.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://adityatiwari98.vercel.app/">
+  <meta property="og:title" content="Aditya Tiwari | Portfolio">
+  <meta property="og:description" content="A high-end professional portfolio showcasing engineering projects focused on scalable systems, analytics, and decision-oriented applications.">
+  <meta property="og:image" content="https://adityatiwari98.vercel.app/social-preview.jpg">
+
+  <meta property="twitter:card" content="summary_large_image">
 
   <script>
     (function () {
-      // 1. Delete the old localStorage so it stops forcing dark mode
       localStorage.removeItem('theme'); 
-      
-      // 2. Check the new sessionStorage instead to match your Navbar
       const theme = sessionStorage.getItem('theme');
-
-      // Light mode = default
       if (theme === 'dark') {
         document.documentElement.classList.add('dark');
       } else {
@@ -34,24 +39,7 @@
     };
   </script>
 
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet"
-  />
-
-  <style>
-    html, body {
-      font-family: "Inter", sans-serif;
-      height: 100%;
-    }
-
-    body {
-      margin: 0;
-      background: #f8fafc;
-      color: #1e293b;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <script type="importmap">
   {
@@ -64,13 +52,9 @@
   }
   </script>
 
-  </head>
-
+</head>
 <body class="bg-[#f8fafc] text-[#1e293b] transition-colors duration-300">
-
   <div id="root"></div>
-
   <script type="module" src="/index.tsx"></script>
-
 </body>
 </html>

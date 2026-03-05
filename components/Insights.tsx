@@ -1,30 +1,7 @@
 import React from "react";
+import { INSIGHTS } from "../constants";
 
 const Insights: React.FC = () => {
-  const insights = [
-    {
-      title: "Why Data Systems Are Really Decision Systems",
-      category: "Technology & Strategy",
-      readTime: "4 min read",
-      description:
-        "Modern software systems increasingly shape how people interpret information and make choices. This reflection explores how data infrastructure influences judgment and strategy.",
-    },
-    {
-      title: "Engineering vs Problem Solving",
-      category: "Systems Thinking",
-      readTime: "3 min read",
-      description:
-        "Technology choices matter less than problem clarity. Understanding constraints and objectives often determines success long before implementation.",
-    },
-    {
-      title: "Technology, Finance, and Strategic Thinking",
-      category: "Technology & Business",
-      readTime: "5 min read",
-      description:
-        "As systems shape financial models and organizational strategy, engineers benefit from understanding the broader business context behind the systems they build.",
-    },
-  ];
-
   return (
     <section className="space-y-20">
 
@@ -58,7 +35,7 @@ const Insights: React.FC = () => {
         grid md:grid-cols-2 lg:grid-cols-3
         gap-8
       ">
-        {insights.map((item, idx) => (
+        {INSIGHTS.map((item, idx) => (
           <div
             key={idx}
             className="

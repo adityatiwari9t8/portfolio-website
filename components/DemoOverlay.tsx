@@ -1,10 +1,10 @@
 import React, { Suspense, lazy } from 'react';
 import { X, ArrowLeft, Loader2 } from 'lucide-react';
 
-// Lazy loading heavy components for performance
-const AcademicPathDemo = lazy(() => import('./demos/AcademicPathDemo'));
-const ExpenseProDemo = lazy(() => import('./demos/ExpenseProDemo'));
-const SudokuVisualizerDemo = lazy(() => import('./demos/SudokuVisualizerDemo'));
+// 👇 UPDATED IMPORTS: Pointing to the new folder structures
+const AcademicPathDemo = lazy(() => import('./demos/academic-path/AcademicPathDemo'));
+const ExpenseProDemo = lazy(() => import('./demos/expense-pro/ExpenseProDemo'));
+const SudokuVisualizerDemo = lazy(() => import('./demos/sudoku-visualizer/SudokuVisualizerDemo'));
 
 interface DemoOverlayProps {
   activeDemoId: string | null;

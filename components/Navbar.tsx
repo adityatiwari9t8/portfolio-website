@@ -28,18 +28,15 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
   const badgeRef = useRef<HTMLDivElement | null>(null);
   const sessionHintDisabled = useRef(false);
-  const scrollTimer = useRef<any>(null);
 
   /* ================= DARK MODE INIT ================= */
   useEffect(() => {
     const savedTheme = sessionStorage.getItem('theme');
 
-    // If they explicitly chose dark mode in this session, apply it
     if (savedTheme === 'dark') {
       document.documentElement.classList.add('dark');
       setIsDarkMode(true);
     } else {
-      // FORCE light mode on first visit or if they chose light
       document.documentElement.classList.remove('dark');
       setIsDarkMode(false);
     }
@@ -68,7 +65,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
     }, 10000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [isDarkMode]);
 
   /* ================= AUTO FADE ================= */
   useEffect(() => {
@@ -189,7 +186,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             onClick={() => handleNavClick('home')}
             className="cursor-pointer group flex items-center relative"
           >
-            {/* Background Glow Effect on Hover */}
             <div className="absolute -inset-3 bg-gradient-to-r from-blue-400/0 via-blue-400/10 to-[#3d4977]/0 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             
             <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white relative z-10 transition-colors">
@@ -213,8 +209,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
                 }`}
               >
                 {item.label}
-                
-                {/* Active Slider Underline */}
                 {activeSection === item.id && (
                   <span className="absolute -bottom-1.5 left-0 right-0 h-[2.5px] bg-gradient-to-r from-[#3d4977] to-blue-400 rounded-full transition-all duration-300" />
                 )}
@@ -229,6 +223,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             <div className="relative flex items-center justify-center">
 
               <button
+                aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                 onClick={toggleTheme}
                 className="p-2 text-slate-500 dark:text-slate-400 hover:text-[#3d4977] dark:hover:text-blue-400 transition"
               >
@@ -259,19 +254,15 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
                     animate-[badgeEnter_.5s_cubic-bezier(0.34,1.56,0.64,1),float_4s_ease-in-out_infinite]
                   `}
                 >
-                  {/* Arrow Pointer */}
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white dark:bg-slate-800 rounded-tl-sm border-l border-t border-slate-200/60 dark:border-slate-700/60 rotate-45 z-0" />
 
-                  {/* Inner Card Content */}
                   <div className="relative z-10 flex items-center gap-3 sm:gap-4 px-3 py-2 sm:px-5 sm:py-3 rounded-xl bg-gradient-to-br from-slate-50 to-white dark:from-slate-800 dark:to-slate-900/80 border border-slate-100/50 dark:border-slate-700/50">
                     
-                    {/* Icon Container with Wiggle */}
                     <div className="relative flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-tr from-blue-100 to-indigo-50 dark:from-blue-900/40 dark:to-indigo-900/40 shadow-inner">
                       <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-[#3d4977] dark:text-blue-400 animate-[wiggle_2.5s_ease-in-out_infinite]" />
                       <div className="absolute top-0 right-0 w-2 h-2 sm:w-2.5 sm:h-2.5 bg-blue-500 rounded-full border-2 border-white dark:border-slate-800" />
                     </div>
 
-                    {/* Text Container */}
                     <div className="flex flex-col pr-1 sm:pr-2 text-left whitespace-nowrap">
                       <span className="text-xs sm:text-sm font-extrabold bg-gradient-to-r from-[#3d4977] to-blue-500 dark:from-blue-400 dark:to-indigo-300 bg-clip-text text-transparent">
                         Try Dark Mode
@@ -286,19 +277,19 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
               )}
             </div>
 
-            {/* Social Icons - Hidden on mobile, visible on desktop */}
-            <a href="https://github.com/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+            <a href="https://github.com/adityatiwari9t8" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
               <Github className="w-5 h-5" />
             </a>
-            <a href="https://www.linkedin.com/in/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+            <a href="https://www.linkedin.com/in/adityatiwari9t8" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
               <Linkedin className="w-5 h-5" />
             </a>
-            <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+            <a href="https://leetcode.com/Aditya_Tiwari_98/" aria-label="LeetCode Profile" target="_blank" rel="noopener noreferrer" className="hidden sm:block text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
               <Code2 className="w-5 h-5" />
             </a>
 
             {/* Hamburger Button */}
             <button
+              aria-label="Open mobile menu"
               onClick={() => setIsMobileMenuOpen(true)}
               className="md:hidden p-2 text-slate-700 dark:text-slate-300 hover:text-[#3d4977] dark:hover:text-blue-400 transition"
             >
@@ -328,12 +319,12 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
           ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        {/* Drawer Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-slate-800">
           <span className="text-lg font-extrabold text-slate-900 dark:text-white">
             Navigation
           </span>
           <button
+            aria-label="Close mobile menu"
             onClick={() => setIsMobileMenuOpen(false)}
             className="p-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition bg-slate-50 dark:bg-slate-900 rounded-full"
           >
@@ -341,7 +332,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
           </button>
         </div>
 
-        {/* Drawer Links */}
         <div className="flex-1 overflow-y-auto py-6 px-4 space-y-2">
           {navItems.map(item => (
             <button
@@ -361,15 +351,14 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
           ))}
         </div>
 
-        {/* Drawer Footer (Social Icons) */}
         <div className="p-6 border-t border-slate-100 dark:border-slate-800 flex justify-center space-x-6">
-          <a href="https://github.com/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+          <a href="https://github.com/adityatiwari9t8" aria-label="GitHub Profile" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
             <Github className="w-6 h-6" />
           </a>
-          <a href="https://www.linkedin.com/in/adityatiwari9t8" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+          <a href="https://www.linkedin.com/in/adityatiwari9t8" aria-label="LinkedIn Profile" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
             <Linkedin className="w-6 h-6" />
           </a>
-          <a href="https://leetcode.com/Aditya_Tiwari_98/" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
+          <a href="https://leetcode.com/Aditya_Tiwari_98/" aria-label="LeetCode Profile" target="_blank" rel="noopener noreferrer" className="text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer">
             <Code2 className="w-6 h-6" />
           </a>
         </div>

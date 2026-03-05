@@ -65,10 +65,8 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
           >
 
             {/* ================= IMAGE SUB-CARD ================= */}
-            {/* Minimal bottom padding (pb-1 / pb-2) to bring the text extremely close */}
             <div className="p-4 md:p-5 pb-1 md:pb-2 h-[250px] md:h-[280px] shrink-0">
               
-              {/* Inner div acting as the sub-card */}
               <div className="
                 relative w-full h-full 
                 rounded-2xl overflow-hidden 
@@ -80,6 +78,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
                 <img
                   src={project.imageLight}
                   alt={project.title}
+                  loading="lazy"
                   className="
                     w-full h-full
                     object-cover object-top
@@ -93,6 +92,7 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
                 <img
                   src={project.imageDark}
                   alt={project.title}
+                  loading="lazy"
                   className="
                     hidden dark:block
                     w-full h-full
@@ -105,7 +105,6 @@ const Portfolio: React.FC<PortfolioProps> = ({ onLaunchDemo }) => {
             </div>
 
             {/* ================= CONTENT ================= */}
-            {/* Minimal top padding (pt-2) to close the gap from the bottom up */}
             <div className="px-5 md:px-6 pt-2 pb-6 md:pb-8 flex flex-col justify-between grow">
 
               <div className="space-y-4">

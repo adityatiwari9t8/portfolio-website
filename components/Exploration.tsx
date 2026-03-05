@@ -1,13 +1,7 @@
 import React from "react";
+import { EXPLORATION_TOPICS } from "../constants";
 
 const Exploration: React.FC = () => {
-  const topics = [
-    "Decision-making systems built on data and analytics",
-    "Product and system design for scalable organizations",
-    "Technology’s role in financial and operational strategy",
-    "The intersection of engineering, product thinking, and leadership",
-  ];
-
   return (
     <section className="space-y-20">
 
@@ -46,7 +40,7 @@ const Exploration: React.FC = () => {
         grid md:grid-cols-2
         gap-8
       ">
-        {topics.map((topic, idx) => (
+        {EXPLORATION_TOPICS.map((topic, idx) => (
           <div
             key={idx}
             className="

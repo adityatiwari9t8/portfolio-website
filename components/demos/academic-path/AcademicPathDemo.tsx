@@ -1,74 +1,10 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Search, Sparkles, BookOpen, CheckCircle2, RotateCcw, Filter, X, ExternalLink, ArrowRight, Target, Library, Layers } from 'lucide-react';
 
-// --- TYPES ---
-interface RoadmapModule {
-  phase: string;
-  subject: string;
-  effort: string;
-  color: string;
-  desc: string;
-  details: {
-    objectives: string[];
-    topics: string[];
-    resources: string[];
-  };
-}
+import { RoadmapModule } from './types';
+import { COLOR_THEMES, SKILL_CATEGORIES } from './constants';
+import { generateRoadmap } from './utils';
 
-interface SubjectModel {
-  name: string;
-  level: 'bridge' | 'core' | 'advanced';
-  requires: string[];
-  triggers: string[];
-  color: string;
-}
-
-// --- TAILWIND DYNAMIC COLOR MAP ---
-const COLOR_THEMES: Record<string, { bg: string; hover: string; text: string; lightBg: string; border: string }> = {
-  green: { bg: 'bg-emerald-500', hover: 'hover:bg-emerald-600', text: 'text-emerald-600 dark:text-emerald-400', lightBg: 'bg-emerald-50 dark:bg-emerald-900/30', border: 'border-emerald-200 dark:border-emerald-800' },
-  indigo: { bg: 'bg-indigo-500', hover: 'hover:bg-indigo-600', text: 'text-indigo-600 dark:text-indigo-400', lightBg: 'bg-indigo-50 dark:bg-indigo-900/30', border: 'border-indigo-200 dark:border-indigo-800' },
-  blue: { bg: 'bg-blue-500', hover: 'hover:bg-blue-600', text: 'text-blue-600 dark:text-blue-400', lightBg: 'bg-blue-50 dark:bg-blue-900/30', border: 'border-blue-200 dark:border-blue-800' },
-  yellow: { bg: 'bg-yellow-500', hover: 'hover:bg-yellow-600', text: 'text-yellow-600 dark:text-yellow-400', lightBg: 'bg-yellow-50 dark:bg-yellow-900/30', border: 'border-yellow-200 dark:border-yellow-800' },
-  purple: { bg: 'bg-purple-500', hover: 'hover:bg-purple-600', text: 'text-purple-600 dark:text-purple-400', lightBg: 'bg-purple-50 dark:bg-purple-900/30', border: 'border-purple-200 dark:border-purple-800' },
-  pink: { bg: 'bg-pink-500', hover: 'hover:bg-pink-600', text: 'text-pink-600 dark:text-pink-400', lightBg: 'bg-pink-50 dark:bg-pink-900/30', border: 'border-pink-200 dark:border-pink-800' },
-  cyan: { bg: 'bg-cyan-500', hover: 'hover:bg-cyan-600', text: 'text-cyan-600 dark:text-cyan-400', lightBg: 'bg-cyan-50 dark:bg-cyan-900/30', border: 'border-cyan-200 dark:border-cyan-800' },
-  emerald: { bg: 'bg-emerald-500', hover: 'hover:bg-emerald-600', text: 'text-emerald-600 dark:text-emerald-400', lightBg: 'bg-emerald-50 dark:bg-emerald-900/30', border: 'border-emerald-200 dark:border-emerald-800' },
-  orange: { bg: 'bg-orange-500', hover: 'hover:bg-orange-600', text: 'text-orange-600 dark:text-orange-400', lightBg: 'bg-orange-50 dark:bg-orange-900/30', border: 'border-orange-200 dark:border-orange-800' },
-  red: { bg: 'bg-rose-500', hover: 'hover:bg-rose-600', text: 'text-rose-600 dark:text-rose-400', lightBg: 'bg-rose-50 dark:bg-rose-900/30', border: 'border-rose-200 dark:border-rose-800' },
-  violet: { bg: 'bg-violet-500', hover: 'hover:bg-violet-600', text: 'text-violet-600 dark:text-violet-400', lightBg: 'bg-violet-50 dark:bg-violet-900/30', border: 'border-violet-200 dark:border-violet-800' },
-  sky: { bg: 'bg-sky-500', hover: 'hover:bg-sky-600', text: 'text-sky-600 dark:text-sky-400', lightBg: 'bg-sky-50 dark:bg-sky-900/30', border: 'border-sky-200 dark:border-sky-800' },
-  slate: { bg: 'bg-slate-600', hover: 'hover:bg-slate-700', text: 'text-slate-600 dark:text-slate-400', lightBg: 'bg-slate-100 dark:bg-slate-800', border: 'border-slate-300 dark:border-slate-700' },
-};
-
-// --- DATA MODELS ---
-const SUBJECT_MODELS: SubjectModel[] = [
-  { name: 'Programming Foundations', level: 'bridge', requires: [], triggers: ['Python', 'C++', 'Java', 'JavaScript', 'TypeScript', 'Go', 'Rust'], color: 'green' },
-  { name: 'Frontend Engineering Foundations', level: 'core', requires: ['Web Basics (HTML/CSS)'], triggers: ['Web Basics (HTML/CSS)', 'JavaScript', 'TypeScript'], color: 'indigo' },
-  { name: 'Backend & API Development', level: 'core', requires: ['Programming Foundations'], triggers: ['REST API Design', 'GraphQL', 'SQL'], color: 'blue' },
-  { name: 'Algorithms & Data Structures', level: 'bridge', requires: [], triggers: ['Data Structures', 'Algorithms'], color: 'yellow' },
-  { name: 'Operating Systems & Concurrency', level: 'core', requires: ['Data Structures'], triggers: ['Operating Systems', 'Computer Architecture'], color: 'purple' },
-  { name: 'Computer Networks & Distributed Thinking', level: 'core', requires: ['Operating Systems'], triggers: ['Computer Networks', 'Kafka', 'gRPC'], color: 'pink' },
-  { name: 'Database Systems & Modeling', level: 'core', requires: [], triggers: ['Database Systems', 'SQL', 'Redis'], color: 'cyan' },
-  { name: 'Probability & Statistical Reasoning', level: 'bridge', requires: [], triggers: ['Probability', 'Statistics', 'Information Theory'], color: 'emerald' },
-  { name: 'Machine Learning Foundations', level: 'core', requires: ['Linear Algebra', 'Probability'], triggers: ['Scikit-Learn', 'Reinforcement Learning'], color: 'orange' },
-  { name: 'Deep Learning & Representation', level: 'advanced', requires: ['Machine Learning Foundations'], triggers: ['Neural Networks', 'Deep Learning', 'PyTorch', 'TensorFlow'], color: 'red' },
-  { name: 'LLMs & Generative Systems', level: 'advanced', requires: ['Deep Learning & Representation'], triggers: ['Generative AI', 'LLMs', 'NLP'], color: 'violet' },
-  { name: 'Cloud-Native & DevOps', level: 'core', requires: ['Operating Systems'], triggers: ['Docker', 'Kubernetes', 'AWS', 'Terraform', 'CI/CD'], color: 'sky' },
-  { name: 'Scalable System Design', level: 'advanced', requires: ['Algorithms', 'Operating Systems'], triggers: ['System Design', 'Microservices'], color: 'slate' }
-];
-
-const SKILL_CATEGORIES = [
-  { name: 'Programming Languages', skills: ['Python', 'C++', 'Java', 'Rust', 'Go', 'TypeScript', 'JavaScript', 'SQL', 'C#', 'Ruby', 'PHP', 'Swift', 'Kotlin', 'Haskell'] },
-  { name: 'CS Fundamentals', skills: ['Data Structures', 'Algorithms', 'Operating Systems', 'Computer Networks', 'Database Systems', 'OOP', 'Discrete Mathematics', 'Computer Architecture'] },
-  { name: 'Mathematics', skills: ['Linear Algebra', 'Multivariable Calculus', 'Statistics', 'Probability', 'Numerical Methods', 'Optimization Theory', 'Information Theory'] },
-  { name: 'AI & Machine Learning', skills: ['Neural Networks', 'Deep Learning', 'Computer Vision', 'NLP', 'Reinforcement Learning', 'PyTorch', 'TensorFlow', 'Scikit-Learn', 'Generative AI', 'LLMs'] },
-  { name: 'DevOps & Systems', skills: ['Docker', 'Kubernetes', 'Git', 'CI/CD', 'AWS', 'Google Cloud', 'Terraform', 'Linux/Unix', 'gRPC', 'Kafka', 'Redis'] },
-  { name: 'Software Engineering', skills: ['System Design', 'Agile Methodology', 'Microservices', 'GraphQL', 'REST API Design', 'Unit Testing', 'Web Basics (HTML/CSS)'] }
-];
-
-const missingFrom = (have: string[], need: string[]) => need.filter(n => !have.includes(n));
-
-// --- COMPONENT ---
 export default function AcademicPathDemo() {
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -78,7 +14,6 @@ export default function AcademicPathDemo() {
   const [roadmapModulesState, setRoadmapModulesState] = useState<RoadmapModule[]>([]);
   const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Focus trap and body scroll lock for modal
   useEffect(() => {
     if (activeDetailModule) {
       document.body.style.overflow = 'hidden';
@@ -87,44 +22,6 @@ export default function AcademicPathDemo() {
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [activeDetailModule]);
-
-  const generateRoadmap = (sel: string[]): RoadmapModule[] => {
-    if (!sel.length) return [];
-    
-    const activated = SUBJECT_MODELS.filter(m => m.triggers.some(t => sel.includes(t)));
-    const modules: RoadmapModule[] = [];
-
-    activated.forEach(model => {
-      const missing = missingFrom(sel, model.requires);
-      if (missing.length > 0) {
-        modules.push({
-          phase: 'Bridge Phase', subject: `Foundations for ${model.name}`, effort: 'High', color: model.color,
-          desc: `Strengthen prerequisite concepts (${missing.join(', ')}) before progressing.`,
-          details: { objectives: ['Close conceptual gaps', `Prepare for ${model.name}`], topics: missing, resources: ['MIT OpenCourseWare', 'Coursera Fundamentals'] }
-        });
-      } else {
-        modules.push({
-          phase: model.level === 'advanced' ? 'Advanced Track' : 'Core Track', subject: model.name, effort: model.level === 'advanced' ? 'Advanced' : 'Critical', color: model.color,
-          desc: 'The next logical step based on your current demonstrated skill profile.',
-          details: { objectives: [`Master ${model.name}`, 'Apply concepts to real-world projects'], topics: model.triggers.slice(0, 4), resources: ['Top University Courses', 'Industry Playbooks'] }
-        });
-      }
-    });
-
-    const uniqueModules = Array.from(new Map(modules.map(m => [m.subject, m])).values())
-      .sort((a, b) => (a.phase === 'Bridge Phase' ? -1 : 1))
-      .slice(0, 3);
-
-    if (uniqueModules.length === 0) {
-      return [{
-        phase: 'Exploration Track', subject: 'Broaden Your Foundations', effort: 'Variable', color: 'slate',
-        desc: 'Your current selections are niche. Consider expanding your core fundamentals to generate a specific roadmap.',
-        details: { objectives: ['Explore core CS concepts', 'Identify a specialization'], topics: ['General Computing', 'Software Architecture'], resources: ['Roadmap.sh', 'TeachYourselfCS'] }
-      }];
-    }
-
-    return uniqueModules;
-  };
 
   const filteredCategories = useMemo(() => {
     if (!searchQuery.trim()) return SKILL_CATEGORIES;
@@ -160,7 +57,6 @@ export default function AcademicPathDemo() {
   return (
     <div className={`max-w-7xl mx-auto py-8 md:py-12 px-4 md:px-8 space-y-12 relative ${selectedSkills.length > 0 && !showResult ? 'pb-40' : 'pb-12'}`}>
       
-      {/* MODAL (Remains unchanged) */}
       {activeDetailModule && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6" role="dialog" aria-modal="true">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={() => setActiveDetailModule(null)} />
@@ -238,7 +134,6 @@ export default function AcademicPathDemo() {
         </div>
       )}
 
-      {/* HEADER */}
       <div className="text-center space-y-4 max-w-3xl mx-auto px-4">
         <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest border border-blue-100 dark:border-blue-800/50">
           <Sparkles className="w-3 h-3 md:w-4 md:h-4" />
@@ -250,10 +145,8 @@ export default function AcademicPathDemo() {
         </p>
       </div>
 
-      {/* FULL-WIDTH MAIN LAYOUT */}
       <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-xl overflow-hidden p-6 md:p-10">
         
-        {/* Search & Filter Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-10 pb-6 border-b border-slate-100 dark:border-slate-700/50">
           <h3 className="text-xl font-bold flex items-center space-x-2 text-slate-800 dark:text-slate-200 shrink-0">
             <Filter className="w-5 h-5 text-blue-500" />
@@ -277,7 +170,6 @@ export default function AcademicPathDemo() {
           </div>
         </div>
 
-        {/* Full-Width Responsive Skills Grid */}
         <div className="min-h-[400px]">
           {filteredCategories.length === 0 ? (
             <div className="text-center py-20 flex flex-col items-center justify-center space-y-4">
@@ -322,12 +214,10 @@ export default function AcademicPathDemo() {
         </div>
       </div>
 
-      {/* STICKY BOTTOM DOCK (Replaces Right Panel) */}
       {selectedSkills.length > 0 && !showResult && (
         <div className="fixed bottom-0 left-0 right-0 z-50 animate-in slide-in-from-bottom-full duration-300 pointer-events-none p-4 md:p-6">
           <div className="max-w-5xl mx-auto bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200/50 dark:border-slate-700/50 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_40px_rgba(0,0,0,0.4)] rounded-2xl md:rounded-[2rem] p-3 md:p-4 pointer-events-auto flex flex-col sm:flex-row items-center justify-between gap-4 md:gap-6">
             
-            {/* Dock Left: Stats & Scrollable Stack */}
             <div className="w-full sm:flex-1 flex items-center gap-4 md:gap-6 overflow-hidden pl-2">
               <div className="flex flex-col shrink-0">
                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-0.5">Stack</span>
@@ -336,7 +226,6 @@ export default function AcademicPathDemo() {
               
               <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 shrink-0 hidden sm:block" />
               
-              {/* Horizontal Scroll Ribbon */}
               <div className="flex-1 flex gap-2 overflow-x-auto custom-scrollbar pb-1 pt-1 -mx-2 px-2 mask-linear-fade">
                 {selectedSkills.map(s => (
                   <span key={s} className="shrink-0 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-bold border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-1.5 group">
@@ -349,7 +238,6 @@ export default function AcademicPathDemo() {
               </div>
             </div>
 
-            {/* Dock Right: Actions */}
             <div className="w-full sm:w-auto flex items-center gap-3 shrink-0 pr-1">
               <button 
                 onClick={reset} 
@@ -385,7 +273,6 @@ export default function AcademicPathDemo() {
         </div>
       )}
 
-      {/* RESULTS SECTION */}
       {showResult && (
         <div ref={resultsRef} className="animate-in fade-in slide-in-from-bottom-12 duration-700 space-y-8 pt-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-6">
@@ -411,7 +298,6 @@ export default function AcademicPathDemo() {
               return (
                 <div key={i} className={`bg-white dark:bg-slate-800 p-8 rounded-[2rem] border ${theme.border} shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full relative overflow-hidden group`}>
                   
-                  {/* Background decoration */}
                   <div className={`absolute top-0 right-0 w-40 h-40 ${theme.lightBg} rounded-bl-[120px] -z-10 transition-transform duration-500 group-hover:scale-110`} />
 
                   <div className="flex justify-between items-start mb-6">
@@ -451,7 +337,6 @@ export default function AcademicPathDemo() {
           </div>
         </div>
       )}
-      
       
     </div>
   );

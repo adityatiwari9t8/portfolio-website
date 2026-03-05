@@ -7,85 +7,10 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
 
-// --- Types & Constants ---
-interface Transaction {
-  id: string;
-  name: string;
-  cat: string;
-  amount: number;
-  date: string;
-  timestamp: number;
-  type: 'income' | 'expense';
-}
+import { Transaction, ChartPoint } from './types';
+import { STARTING_BALANCE, CURRENCIES, CATEGORIES } from './constants';
+import { calculatePrediction } from './utils';
 
-interface ChartPoint {
-  date: string;
-  balance: number | null;
-  trend: number | null;
-}
-
-const STARTING_BALANCE = 10542.50;
-
-const CURRENCIES = [
-  { code: 'USD', symbol: '$', rate: 1 },
-  { code: 'EUR', symbol: '€', rate: 0.92 },
-  { code: 'GBP', symbol: '£', rate: 0.79 },
-  { code: 'INR', symbol: '₹', rate: 83.45 },
-  { code: 'JPY', symbol: '¥', rate: 151.20 }
-];
-
-const CATEGORIES = ['Tech', 'Income', 'Design', 'Food', 'Travel', 'Health', 'Entertainment'];
-
-// --- Helper Functions ---
-const calculatePrediction = (transactions: Transaction[], baseBalance: number) => {
-  if (transactions.length < 2) return { predictedBalance: baseBalance, newChartData: [] };
-
-  const sortedTx = [...transactions].sort((a, b) => a.timestamp - b.timestamp);
-  const t0 = sortedTx[0].timestamp;
-  const data: { x: number, y: number }[] = [];
-  let runningBalance = baseBalance;
-  
-  data.push({ x: 0, y: runningBalance });
-  
-  sortedTx.forEach(tx => {
-    runningBalance += tx.type === 'income' ? tx.amount : -tx.amount;
-    const daysFromStart = (tx.timestamp - t0) / (1000 * 60 * 60 * 24);
-    data.push({ x: daysFromStart, y: runningBalance });
-  });
-
-  const n = data.length;
-  let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
-  
-  for (let i = 0; i < n; i++) {
-    sumX += data[i].x;
-    sumY += data[i].y;
-    sumXY += data[i].x * data[i].y;
-    sumXX += data[i].x * data[i].x;
-  }
-
-  const denominator = (n * sumXX) - (sumX * sumX);
-  const m = denominator === 0 ? 0 : ((n * sumXY) - (sumX * sumY)) / denominator;
-  const b = (sumY - m * sumX) / n;
-
-  const targetDaysFromStart = (Date.now() + (30 * 24 * 60 * 60 * 1000) - t0) / (1000 * 60 * 60 * 24);
-  const predictedBalance = Math.max(0, (m * targetDaysFromStart) + b);
-
-  const newChartData: ChartPoint[] = data.map((point, index) => ({
-    date: index === 0 ? 'Start' : new Date(t0 + point.x * 24 * 60 * 60 * 1000).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
-    balance: point.y,
-    trend: (m * point.x) + b
-  }));
-
-  newChartData.push({
-    date: '30d Forecast',
-    balance: null,
-    trend: predictedBalance
-  });
-
-  return { predictedBalance, newChartData };
-};
-
-// --- Main Component ---
 const ExpenseProDemo: React.FC = () => {
   const [isPredicting, setIsPredicting] = useState(false);
   const [forecast, setForecast] = useState<number | null>(null);
@@ -93,7 +18,6 @@ const ExpenseProDemo: React.FC = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [currency, setCurrency] = useState(CURRENCIES[0]);
   
-  // Unified Modal State
   const [modalConfig, setModalConfig] = useState<{isOpen: boolean, mode: 'add' | 'edit', editId?: string}>({ isOpen: false, mode: 'add' });
   const [formData, setFormData] = useState({ name: '', amount: '', cat: 'Tech', type: 'expense' as 'income' | 'expense' });
 

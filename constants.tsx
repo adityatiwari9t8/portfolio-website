@@ -98,7 +98,7 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
 ];
 
 /* =========================================================
-   PROJECTS  ⭐ FIXED IMAGE PATHS
+   PROJECTS
 ========================================================= */
 
 export const PROJECTS: Project[] = [
@@ -152,4 +152,39 @@ export const EDUCATION: EducationItem[] = [
       'OOP'
     ]
   }
+];
+
+/* =========================================================
+   INSIGHTS & EXPLORATION
+========================================================= */
+
+export const INSIGHTS = [
+  {
+    title: "Why Data Systems Are Really Decision Systems",
+    category: "Technology & Strategy",
+    readTime: "4 min read",
+    description:
+      "Modern software systems increasingly shape how people interpret information and make choices. This reflection explores how data infrastructure influences judgment and strategy.",
+  },
+  {
+    title: "Engineering vs Problem Solving",
+    category: "Systems Thinking",
+    readTime: "3 min read",
+    description:
+      "Technology choices matter less than problem clarity. Understanding constraints and objectives often determines success long before implementation.",
+  },
+  {
+    title: "Technology, Finance, and Strategic Thinking",
+    category: "Technology & Business",
+    readTime: "5 min read",
+    description:
+      "As systems shape financial models and organizational strategy, engineers benefit from understanding the broader business context behind the systems they build.",
+  },
+];
+
+export const EXPLORATION_TOPICS = [
+  "Decision-making systems built on data and analytics",
+  "Product and system design for scalable organizations",
+  "Technology’s role in financial and operational strategy",
+  "The intersection of engineering, product thinking, and leadership",
 ];

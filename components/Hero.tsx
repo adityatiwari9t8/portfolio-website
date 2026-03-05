@@ -3,7 +3,6 @@ import { FileText, ArrowRight } from 'lucide-react';
 
 const Hero: React.FC = () => {
 
-  // Smooth scroll handler with offset for the fixed navbar
   const handleScrollToPortfolio = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const element = document.getElementById('portfolio');
@@ -75,13 +74,14 @@ const Hero: React.FC = () => {
       {/* IMAGE */}
       <div className="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-[420px] md:h-[420px] shrink-0">
         
-        {/* Adjusted the inset slightly on mobile so the glow doesn't cause horizontal scrolling */}
         <div className="absolute -inset-4 md:-inset-6 bg-gradient-to-tr from-[#3d4977] to-blue-400/30 blur-3xl opacity-30 rounded-3xl" />
 
         <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden border-8 border-white dark:border-slate-900 shadow-2xl">
           <img
             src="/img.png"
             alt="Aditya Tiwari"
+            loading="eager"
+            fetchPriority="high"
             className="w-full h-full object-cover"
             style={{ objectPosition: 'center top' }}
           />

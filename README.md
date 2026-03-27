@@ -5,7 +5,6 @@
 
 A lightweight, responsive portfolio built with React, TypeScript and Vite. It showcases projects, demos, skills, and contact information using modular components and small demo apps.
 
-![Screenshot placeholder](public/screenshot.png)
 
 ## Table of contents
 

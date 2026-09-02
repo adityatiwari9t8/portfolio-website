@@ -78,5 +78,3 @@ This site is a static site after building. Recommended hosting options:
 - Netlify: same `npm run build`, publish directory `dist`.
 
 For GitHub Pages, use a CI step to build and publish `dist/` to `gh-pages`.
-
-

@@ -78,7 +78,7 @@ const Hero: React.FC = () => {
 
         <div className="relative w-full h-full rounded-[2.5rem] overflow-hidden border-8 border-white dark:border-slate-900 shadow-2xl">
           <img
-            src="/img.png"
+            src="/img.jpeg"
             alt="Aditya Tiwari"
             loading="eager"
             fetchPriority="high"

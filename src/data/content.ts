@@ -48,8 +48,8 @@ export interface StoryPhoto {
   kind: 'photo' | 'shot';
 }
 export const STORY_PHOTOS: [StoryPhoto] | [StoryPhoto, StoryPhoto] = [
-  { src: '/img.webp', alt: 'Portrait of Aditya', position: 'center 20%', caption: 'Hi, I’m Aditya', kind: 'photo' },
-  { src: '/story.webp', alt: 'Second portrait of Aditya', position: 'center 25%', caption: 'Learning by building', kind: 'photo' }
+  { src: '/story-notes.webp', alt: 'An open notebook, glasses and a pen in front of a screen of code', position: 'center', caption: 'Learning by building', kind: 'photo' },
+  { src: '/story-flowchart.webp', alt: 'A hand-drawn flowchart on paper', position: 'center', caption: 'Questions into logic', kind: 'photo' }
 ];
 
 /** "Right now" list in the Background section. Keep it short and current. */

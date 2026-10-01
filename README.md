@@ -96,4 +96,4 @@ The site is a plain Vite app, so Vercel needs no extra settings: import the repo
 
 **adityatiwari.connect@gmail.com** — I'm open to software and web-development internships (remote, hybrid or on-site, anywhere) and to team projects.
 
-Layout inspired by the "Portfolio For Designers" shot on [Dribbble](https://dribbble.com/shots/25944606-Portfolio-For-Designers).
+

@@ -1,0 +1,336 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+html,
+body {
+  font-family: 'Inter Variable', 'Inter', ui-sans-serif, system-ui, sans-serif;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f4f4f2;
+  color: #0f0f10;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark body {
+  background: #0b0b0c;
+  color: #f4f4f2;
+}
+
+/* Italic serif accent used inside headlines */
+.accent {
+  font-family: 'Instrument Serif', Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+/* Keyboard focus: always visible, never for mouse clicks */
+:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.dark :focus-visible {
+  outline-color: #93c5fd;
+}
+
+/* Skip link for keyboard and screen-reader users */
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: -4rem;
+  z-index: 200;
+  border-radius: 9999px;
+  background: #0f0f10;
+  color: #fff;
+  padding: 0.6rem 1.1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: top 0.2s ease;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.reveal-scale { transform: translateY(36px) scale(0.955); filter: blur(6px); transition: opacity 0.8s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.8s ease; }
+.reveal-left { transform: translateX(-36px); }
+.reveal-right { transform: translateX(36px); }
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* Tech marquee */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  animation: marquee 32s linear infinite;
+}
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+.marquee-fade {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5); }
+  50% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+}
+.pulse-dot {
+  animation: pulse-dot 2s ease-out infinite;
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up {
+  animation: fade-up 0.3s ease both;
+}
+/* Staggered entrance for the hero on page load */
+.rise {
+  animation: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Custom scrollbars (used by demo overlay) */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.mask-linear-fade {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
+}
+
+/* Hero: slow ambient colour wash plus a pointer-following highlight */
+.hero-glow {
+  background:
+    radial-gradient(520px circle at var(--mx, 75%) var(--my, 20%), rgba(99, 102, 241, 0.10), transparent 60%),
+    radial-gradient(700px circle at 0% 100%, rgba(16, 185, 129, 0.08), transparent 55%);
+  transition: background 0.2s ease;
+}
+.dark .hero-glow {
+  background:
+    radial-gradient(520px circle at var(--mx, 75%) var(--my, 20%), rgba(129, 140, 248, 0.16), transparent 60%),
+    radial-gradient(700px circle at 0% 100%, rgba(52, 211, 153, 0.10), transparent 55%);
+}
+
+/* Headline words rise in one by one */
+@keyframes word-in {
+  from { opacity: 0; transform: translateY(0.5em); filter: blur(8px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+.word {
+  display: inline-block;
+  animation: word-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Typing caret */
+@keyframes caret {
+  50% { opacity: 0; }
+}
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: currentColor;
+  animation: caret 1s steps(1) infinite;
+}
+
+/* Portrait float and its floating chips */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.float { animation: float 7s ease-in-out infinite; }
+@keyframes chip-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.chip-float { animation: chip-float 5s ease-in-out infinite; }
+
+/* Cards that light up under the pointer */
+.glow {
+  background-image: radial-gradient(320px circle at var(--gx, -400px) var(--gy, -400px), rgba(99, 102, 241, 0.09), transparent 70%);
+}
+.dark .glow {
+  background-image: radial-gradient(320px circle at var(--gx, -400px) var(--gy, -400px), rgba(255, 255, 255, 0.07), transparent 70%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word { animation: none; }
+  .caret, .float, .chip-float { animation: none; }
+  .hero-glow { transition: none; }
+  .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+  .marquee-track, .pulse-dot, .rise, .fade-up { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* 3D cards (see Tilt.tsx) */
+.preserve-3d { transform-style: preserve-3d; }
+/* The card you are touching rises above its neighbours */
+.tilt[data-hot] { z-index: 20; }
+/* Children can sit at different depths inside a tilting card. `translate` composes with transform, so hover utilities still work. */
+.depth-1 { translate: 0 0 calc(18px * var(--dk, 1)); }
+.depth-2 { translate: 0 0 calc(40px * var(--dk, 1)); }
+.depth-3 { translate: 0 0 calc(70px * var(--dk, 1)); }
+/* Moving shadow under the card's first child while hovered */
+.tilt-shadow > :first-child { transition: box-shadow 0.25s ease; }
+.tilt-shadow[data-hot] > :first-child { box-shadow: var(--ts) !important; }
+
+/* Highlight that follows the pointer across a tilting card */
+.tilt-glare {
+  opacity: 0;
+  transition: opacity 300ms ease;
+  background: radial-gradient(420px circle at var(--tx, 50%) var(--ty, 50%), rgba(99, 102, 241, 0.16), transparent 62%);
+}
+.dark .tilt-glare {
+  background: radial-gradient(420px circle at var(--tx, 50%) var(--ty, 50%), rgba(255, 255, 255, 0.12), transparent 62%);
+}
+.tilt[data-hot] > .tilt-glare { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .tilt-glare { display: none; }
+  .depth-1, .depth-2, .depth-3 { translate: none; }
+}
+
+/* Coloured caret in the typed line */
+.caret-accent .caret { background: #6366f1; width: 3px; }
+.dark .caret-accent .caret { background: #818cf8; }
+
+/* 3D headlines (see Headline.tsx). Words sit at different depths and swing against each other when the heading tilts. */
+.w3d { display: inline-block; margin-right: 0.04em; translate: 0 0 calc(var(--z, 20) * 1px * var(--dk, 1)); }
+/* Soft shadow that slides with the pointer, only while the heading is being touched */
+.tilt[data-hot] .w3d {
+  text-shadow:
+    calc(var(--nx, 0) * var(--th, 0) * -7px) calc(var(--ny, 0) * var(--th, 0) * -7px + var(--th, 0) * 7px) calc(var(--th, 0) * 12px) rgba(15, 15, 25, 0.16);
+}
+.dark .tilt[data-hot] .w3d {
+  text-shadow:
+    calc(var(--nx, 0) * var(--th, 0) * -6px) calc(var(--ny, 0) * var(--th, 0) * -6px + var(--th, 0) * 6px) calc(var(--th, 0) * 12px) rgba(129, 140, 248, 0.3);
+}
+/* Scroll-in: each word flips up from below, one after another */
+.flip-word {
+  transform-origin: 50% 100%;
+  transition:
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) calc(var(--i, 0) * var(--step, 70ms) + var(--base, 120ms)),
+    opacity 0.7s ease calc(var(--i, 0) * var(--step, 70ms) + var(--base, 120ms));
+}
+.reveal:not(.is-visible) .flip-word {
+  opacity: 0;
+  transform: perspective(600px) rotateX(-75deg) translateY(0.35em);
+}
+@media (prefers-reduced-motion: reduce) {
+  .w3d { translate: none; }
+  .tilt[data-hot] .w3d, .dark .tilt[data-hot] .w3d { text-shadow: none; }
+  .flip-word { transition: none; }
+  .reveal:not(.is-visible) .flip-word { opacity: 1; transform: none; }
+}
+
+/* ---- Round: theme ripple, case-study morph, lit borders, preview parallax ---- */
+
+/* Theme switch: the new theme is drawn on top and revealed by a circle (animated in lib/transition.ts) */
+.vt-theme::view-transition-old(root),
+.vt-theme::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+.vt-theme::view-transition-new(root) { z-index: 2; }
+/* No colour fades while the snapshot is taken, or it would capture half-faded colours */
+.vt-theme *, .vt-theme *::before, .vt-theme *::after { transition: none !important; }
+
+/* Case study: the preview window grows from the card into the page and back */
+::view-transition-group(case-media) {
+  animation-duration: 0.6s;
+  animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+::view-transition-old(case-media), ::view-transition-new(case-media) { height: 100%; object-fit: cover; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: 0.35s; }
+.vt-theme::view-transition-old(root), .vt-theme::view-transition-new(root) { animation: none; }
+
+/* Card borders that light up near the mouse (see lib/useCursorLight.ts) */
+.lit { position: relative; }
+.lit::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  pointer-events: none;
+  background: radial-gradient(260px circle at var(--lx, -400px) var(--ly, -400px), rgba(99, 102, 241, 0.8), rgba(16, 185, 129, 0.35) 45%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: var(--lo, 0);
+  transition: opacity 0.35s ease;
+}
+.dark .lit::after {
+  background: radial-gradient(260px circle at var(--lx, -400px) var(--ly, -400px), rgba(165, 180, 252, 0.9), rgba(52, 211, 153, 0.4) 45%, transparent 70%);
+}
+
+/* Preview picture slides against the card's tilt, as if seen through a window */
+.pmedia {
+  translate: calc(var(--nx, 0) * var(--th, 0) * -14px) calc(var(--ny, 0) * var(--th, 0) * -9px);
+  scale: calc(1 + var(--th, 0) * 0.07);
+  transform-origin: 50% 25%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lit::after { display: none; }
+  .pmedia { translate: none; scale: none; }
+}
+
+/* Touch screens: the pose is driven by scroll, so keep it clean (no persistent text shadow under headings) */
+@media (hover: none) {
+  /* On a narrow screen layers pushed far forward would swell past the card edge, so depth is mostly flattened */
+  :root { --dk: 0.25; }
+  .tilt[data-hot] .w3d, .dark .tilt[data-hot] .w3d { text-shadow: none !important; }
+}
+
+/* Body copy that moves with its heading (see Story.tsx): same flip-in and pointer-following glow, gentler so it stays readable. */
+.wbody { display: inline-block; }
+.tilt[data-hot] .wbody {
+  text-shadow:
+    calc(var(--nx, 0) * var(--th, 0) * -4px) calc(var(--ny, 0) * var(--th, 0) * -4px + var(--th, 0) * 4px) calc(var(--th, 0) * 9px) rgba(15, 15, 25, 0.1);
+}
+.dark .tilt[data-hot] .wbody {
+  text-shadow:
+    calc(var(--nx, 0) * var(--th, 0) * -4px) calc(var(--ny, 0) * var(--th, 0) * -4px + var(--th, 0) * 4px) calc(var(--th, 0) * 9px) rgba(129, 140, 248, 0.22);
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .tilt[data-hot] .wbody, .dark .tilt[data-hot] .wbody { text-shadow: none !important; }
+}
+
+/* Portrait bands (see Hero.tsx): permanent fluted-glass slices of the photo. */
+.pband { filter: blur(calc(var(--b, 0) * 1px)); }
+.dark .pband { filter: brightness(0.8) blur(calc(var(--b, 0) * 1px)); }
+/* Each rib catches a little light on its left edge and falls into shade on its right. */
+.prib {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 38%, rgba(0, 0, 0, 0.16) 100%);
+}
+.dark .prib {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 38%, rgba(0, 0, 0, 0.3) 100%);
+}

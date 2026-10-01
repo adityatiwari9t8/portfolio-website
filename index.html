@@ -4,57 +4,70 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Aditya Tiwari</title>
-  <meta name="title" content="Aditya Tiwari | Software Engineer & Systems Designer">
-  <meta name="description" content="Designing data-driven systems at the intersection of technology, analytics, and business strategy.">
+  <title>Aditya Tiwari | CS Student & Web Developer in Gurugram</title>
+  <meta name="description" content="Aditya Tiwari is a Computer Science student at IILM University, Gurugram, looking for a software or web-development internship. Live demos and source code for three projects, plus resume." />
+  <meta name="author" content="Aditya Tiwari" />
+  <meta name="theme-color" content="#0b0b0c" />
+  <meta name="color-scheme" content="dark light" />
+  <link rel="canonical" href="__SITE_URL__/" />
 
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://adityatiwari98.vercel.app/">
-  <meta property="og:title" content="Aditya Tiwari | Personal Website">
-  <meta property="og:description" content="A high-end professional portfolio showcasing engineering projects focused on scalable systems, analytics, and decision-oriented applications.">
-  <meta property="og:image" content="https://adityatiwari98.vercel.app/social-preview.jpg">
+  <link rel="preload" as="image" href="/img.webp" type="image/webp" fetchpriority="high" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-  <meta property="twitter:card" content="summary_large_image">
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Aditya Tiwari" />
+  <meta property="og:title" content="Aditya Tiwari | CS Student & Web Developer in Gurugram" />
+  <meta property="og:description" content="Three projects with live demos and source code, plus resume. Looking for a software or web-development internship." />
+  <meta property="og:url" content="__SITE_URL__/" />
+  <meta property="og:image" content="__SITE_URL__/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Aditya Tiwari, Computer Science student and developer" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Aditya Tiwari | CS Student & Web Developer in Gurugram" />
+  <meta name="twitter:description" content="Three projects with live demos and source code, plus resume. Looking for a software or web-development internship." />
+  <meta name="twitter:image" content="__SITE_URL__/og.jpg" />
 
-  <script>
-    (function () {
-      localStorage.removeItem('theme'); 
-      const theme = sessionStorage.getItem('theme');
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    })();
-  </script>
-
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {}
-      }
-    };
-  </script>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-  <script type="importmap">
+  <script type="application/ld+json">
   {
-    "imports": {
-      "react": "https://esm.sh/react@19.2.3",
-      "react-dom/": "https://esm.sh/react-dom@19.2.3/",
-      "react/": "https://esm.sh/react@19.2.3/",
-      "lucide-react": "https://esm.sh/lucide-react@0.562.0"
-    }
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Aditya Tiwari",
+    "url": "__SITE_URL__/",
+    "image": "__SITE_URL__/og.jpg",
+    "jobTitle": "Computer Science student and developer",
+    "affiliation": { "@type": "CollegeOrUniversity", "name": "IILM University" },
+    "address": { "@type": "PostalAddress", "addressLocality": "Gurugram", "addressCountry": "IN" },
+    "alumniOf": { "@type": "CollegeOrUniversity", "name": "IILM University" },
+    "knowsAbout": ["Web development", "React", "TypeScript", "Python", "C++", "Java", "Data structures", "Algorithms"],
+    "sameAs": [
+      "https://github.com/adityatiwari9t8",
+      "https://www.linkedin.com/in/adityatiwari9t8",
+      "https://leetcode.com/Aditya_Tiwari_98/"
+    ]
   }
   </script>
 
+  <script>
+    (function () {
+      try {
+        var t = sessionStorage.getItem('theme');
+        if (t !== 'light') document.documentElement.classList.add('dark');
+      } catch (e) {}
+    })();
+  </script>
 </head>
-<body class="bg-[#f8fafc] text-[#1e293b] transition-colors duration-300">
+<body>
   <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
+  <noscript>
+    <p style="font-family:system-ui,sans-serif;padding:2rem;max-width:40rem;margin:0 auto">
+      Aditya Tiwari is a Computer Science student at IILM University who builds web apps, dashboards and
+      data-driven tools. Please enable JavaScript to see the portfolio, or write to
+      adityatiwari.connect@gmail.com.
+    </p>
+  </noscript>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>

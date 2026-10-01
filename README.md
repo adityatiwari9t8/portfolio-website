@@ -1,74 +1,99 @@
-# Aditya Tiwari | Main portfolio (companies, recruiters, GitHub)
+<div align="center">
 
-The version to share with companies and recruiters.
-React + TypeScript + Vite + Tailwind. Layout inspired by the "Portfolio For Designers" shot on Dribbble.
+# Aditya Tiwari — Portfolio
 
-## Run it
+**Computer Science student at IILM University, looking for a software or web-development internship.**
+
+Three projects, each with a live demo you can open right inside the page, and a case study explaining the thinking behind it.
+
+[**Live site**](https://portfolio-website-pi-lac.vercel.app) · [GitHub](https://github.com/adityatiwari9t8) · [LinkedIn](https://www.linkedin.com/in/adityatiwari9t8) · [LeetCode](https://leetcode.com/Aditya_Tiwari_98/)
+
+![React](https://img.shields.io/badge/React_19-20232a?logo=react&logoColor=61dafb)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178c6?logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite_6-646cff?logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06b6d4?logo=tailwindcss&logoColor=white)
+![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?logo=vercel&logoColor=white)
+
+</div>
+
+---
+
+## The projects
+
+Every project has a working demo embedded in the site, plus a case study (problem, what was built, trade-offs, stack) at `#/work/<id>`.
+
+| | Project | What it does | Code |
+| --- | --- | --- | --- |
+| <img src="public/academic-dark.webp" width="220" alt="Academic Path Intelligence"> | **Academic Path Intelligence** | Pick the skills you want to learn and it maps their prerequisites into a personalised learning roadmap. | [Repo](https://github.com/adityatiwari9t8/academic-path-intelligence) |
+| <img src="public/expense-dark.webp" width="220" alt="Expense Insight Pro"> | **Expense Insight Pro** | A multi-currency expense dashboard with a 30-day balance forecast that moves as you add transactions. | [Repo](https://github.com/adityatiwari9t8/expense-insight-pro) |
+| <img src="public/sudoku-dark.webp" width="220" alt="Sudoku Algorithm Visualizer"> | **Sudoku Algorithm Visualizer** | Watch DFS, BFS, greedy and MRV solve the same board, then compare steps, backtracks and time. | [Repo](https://github.com/adityatiwari9t8/sudoku-algorithm-visualizer) |
+
+## What's in the site
+
+- **Embedded live demos.** Each project opens in a browser-style overlay without leaving the page.
+- **Case-study pages** on a tiny hash router (`#/work/<id>`): links are shareable and the Back button closes the page.
+- **Interaction, in plain CSS and a little JavaScript.** Pointer-driven 3D tilt on cards, cursor-lit borders, scroll-linked section lift, word-by-word headline reveals and View Transitions between pages. On touch devices the same effects follow scrolling instead of the pointer. All of it switches off for visitors who prefer reduced motion.
+- **Dark by default, with a light toggle.**
+- **No backend.** The contact button opens the visitor's email app, and there is a copy-email button for people without one.
+- **Fonts are bundled** (Inter and Instrument Serif), so the site makes no Google Fonts request and looks the same everywhere.
+- **Optional visitor analytics.** Cookie-less and off by default (see below).
+
+## Run it locally
 
 ```bash
+git clone https://github.com/adityatiwari9t8/portfolio-website.git
+cd portfolio-website
 npm install
 npm run dev        # http://localhost:5173
-npm run build      # production build into dist/
+```
+
+```bash
+npm run build      # type-check, then production build into dist/
 npm run preview    # serve the production build locally
 ```
 
-## Where things live
+Needs Node 18 or newer.
 
-| Want to change...                         | Edit this file                 |
-| ----------------------------------------- | ------------------------------ |
-| Name, email, social links, status badge   | `src/data/site.ts`             |
-| Hero text, "looking for" line, story, education, tools, "right now" list | `src/data/content.ts` |
-| Story polaroids (add a second real photo) | `STORY_PHOTOS` in `content.ts` |
-| Projects and their case studies           | `src/data/projects.ts`         |
-| Photo / resume                            | `public/img.webp`, `public/resume.pdf` |
+## How it's organised
 
-## Add a new project
+```text
+src/
+├── App.tsx              page layout and section order
+├── data/
+│   ├── site.ts          name, email, social links, status badge
+│   ├── content.ts       hero, story, education, skills, call-to-action text
+│   └── projects.ts      the projects and their case studies
+├── components/          sections, effects (Tilt, SectionLift, Reveal, ...)
+│   └── demos/           the three embedded project demos
+└── lib/                 router, scroll bus, cursor light, dialog helper
+public/                  photos, project screenshots and demo videos, resume, social preview
+```
 
-1. Put a light and a dark screenshot in `public/` (WebP, about 960 px wide keeps the page fast).
-2. Open `src/data/projects.ts`, copy one object in `PROJECTS`, change the fields.
-3. Fill in `study` (problem, what you built, what you learned, stack). It becomes the case-study page at `#/work/<id>`.
-4. Add `repo` (GitHub link) and `live` (deployed URL) if you have them. The "Source" and "Live site" buttons appear automatically.
+All copy and links live in `src/data/`, so updating the site rarely means touching a component.
 
-Only write what is true and what you can explain in an interview. No invented numbers.
+| To change… | Edit |
+| --- | --- |
+| Name, email, social links | `src/data/site.ts` |
+| Hero, story, education, skills | `src/data/content.ts` |
+| Projects and case studies | `src/data/projects.ts` |
+| Photo and resume | `public/img.webp`, `public/resume.pdf` |
 
-The **Work** section (and its nav link) is hidden while `PROJECTS` is empty and appears automatically with the first project.
+### Adding a project
 
-## The planned projects
+1. Add a light and a dark screenshot to `public/` (WebP, about 960 px wide).
+2. Copy an object in `PROJECTS` in `src/data/projects.ts` and change its fields.
+3. Fill in `study` (problem, what was built, what was learned, stack). It becomes the case-study page.
+4. Add `repo` and `live` links if they exist. The buttons appear automatically.
 
-`docs/PROJECTS.md` is the full build specification. The plan is three portfolio projects, built in this order: **SeatLock** (a concurrency-safe ticket-booking platform, released in stages), **TinyTensor** (a deep-learning library from scratch) and **CiteRAG** (retrieval-augmented Q&A with a rigorous evaluation harness).
-Two more (a group-expenses app and a C++ Redis-compatible server) are documented there as optional later work. Every project is built in its full version, including extras, not just a first release.
-The spec covers scope, architecture, phases, tests, deployment, interview questions, the `projects.ts` entry for each project, and a GitHub and launch checklist.
-Each project is added here only when it is finished, using the handoff folder it produces (`docs/handoff/<project-id>/`) and the prompts in the portfolio-site kit.
-`CLAUDE.md` holds the working rules for Claude Code in this repository.
+## Deploying
 
-## Address, sharing preview and search
+The site is a plain Vite app, so Vercel needs no extra settings: import the repo, keep the framework preset on **Vite**, and every push to `main` redeploys.
 
-- Favicon and the LinkedIn / WhatsApp preview image (`public/og.jpg`, 1200x630) are included.
-- On Vercel the site address is picked up automatically at build time (canonical link, sitemap, absolute preview URLs).
-  Anywhere else, set `SITE_URL=https://your-domain.com` before `npm run build`.
-- `public/404.html` is the page shown for unknown addresses on Vercel.
+- **Site address.** On Vercel the address is picked up at build time (canonical link, sitemap, absolute preview URLs). Anywhere else, set `SITE_URL=https://your-domain.com` before `npm run build`.
+- **Analytics (optional).** Enable **Analytics** in the Vercel project, add the environment variable `VITE_ANALYTICS=1` and redeploy.
 
-## Visitor analytics (optional)
+## Contact
 
-Privacy-friendly and cookie-less. It is off by default so nothing breaks. To switch it on: open the Vercel project,
-enable **Analytics**, then add the environment variable `VITE_ANALYTICS=1` and redeploy.
+**adityatiwari.connect@gmail.com** — I'm open to software and web-development internships (remote, hybrid or on-site, anywhere) and to team projects.
 
-## Fonts
-
-Inter and Instrument Serif are bundled with the site (no Google Fonts request), so it renders the same everywhere.
-
-## Contact form
-
-There is no backend. "Compose email" opens the visitor's email app addressed to the email in `src/data/site.ts`,
-and there is a "copy email" button for people without a mail app.
-
-## Before you deploy: confirm these are true for you
-
-- `HERO.lookingFor` in `content.ts` (role type and location).
-- `NOW` in `content.ts` ("Right now" list).
-- The email in `site.ts` (currently adityatiwari.connect@gmail.com).
-- Replace the second Polaroid (a project screenshot) with a real photo if you have one.
-
-## Deploy
-
-Push this folder to its own GitHub repo and import it in Vercel (framework: Vite). No extra settings.
+Layout inspired by the "Portfolio For Designers" shot on [Dribbble](https://dribbble.com/shots/25944606-Portfolio-For-Designers).

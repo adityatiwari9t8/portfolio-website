@@ -35,7 +35,7 @@ Every project has a working demo embedded in the site, plus a case study (proble
 - **Case-study pages** on a tiny hash router (`#/work/<id>`): links are shareable and the Back button closes the page.
 - **Keyboard command menu (⌘K / Ctrl+K).** Jump to any section, open a demo or case study, copy the email, grab the resume or switch theme from the keyboard.
 - **Restrained motion.** Scroll reveals, a gentle hover tilt on project cards, cursor-lit borders, and View Transitions for the theme switch and case-study pages. Touch screens get still cards, and everything switches off for visitors who prefer reduced motion.
-- **Light by default, with a dark toggle.** A bouncing dot on the moon icon suggests dark mode until the visitor switches once; the choice is remembered in `localStorage`.
+- **Dark by default, with a light toggle.** The visitor's choice is remembered in `localStorage`.
 - **No backend.** The contact button opens the visitor's email app, and there is a copy-email button for people without one.
 - **Fonts are bundled** (Roboto Condensed for display, Roboto Mono for labels, Inter for body text), so the site makes no Google Fonts request and looks the same everywhere.
 - **Optional visitor analytics.** Cookie-less and off by default (see below).

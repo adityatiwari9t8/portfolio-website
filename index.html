@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,8 +7,8 @@
   <title>Aditya Tiwari | Software Developer</title>
   <meta name="description" content="Aditya Tiwari is a software developer and B.Tech Computer Science student (class of 2029) at IILM University, working across backend, full-stack and applied AI in Java, Python and TypeScript. Looking for a software engineering internship." />
   <meta name="author" content="Aditya Tiwari" />
-  <meta name="theme-color" content="#f4f4f2" />
-  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" content="#0b0b0c" />
+  <meta name="color-scheme" content="dark light" />
   <link rel="canonical" href="__SITE_URL__/" />
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
@@ -50,12 +50,12 @@
   </script>
 
   <script>
-    // Light by default; a visitor who picked dark gets it back before first paint.
+    // Dark by default; a visitor who picked light gets it back before first paint.
     (function () {
       try {
-        if (localStorage.getItem('theme') === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0b0b0c');
+        if (localStorage.getItem('theme') === 'light') {
+          document.documentElement.classList.remove('dark');
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f4f4f2');
         }
       } catch (e) {}
     })();

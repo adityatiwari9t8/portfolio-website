@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Menu, X, Sun, Moon, ArrowUpRight } from 'lucide-react';
 import { SITE } from '../data/site';
-import { dismissThemeHint, toggleTheme, useTheme } from '../lib/theme';
+import { toggleTheme, useTheme } from '../lib/theme';
 import { scrollToSection } from '../lib/scroll';
 import { SECTIONS, sectionNumber } from '../lib/sections';
 
@@ -10,26 +10,10 @@ interface NavbarProps {
 }
 
 /**
- * Moon button for the light theme, with a bouncing dot and a small "Try dark mode" note
- * until the visitor has switched once (remembered, so it never nags twice).
+ * Theme toggle button switching between dark and light modes.
  */
 const ThemeButton: React.FC<{ className: string }> = ({ className }) => {
-  const { dark, showHint } = useTheme();
-  const [bubble, setBubble] = useState(false);
-
-  // The note slides in a moment after load, so it doesn't compete with the hero, then tucks itself away.
-  useEffect(() => {
-    if (!showHint) {
-      setBubble(false);
-      return;
-    }
-    const show = window.setTimeout(() => setBubble(true), 2200);
-    const hide = window.setTimeout(() => setBubble(false), 11000);
-    return () => {
-      window.clearTimeout(show);
-      window.clearTimeout(hide);
-    };
-  }, [showHint]);
+  const { dark } = useTheme();
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -37,46 +21,13 @@ const ThemeButton: React.FC<{ className: string }> = ({ className }) => {
   };
 
   return (
-    <div className="relative">
-      <button
-        onClick={onClick}
-        aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-        aria-describedby={showHint ? 'theme-hint' : undefined}
-        className={className}
-      >
-        {dark ? <Sun className="h-4 w-4" /> : <Moon className={`h-4 w-4 ${showHint ? 'moon-wiggle' : ''}`} />}
-        {showHint && (
-          <span aria-hidden className="pointer-events-none absolute right-1 top-1 flex h-2.5 w-2.5">
-            <span className="hint-ping absolute inline-flex h-full w-full rounded-full bg-indigo-500/60" />
-            <span className="hint-bounce relative inline-flex h-2.5 w-2.5 rounded-full bg-indigo-500 ring-2 ring-white" />
-          </span>
-        )}
-      </button>
-
-      {showHint && (
-        <div
-          id="theme-hint"
-          role="status"
-          className={`absolute right-0 top-[calc(100%+12px)] z-50 w-max max-w-[15rem] transition duration-300 ${
-            bubble ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-1 opacity-0'
-          }`}
-        >
-          <div className="relative flex items-center gap-2 rounded-2xl bg-neutral-950 py-2 pl-3.5 pr-2 text-[13px] font-medium text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)]">
-            <span aria-hidden className="absolute -top-1 right-3.5 h-2.5 w-2.5 rotate-45 bg-neutral-950" />
-            <Moon className="h-3.5 w-3.5 shrink-0 text-indigo-300" aria-hidden />
-            <span>Try dark mode for the best experience</span>
-            <button
-              onClick={dismissThemeHint}
-              aria-label="Dismiss dark mode tip"
-              tabIndex={bubble ? 0 : -1}
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-white/10 hover:text-white"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          </div>
-        </div>
-      )}
-    </div>
+    <button
+      onClick={onClick}
+      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+      className={className}
+    >
+      {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+    </button>
   );
 };
 

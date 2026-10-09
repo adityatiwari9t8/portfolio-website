@@ -1,33 +1,83 @@
-import React from 'react';
-import { Award, Calendar, GraduationCap, Check, Github } from 'lucide-react';
-import { EDUCATION, NOW, OPEN_TO, TOOLKIT } from '../data/content';
+import React, { useState } from 'react';
+import { ArrowUpRight, Award, Briefcase, Calendar, ChevronDown, GraduationCap, Check, Github } from 'lucide-react';
+import { CERTIFICATIONS, Certification, EDUCATION, EXPERIENCE, NOW, OPEN_TO, TOOLKIT } from '../data/content';
+import { PROJECTS } from '../data/projects';
 import { SITE } from '../data/site';
 import SectionTitle from './SectionTitle';
 import Tilt from './Tilt';
 import Reveal from './Reveal';
+import CertificateViewer from './CertificateViewer';
 
-const Chip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <span className="rounded-full bg-neutral-100 px-3.5 py-1.5 text-sm font-medium text-neutral-700 dark:bg-white/10 dark:text-neutral-200">
+/** Lists longer than this fold the rest behind a "Show all" button, so a long history never swamps the page. */
+const SHOW_EXPERIENCE = 3;
+const SHOW_CERTIFICATIONS = 6;
+
+// How many projects use each skill, read from the projects' stacks so it stays right as projects are added.
+const usage = (skill: string) => PROJECTS.filter((p) => p.study.stack.some((s) => s.toLowerCase() === skill.toLowerCase())).length;
+const anyUsed = TOOLKIT.some((g) => g.items.some((i) => usage(i) > 0));
+const allOpenSource = PROJECTS.length > 0 && PROJECTS.every((p) => p.repo);
+
+const Chip: React.FC<{ children: React.ReactNode; used?: number }> = ({ children, used = 0 }) => (
+  <span
+    title={used ? `Used in ${used} project${used > 1 ? 's' : ''} on this page` : undefined}
+    className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3.5 py-1.5 text-sm font-medium text-neutral-700 dark:bg-white/10 dark:text-neutral-200"
+  >
     {children}
+    {used > 0 && (
+      <>
+        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+        <span className="sr-only">, used in {used} project{used > 1 ? 's' : ''}</span>
+      </>
+    )}
   </span>
 );
 
+/** "Show all 8" / "Show fewer" under a folded list. Renders nothing when the list is short. */
+const MoreToggle: React.FC<{ total: number; limit: number; open: boolean; onToggle: () => void; what: string }> = ({
+  total,
+  limit,
+  open,
+  onToggle,
+  what
+}) =>
+  total > limit ? (
+    <button
+      onClick={onToggle}
+      aria-expanded={open}
+      className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-4 py-2 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-200 dark:bg-white/10 dark:text-neutral-200 dark:hover:bg-white/20"
+    >
+      {open ? 'Show fewer' : `Show all ${total} ${what}`}
+      <ChevronDown className={`h-4 w-4 transition ${open ? 'rotate-180' : ''}`} />
+    </button>
+  ) : null;
+
 const card =
   'glow lit preserve-3d transition duration-300 hover:-translate-y-0.5 rounded-[1.5rem] border border-black/5 bg-white p-7 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.15)] dark:border-white/10 dark:bg-neutral-900';
+const certLink =
+  'mt-3 inline-flex items-center gap-1 text-sm font-semibold text-neutral-800 underline-offset-4 hover:underline dark:text-neutral-200';
 const label = 'text-xs font-medium uppercase tracking-[0.18em] text-neutral-600 dark:text-neutral-400';
 
-/** Education, toolkit and availability in one place, for recruiters and clients. */
-const Background: React.FC = () => (
+/** Education, experience, certifications, toolkit and availability in one place, for recruiters and clients. */
+const Background: React.FC = () => {
+  const [cert, setCert] = useState<Certification | null>(null);
+  const [allExperience, setAllExperience] = useState(false);
+  const [allCerts, setAllCerts] = useState(false);
+
+  const experience = allExperience ? EXPERIENCE : EXPERIENCE.slice(0, SHOW_EXPERIENCE);
+  const certs = allCerts ? CERTIFICATIONS : CERTIFICATIONS.slice(0, SHOW_CERTIFICATIONS);
+
+  return (
   <div>
+    <CertificateViewer cert={cert} onClose={() => setCert(null)} />
     <Reveal>
       <SectionTitle
         before="A bit of"
         accent="background"
-        sub="The foundations behind the work, and what I'm open to right now."
+        sub="Education, experience and what I'm open to right now."
       />
     </Reveal>
 
-    <div className="mx-auto mt-12 grid max-w-5xl gap-4 md:grid-cols-[1.4fr_1fr]">
+    <div className="mx-auto mt-8 grid max-w-5xl gap-4 sm:mt-12 md:grid-cols-[1.4fr_1fr]">
       {/* education */}
       <Reveal variant="left" className="h-full">
       <Tilt max={8} scale={1.025} lift={18} className="h-full">
@@ -69,8 +119,8 @@ const Background: React.FC = () => (
         </p>
         <ul className="mt-5 space-y-3">
           {OPEN_TO.map((o) => (
-            <li key={o} className="flex items-center gap-2.5 text-[15px] font-medium">
-              <Check className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
+            <li key={o} className="flex items-start gap-2.5 text-[15px] font-medium">
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
               {o}
             </li>
           ))}
@@ -88,7 +138,101 @@ const Background: React.FC = () => (
       </Tilt>
       </Reveal>
 
+      {/* experience: one row per role, like a resume, so each new role just adds a row */}
+      {EXPERIENCE.length > 0 && (
+      <Reveal variant="scale" className="md:col-span-2">
+      <Tilt max={3} scale={1.008} lift={10}>
+      <div className={card}>
+        <p className={label}>Experience</p>
+        <ol className="mt-2 divide-y divide-black/5 dark:divide-white/10">
+          {experience.map((x) => (
+            <li key={x.role + x.org + x.period} className="grid gap-x-8 gap-y-2 py-5 last:pb-0 md:grid-cols-[13rem_1fr]">
+              <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-neutral-600 md:flex-col dark:text-neutral-400">
+                <span className="inline-flex items-center gap-2">
+                  <Calendar className="h-4 w-4 shrink-0" />
+                  {x.period}
+                </span>
+                <span className="inline-flex items-start gap-2">
+                  <Briefcase className="mt-0.5 h-4 w-4 shrink-0" />
+                  {x.org}
+                </span>
+              </div>
+              <div>
+                <h3 className="text-lg font-medium tracking-[-0.01em] text-neutral-950 dark:text-white">{x.role}</h3>
+                {x.points.length > 0 && (
+                  <ul className="mt-3 max-w-3xl space-y-2">
+                    {x.points.map((pt) => (
+                      <li key={pt} className="flex items-start gap-2.5 text-[15px] leading-relaxed text-neutral-700 dark:text-neutral-300">
+                        <span className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-neutral-400" />
+                        {pt}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+        <MoreToggle
+          total={EXPERIENCE.length}
+          limit={SHOW_EXPERIENCE}
+          open={allExperience}
+          onToggle={() => setAllExperience((v) => !v)}
+          what="roles"
+        />
+      </div>
+      </Tilt>
+      </Reveal>
+      )}
+
+      {/* certifications: tiles that reflow from one to three per row as the list grows */}
+      {CERTIFICATIONS.length > 0 && (
+      <Reveal variant="scale" className="md:col-span-2">
+      <Tilt max={3} scale={1.008} lift={10}>
+      <div className={card}>
+        <p className={label}>{CERTIFICATIONS.length > 1 ? 'Certifications' : 'Certification'}</p>
+        <ul className="mt-5 grid gap-3 sm:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]">
+          {certs.map((c) => (
+            <li
+              key={c.title}
+              className="flex flex-col rounded-2xl border border-black/5 bg-neutral-50 p-5 dark:border-white/10 dark:bg-white/[0.03]"
+            >
+              <Award className="h-5 w-5 text-neutral-500 dark:text-neutral-400" aria-hidden />
+              <p className="mt-3 text-[15px] font-medium leading-snug text-neutral-950 dark:text-white">{c.title}</p>
+              <p className="mt-1 text-sm leading-snug text-neutral-600 dark:text-neutral-400">{c.issuer}</p>
+              {/* pushed to the bottom so buttons line up across a row of tiles */}
+              <div className="mt-auto">
+                {c.url ? (
+                  <a href={c.url} target="_blank" rel="noopener noreferrer" className={certLink}>
+                    View certificate
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </a>
+                ) : (
+                  c.image && (
+                    <button onClick={() => setCert(c)} className={certLink}>
+                      View certificate
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </button>
+                  )
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <MoreToggle
+          total={CERTIFICATIONS.length}
+          limit={SHOW_CERTIFICATIONS}
+          open={allCerts}
+          onToggle={() => setAllCerts((v) => !v)}
+          what="certificates"
+        />
+      </div>
+      </Tilt>
+      </Reveal>
+      )}
+
       {/* right now */}
+      {NOW.length > 0 && (
       <Reveal variant="scale" className="md:col-span-2">
       <Tilt max={4} scale={1.012} lift={12}>
       <div className={card}>
@@ -104,38 +248,40 @@ const Background: React.FC = () => (
       </div>
       </Tilt>
       </Reveal>
+      )}
 
-      {/* toolkit */}
+      {/* toolkit: any number of groups, laid out side by side when there is room */}
+      {TOOLKIT.length > 0 && (
       <Reveal variant="scale" delay={100} className="md:col-span-2">
       <Tilt max={4} scale={1.012} lift={12}>
       <div className={card}>
-        <div className="grid gap-6 sm:grid-cols-2">
-          <div>
-            <p className={label}>Core languages</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {TOOLKIT.core.map((t) => (
-                <Chip key={t}>{t}</Chip>
-              ))}
+        <div className="grid gap-x-8 gap-y-7 sm:grid-cols-[repeat(auto-fit,minmax(15rem,1fr))]">
+          {TOOLKIT.map((g) => (
+            <div key={g.label}>
+              <p className={label}>{g.label}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {g.items.map((t) => (
+                  <Chip key={t} used={usage(t)}>
+                    {t}
+                  </Chip>
+                ))}
+              </div>
             </div>
-            <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">TypeScript is in all three projects above.</p>
-          </div>
-          <div>
-            <p className={label}>I build with</p>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {TOOLKIT.build.map((t) => (
-                <Chip key={t}>{t}</Chip>
-              ))}
-            </div>
-            <p className="mt-3 text-sm text-neutral-600 dark:text-neutral-400">
-              React, Tailwind CSS and Vite are in all three too. All three have their source on GitHub.
-            </p>
-          </div>
+          ))}
         </div>
+        {anyUsed && (
+          <p className="mt-6 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+            Used in the projects on this page.{allOpenSource && ' All of them have their source on GitHub.'}
+          </p>
+        )}
       </div>
       </Tilt>
       </Reveal>
+      )}
     </div>
   </div>
-);
+  );
+};
 
 export default Background;

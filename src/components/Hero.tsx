@@ -1,9 +1,7 @@
 import React from 'react';
-import { ArrowUpRight, Code2, Download, FileText, Github, Linkedin, MapPin } from 'lucide-react';
+import { ArrowUpRight, Code2, FileText, Github, Linkedin } from 'lucide-react';
 import { HERO } from '../data/content';
 import { SITE } from '../data/site';
-import Marquee from './Marquee';
-import Typed from './Typed';
 import Magnetic from './Magnetic';
 import Tilt from './Tilt';
 import Parallax from './Parallax';
@@ -92,18 +90,32 @@ const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
       <Corner className="left-4 top-4 border-l border-t" />
       <Corner className="right-4 top-4 border-r border-t" />
 
-      <div className="relative grid items-center gap-10 px-6 pb-10 pt-8 sm:px-12 sm:pt-12 md:grid-cols-[1.15fr_1fr] md:gap-12 md:px-16 md:pb-12">
-        {/* text */}
-        <div className="order-2 md:order-1">
+      <div className="relative grid items-center gap-10 px-6 pb-9 pt-8 sm:px-12 sm:pb-12 sm:pt-12 md:grid-cols-[1.15fr_1fr] md:gap-12 md:px-16 md:py-16">
+        {/* text: name, one headline, two sentences, two buttons. Everything else lives further down the page. */}
+        <div>
           <span style={delay(0)} className="rise inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
             <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-emerald-500" />
             {SITE.status}
           </span>
 
-          <Tilt shadow={false} hint={false} max={5} scale={1.02} lift={34} className="mt-5">
+          <div style={delay(60)} className="rise mt-6 flex items-center gap-3">
+            {/* on phones a small avatar stands in for the big portrait, so the hero fits on one screen */}
+            <img
+              src="/img.webp"
+              width={662}
+              height={886}
+              alt=""
+              aria-hidden
+              className="h-11 w-11 shrink-0 rounded-full object-cover ring-1 ring-black/10 md:hidden dark:ring-white/15"
+              style={{ objectPosition: 'center 20%' }}
+            />
+            <p className="text-base font-medium text-neutral-700 sm:text-lg dark:text-neutral-300">{HERO.intro}</p>
+          </div>
+
+          <Tilt shadow={false} hint={false} max={5} scale={1.02} lift={34} className="mt-3">
             <h1
               aria-label={headline}
-              className="preserve-3d text-[2.5rem] font-medium leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl lg:text-[3.6rem] dark:text-white"
+              className="preserve-3d text-[2.4rem] font-medium leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl lg:text-[3.6rem] dark:text-white"
             >
               {words(before)}
               {words(accent, 'accent text-[1.08em]', 36)}
@@ -111,27 +123,11 @@ const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
             </h1>
           </Tilt>
 
-          <p style={delay(650)} className="caret-accent rise mt-4 flex min-h-[2rem] items-baseline text-xl font-medium text-neutral-600 sm:text-2xl dark:text-neutral-400">
-            <span aria-hidden className="mr-2.5 font-mono text-[0.9em] font-semibold text-indigo-500 dark:text-indigo-400">&gt;</span>
-            <span>I build{' '}<Typed words={HERO.typed} className="accent text-[1.12em] text-neutral-950 dark:text-white" /></span>
-          </p>
-
-          <p style={delay(720)} className="rise mt-4 max-w-lg text-[15px] leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400">
+          <p style={delay(650)} className="rise mt-5 max-w-md text-[15px] leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400">
             {HERO.body}
           </p>
 
-          <ul style={delay(780)} className="rise mt-6 flex flex-wrap gap-2">
-            {HERO.facts.map((f) => (
-              <li
-                key={f}
-                className="rounded-full bg-neutral-100 px-3 py-1 text-xs font-medium text-neutral-600 dark:bg-white/10 dark:text-neutral-300"
-              >
-                {f}
-              </li>
-            ))}
-          </ul>
-
-          <div style={delay(840)} className="rise mt-8 flex flex-wrap items-center gap-3">
+          <div style={delay(760)} className="rise mt-8 flex flex-wrap items-center gap-2">
             <Magnetic>
               <button
                 onClick={onOpenContact}
@@ -146,40 +142,24 @@ const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
                 href={SITE.resume}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="preserve-3d inline-flex items-center gap-2 rounded-full px-5 py-3 text-sm font-semibold text-neutral-700 transition hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/10"
+                className="preserve-3d inline-flex items-center gap-2 rounded-full border border-black/10 px-5 py-3 text-sm font-semibold text-neutral-800 transition hover:bg-neutral-100 dark:border-white/15 dark:text-neutral-200 dark:hover:bg-white/10"
               >
                 <FileText className="depth-1 h-4 w-4" />
-                <span className="depth-1">View resume</span>
-              </a>
-            </Tilt>
-            <Tilt scroll={false} max={16} scale={1.12} lift={16} glare radius="rounded-full" className="-ml-2">
-              <a
-                href={SITE.resume}
-                download="Aditya-Tiwari-Resume.pdf"
-                aria-label="Download resume as PDF"
-                title="Download PDF"
-                className="preserve-3d flex h-11 w-11 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-white/10"
-              >
-                <Download className="depth-1 h-4 w-4" />
+                <span className="depth-1">Resume</span>
               </a>
             </Tilt>
           </div>
 
-          <p style={delay(900)} className="rise mt-5 flex items-start gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-            <MapPin className="mt-0.5 h-4 w-4 shrink-0" />
-            {HERO.lookingFor}
-          </p>
-
-          <ul style={delay(960)} className="rise mt-5 flex flex-wrap gap-2">
+          <ul style={delay(860)} className="rise mt-7 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-neutral-600 dark:text-neutral-400">
             {PROOF.map(({ icon: Icon, label, url }) => (
               <li key={label}>
                 <a
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full border border-black/10 px-3.5 py-1.5 text-xs font-semibold text-neutral-700 transition hover:-translate-y-0.5 hover:bg-neutral-100 dark:border-white/15 dark:text-neutral-300 dark:hover:bg-white/10"
+                  className="inline-flex items-center gap-1.5 py-1 font-medium transition hover:text-neutral-950 dark:hover:text-white"
                 >
-                  <Icon className="h-3.5 w-3.5" aria-hidden />
+                  <Icon className="h-4 w-4" aria-hidden />
                   {label}
                 </a>
               </li>
@@ -188,9 +168,9 @@ const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
         </div>
 
         {/* portrait */}
-        <div style={delay(120)} className="rise order-1 md:order-2">
+        <div style={delay(120)} className="rise hidden md:block">
           <Parallax speed={0.07} max={60}>
-          <Tilt lock max={13} scale={1.04} lift={36} glare radius="rounded-[1.75rem]" className="mx-auto w-full max-w-[380px] md:max-w-none">
+          <Tilt lock max={13} scale={1.04} lift={36} glare radius="rounded-[1.75rem]" className="w-full">
             <div className="float relative aspect-[4/5] w-full overflow-hidden rounded-[1.75rem] bg-white shadow-[0_30px_60px_-20px_rgba(0,0,0,0.3)] ring-1 ring-black/5 dark:ring-white/10">
               <img
                 src="/img.webp"
@@ -233,7 +213,6 @@ const Hero: React.FC<HeroProps> = ({ onOpenContact }) => {
         </div>
       </div>
 
-      <Marquee />
     </section>
     </Tilt>
   );

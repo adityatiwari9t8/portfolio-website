@@ -14,11 +14,12 @@ interface ProjectsProps {
   onOpenDemo: (project: Project) => void;
 }
 
+// On phones the text buttons share one row evenly (flex-1); from sm up they size to their labels.
 const pill =
-  'inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2.5 text-sm font-semibold text-neutral-800 transition hover:bg-white dark:bg-white/10 dark:text-neutral-200 dark:hover:bg-white/20';
+  'inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-white/70 px-4 py-2.5 text-sm font-semibold text-neutral-800 transition hover:bg-white dark:bg-white/10 dark:text-neutral-200 dark:hover:bg-white/20';
 
 const primary =
-  'group/btn inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200';
+  'group/btn inline-flex min-w-0 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-full bg-neutral-950 px-4 py-2.5 sm:flex-none sm:px-5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200';
 
 const mediaFrame =
   'block w-full overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_24px_50px_-18px_rgba(0,0,0,0.45)] transition duration-300 dark:border-white/10 dark:bg-neutral-900';
@@ -34,7 +35,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
       />
     </Reveal>
 
-    <div className="mx-auto mt-12 max-w-4xl">
+    <div className="mx-auto mt-8 max-w-4xl sm:mt-12">
       {PROJECTS.map((p, i) => (
         <article
           key={p.id}
@@ -78,7 +79,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
                   </p>
                 )}
 
-                <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-black/5 pt-5 dark:border-white/10">
+                <dl className="mt-6 hidden grid-cols-2 gap-4 border-t sm:grid border-black/5 pt-5 dark:border-white/10">
                   {p.highlights.map((h) => (
                     <div key={h.value}>
                       <dt className="text-[15px] font-semibold leading-snug text-neutral-950 dark:text-white"><CountUp text={h.value} /></dt>
@@ -90,7 +91,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
                 <div className="depth-2 mt-6 flex flex-wrap items-center gap-2">
                   {p.demo ? (
                     <button onClick={() => onOpenDemo(p)} className={primary}>
-                      Open live demo
+                      Live demo
                       <ArrowUpRight className="h-4 w-4 transition group-hover/btn:-translate-y-0.5 group-hover/btn:translate-x-0.5" />
                     </button>
                   ) : (
@@ -101,8 +102,8 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
                       </a>
                     )
                   )}
-                  <a href={studyHref(p.id)} onClick={studyLinkClick(p.id, studyHref(p.id))} className={pill}>
-                    <BookOpen className="h-4 w-4" />
+                  <a href={studyHref(p.id)} onClick={studyLinkClick(p.id, studyHref(p.id))} className={`${pill} min-w-0 flex-1 sm:flex-none`}>
+                    <BookOpen className="hidden h-4 w-4 sm:block" />
                     Case study
                   </a>
                   {p.demo && p.live && (
@@ -112,9 +113,10 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
                     </a>
                   )}
                   {p.repo && (
-                    <a href={p.repo} target="_blank" rel="noopener noreferrer" className={pill}>
+                    <a href={p.repo} target="_blank" rel="noopener noreferrer" aria-label={`Source code for ${p.title}`} className={pill}>
                       <Github className="h-4 w-4" />
-                      Source
+                      {/* icon-only on phones so all three buttons fit on one row */}
+                      <span className="hidden sm:inline">Source</span>
                     </a>
                   )}
                 </div>

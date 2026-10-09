@@ -1,14 +1,15 @@
 import React from 'react';
-import { Briefcase, Code2, GraduationCap, Wrench } from 'lucide-react';
+import { Briefcase, FolderGit2, GraduationCap, Wrench } from 'lucide-react';
 import { GLANCE } from '../data/content';
 import Tilt from './Tilt';
 import Reveal from './Reveal';
 
-const ICONS = { role: Briefcase, build: Wrench, grad: GraduationCap, stack: Code2 } as const;
+const ICONS = { role: FolderGit2, build: Wrench, grad: GraduationCap, exp: Briefcase } as const;
 
 /** Ten-second scan for recruiters: what, where, when, with what. */
 const Glance: React.FC = () => (
-  <div role="list" className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-4">
+  // auto-fit: three, four or five cards all share the row evenly instead of leaving gaps
+  <div role="list" className="mt-4 grid grid-cols-2 gap-3 md:grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
     {GLANCE.map(({ key, label, value }, i) => {
       const Icon = ICONS[key];
       return (

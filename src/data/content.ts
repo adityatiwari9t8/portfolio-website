@@ -1,31 +1,14 @@
-/** Copy for the non-project sections. Edit freely. */
+/** Copy for the non-project sections. Edit freely: every list below can grow, and the layout adapts. */
+import { PROJECTS } from './projects';
 
 export const HERO = {
+  /** Small line above the headline, so the name is the first thing a visitor reads. */
+  intro: "Hi, I'm Aditya Tiwari",
   headline: ['Software that', 'works,', 'from idea to live demo.'] as const,
+  /** Two sentences at most: the hero is meant to be read in five seconds. */
   body:
-    "Computer Science student at IILM University. I've built a skill-path recommender, a multi-currency expense dashboard with a 30-day forecast, and a Sudoku solver that compares four search strategies. Each one has a live demo you can open right here.",
-  /** Phrases typed after "I build" in the hero. Only things that are true. */
-  typed: ['web apps', 'dashboards', 'algorithm visualizers', 'data-driven tools'] as const,
-  facts: ['B.Tech CSE, IILM University', 'Batch of 2029', 'Based in Gurugram, India'],
-  /** One plain sentence under the buttons: exactly what a recruiter wants to know. */
-  lookingFor: 'Looking for a software or web-development internship, open to remote, hybrid or on-site roles anywhere.'
+    'B.Tech CSE student at IILM University, Gurugram. I build web apps, dashboards and algorithm visualizers, and every project below has a live demo you can open right here.'
 };
-
-/** Scrolling strip under the hero (stands in for the client-logo strip in the reference). */
-export const STRIP = [
-  'React',
-  'TypeScript',
-  'Tailwind CSS',
-  'Vite',
-  'Python',
-  'Java',
-  'JavaScript',
-  'C',
-  'HTML & CSS',
-  'Data Structures',
-  'Algorithms',
-  'Responsive Design'
-];
 
 export const STORY = {
   lead:
@@ -66,10 +49,67 @@ export const EDUCATION = {
   coursework: ['Data Structures', 'Algorithms', 'Operating Systems', 'DBMS', 'Computer Networks', 'OOP']
 };
 
-export const TOOLKIT = {
-  core: ['Python', 'Java', 'JavaScript', 'C', 'TypeScript'],
-  build: ['HTML & CSS', 'React', 'Tailwind CSS', 'Vite', 'Git & GitHub']
-};
+/**
+ * Work experience in the Background section, newest first. Only roles that really happened.
+ * Add as many as you like: the first three show, the rest sit behind a "Show all" button.
+ */
+export interface Experience {
+  role: string;
+  org: string;
+  period: string;
+  points: string[];
+}
+
+export const EXPERIENCE: Experience[] = [
+  {
+    role: 'Market Research Intern',
+    org: 'SEMS Welfare Foundation, Noida',
+    period: 'Jun to Jul 2026',
+    points: [
+      'Researched cognitive bias and dual-process theory in strategic procurement decisions from secondary sources, and wrote a research synopsis with APA-cited references.',
+      'Wrote a 23-page internship report aligned to UN SDG 8 (Decent Work and Economic Growth).'
+    ]
+  }
+];
+
+/**
+ * Certificates in the Background section, newest or most relevant first. The first six show, the rest sit behind "Show all".
+ * `url` opens a verification page in a new tab; `image` (a file in /public/certificates) opens in a viewer on the page.
+ * Give a certificate one or the other, or neither (then it has no button).
+ */
+export interface Certification {
+  title: string;
+  issuer: string;
+  url?: string;
+  image?: { src: string; width: number; height: number };
+}
+
+export const CERTIFICATIONS: Certification[] = [
+  {
+    title: 'Introduction to Financial Engineering and Risk Management',
+    issuer: 'Columbia University, on Coursera',
+    url: 'https://www.coursera.org/account/accomplishments/records/PQPATI9HQWU0'
+  },
+  {
+    title: 'BCG Strategy Consulting Job Simulation',
+    issuer: 'Forage, June 2026. Market research, financial modelling, survey design and data analysis',
+    image: { src: '/certificates/bcg-strategy-consulting.webp', width: 1600, height: 1130 }
+  }
+];
+
+/**
+ * Skills in the Background section, as groups of chips. Add a skill to a group, or add a whole new group
+ * (for example { label: 'Tools', items: [...] }). Skills that appear in a project's `stack` get a marker automatically.
+ */
+export interface SkillGroup {
+  label: string;
+  items: string[];
+}
+
+export const TOOLKIT: SkillGroup[] = [
+  { label: 'Core languages', items: ['Python', 'Java', 'JavaScript', 'C', 'TypeScript'] },
+  { label: 'I build with', items: ['HTML & CSS', 'React', 'Tailwind CSS', 'Vite', 'Git & GitHub'] }
+];
 
 /** Shown as the "open to" list in the Background section. */
 export const OPEN_TO = [
@@ -102,13 +142,28 @@ export const QUICK_CONTACT: QuickContact[] = [];
 
 export const CONTACT_OPTIONS = ['Internship or job opportunity', 'Collaboration', 'Something else'];
 
-/** Four quick facts shown right under the hero, for a ten-second scan. Kept to things the hero does not already say. */
-export const GLANCE = [
-  { key: 'role', label: 'Projects', value: '3 built, each with a live demo' },
-  { key: 'grad', label: 'Academics', value: 'CGPA 8.8 / 10' },
+/**
+ * Quick facts shown right under the hero, for a ten-second scan. Kept to things the hero does not already say.
+ * The project count and latest role update themselves from PROJECTS and EXPERIENCE. Best with four cards.
+ */
+const withDemo = PROJECTS.filter((p) => p.demo || p.live).length;
+const latest = EXPERIENCE[0];
+
+export const GLANCE: { key: 'role' | 'grad' | 'build' | 'exp'; label: string; value: string }[] = [
+  {
+    key: 'role',
+    label: 'Projects',
+    value:
+      withDemo === PROJECTS.length
+        ? `${PROJECTS.length} built, each with a live demo`
+        : `${PROJECTS.length} built, ${withDemo} with a live demo`
+  },
+  { key: 'grad', label: 'Academics', value: `CGPA ${EDUCATION.gpa}` },
   { key: 'build', label: 'Built with', value: 'React, TypeScript, Tailwind' },
-  { key: 'stack', label: 'Languages', value: 'Python, Java, JavaScript, C, TypeScript' }
-] as const;
+  ...(latest
+    ? [{ key: 'exp' as const, label: 'Experience', value: `${latest.role}, ${latest.org.split(',')[0]}` }]
+    : [])
+];
 
 /**
  * Shown in the "building" section while PROJECTS is empty. Update `status` as work moves along;

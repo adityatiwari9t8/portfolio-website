@@ -31,10 +31,10 @@ const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
   };
 
   return (
-    <footer className="mx-auto max-w-6xl px-3 pb-28 pt-24 sm:px-6 md:pb-10">
+    <footer className="mx-auto max-w-6xl px-4 pb-28 pt-16 sm:px-6 sm:pt-24 md:pb-10">
       <div className="border-t border-black/10 pt-12 dark:border-white/10">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr]">
-          <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 lg:grid-cols-[1.5fr_1fr_1fr_1.2fr]">
+          <div className="col-span-2 space-y-4 lg:col-span-1">
             <p className="text-2xl font-medium tracking-[-0.03em] text-neutral-950 dark:text-white">
               Aditya <span className="accent text-[1.1em]">Tiwari</span>
             </p>
@@ -72,7 +72,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
             </ul>
           </div>
 
-          <div className="space-y-4">
+          <div className="col-span-2 space-y-4 lg:col-span-1">
             <h2 className={heading}>Get in touch</h2>
             <div className="flex flex-col items-start gap-3">
               <div className="-ml-3">

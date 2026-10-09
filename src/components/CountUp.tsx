@@ -41,7 +41,9 @@ const CountUp: React.FC<{ text: string; ms?: number }> = ({ text, ms = 900 }) =>
 
   if (!m) return <>{text}</>;
   return (
-    <span ref={ref} aria-label={text}>
+    <span ref={ref}>
+      {/* screen readers get the final text once; the counting digits are visual only */}
+      <span className="sr-only">{text}</span>
       <span aria-hidden>
         <span className="inline-grid justify-items-end tabular-nums">
           <span className="invisible col-start-1 row-start-1">{target}</span>

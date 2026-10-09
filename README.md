@@ -61,12 +61,13 @@ src/
 ├── App.tsx              page layout and section order
 ├── data/
 │   ├── site.ts          name, email, social links, status badge
-│   ├── content.ts       hero, story, education, skills, call-to-action text
+│   ├── content.ts       hero, story, education, experience, skills, call-to-action text
 │   └── projects.ts      the projects and their case studies
 ├── components/          sections, effects (Tilt, SectionLift, Reveal, ...)
 │   └── demos/           the three embedded project demos
 └── lib/                 router, scroll bus, cursor light, dialog helper
 public/                  photos, project screenshots and demo videos, resume, social preview
+resume/                  source of the resume PDF
 ```
 
 All copy and links live in `src/data/`, so updating the site rarely means touching a component.
@@ -74,9 +75,19 @@ All copy and links live in `src/data/`, so updating the site rarely means touchi
 | To change… | Edit |
 | --- | --- |
 | Name, email, social links | `src/data/site.ts` |
-| Hero, story, education, skills | `src/data/content.ts` |
+| Hero, story, education, experience, certifications, skills | `src/data/content.ts` |
 | Projects and case studies | `src/data/projects.ts` |
-| Photo and resume | `public/img.webp`, `public/resume.pdf` |
+| Photo | `public/img.webp` |
+| Resume | edit `resume/resume.html`, open it in Chrome, Print → Save as PDF (A4, no headers) to `public/resume.pdf` |
+
+### Adding experience, certificates or skills
+
+Every list in `src/data/content.ts` can grow without touching a component:
+
+- **Experience:** add an object to `EXPERIENCE`, newest first. The first three show; the rest sit behind a "Show all" button.
+- **Certificates:** add an object to `CERTIFICATIONS`. Give it a `url` (opens in a new tab) or an `image` in `public/certificates/` (opens in a viewer on the page). The first six show; the rest fold away.
+- **Skills:** add to any group in `TOOLKIT`, or add a whole new group (`{ label: 'Tools', items: [...] }`). Skills that appear in a project's `stack` get a green dot automatically.
+- **Quick facts under the hero:** the project count and latest role update themselves from `PROJECTS` and `EXPERIENCE`.
 
 ### Adding a project
 

@@ -70,7 +70,7 @@ const App: React.FC = () => {
         <Glance />
 
         {PROJECTS.length === 0 && (
-          <SectionLift as="section" id="building" className="scroll-mt-24 px-1 pt-24 sm:px-0 sm:pt-28">
+          <SectionLift as="section" id="building" className="scroll-mt-24 px-1 pt-16 sm:px-0 sm:pt-28">
             <Reveal>
               <Building />
             </Reveal>
@@ -78,22 +78,22 @@ const App: React.FC = () => {
         )}
 
         {PROJECTS.length > 0 && (
-          <section id="work" className="scroll-mt-24 px-1 pt-24 sm:px-0 sm:pt-28">
+          <section id="work" className="scroll-mt-24 px-1 pt-16 sm:px-0 sm:pt-28">
             <Projects onOpenDemo={setDemo} />
           </section>
         )}
 
-        <SectionLift as="section" id="story" className="scroll-mt-24 px-3 pt-24 sm:px-6 sm:pt-28">
+        <SectionLift as="section" id="story" className="scroll-mt-24 px-3 pt-16 sm:px-6 sm:pt-28">
           <Reveal>
             <Story />
           </Reveal>
         </SectionLift>
 
-        <SectionLift as="section" id="background" className="scroll-mt-24 px-1 pt-24 sm:px-0 sm:pt-28">
+        <SectionLift as="section" id="background" className="scroll-mt-24 px-1 pt-16 sm:px-0 sm:pt-28">
           <Background />
         </SectionLift>
 
-        <SectionLift as="section" id="contact" settle className="scroll-mt-24 pt-24 sm:pt-28">
+        <SectionLift as="section" id="contact" settle className="scroll-mt-24 pt-16 sm:pt-28">
           <Reveal>
             <CallToAction onOpenContact={openContact} />
           </Reveal>

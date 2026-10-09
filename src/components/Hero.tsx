@@ -20,7 +20,7 @@ const outline = 'border border-black/15 bg-white/70 text-neutral-900 dark:border
  * so it stays right however many projects the site grows to.
  */
 const Hero: React.FC = () => {
-  const [first, second] = HERO.title;
+  const [first, ...rest] = SITE.name.split(' ');
 
   return (
     <section id="home" className="relative -mt-24 flex min-h-[100svh] flex-col pt-24">
@@ -32,85 +32,82 @@ const Hero: React.FC = () => {
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f4f4f2] to-transparent dark:from-[#0b0b0c]" />
       </div>
 
-      <div className="relative flex flex-1 flex-col justify-between px-1 pb-8 pt-8 sm:px-2 sm:pt-14">
-        <div>
-          <p style={delay(0)} className="rise inline-flex items-center gap-2 font-mono text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-600 dark:text-neutral-400">
-            <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            {SITE.status}
-          </p>
+      <div className="relative flex flex-1 flex-col justify-center px-1 pb-12 pt-6 sm:px-2 sm:pb-16 sm:pt-10">
+        <p style={delay(0)} className="halo rise inline-flex items-center gap-2 font-mono text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-700 dark:text-neutral-300">
+          <span className="pulse-dot h-1.5 w-1.5 rounded-full bg-emerald-500" />
+          {SITE.status}
+        </p>
 
-          <div className="mt-6 inline-block max-w-full">
-            <h1 className="font-display text-[clamp(4.1rem,19vw,13.5rem)] font-bold uppercase leading-[0.86] tracking-[-0.015em] text-neutral-950 dark:text-white">
-              <span className="sr-only">{SITE.name}, </span>
-              <span className="block overflow-hidden pb-[0.04em]">
-                <span style={delay(80)} className="line-up block">
-                  {first}
-                </span>
-              </span>
-              <span className="block overflow-hidden pb-[0.04em]">
-                <span style={delay(200)} className="line-up block text-neutral-500">
-                  <span aria-hidden className="caret mr-[0.05em] inline-block h-[0.8em] w-[0.03em] min-w-[2px] translate-y-[0.03em] bg-neutral-950 dark:bg-white" />
-                  {second}
-                </span>
-              </span>
-            </h1>
-            <p style={delay(420)} className="rise mt-4 font-mono text-[12.5px] text-neutral-700 sm:text-right dark:text-neutral-300">
-              {HERO.byline}
-            </p>
+        <h1 id="hero-name" className="mt-6 font-display text-[clamp(4.25rem,18vw,10.5rem)] font-bold uppercase leading-[0.86] tracking-[-0.015em] text-neutral-950 sm:text-[clamp(4.25rem,11.5vw,10.5rem)] dark:text-white">
+          <span className="inline-block overflow-hidden pb-[0.04em] align-bottom">
+            <span style={delay(80)} className="line-up inline-block">
+              {first}
+            </span>
+          </span>{' '}
+          <span className="inline-block overflow-hidden pb-[0.04em] align-bottom">
+            <span style={delay(180)} className="line-up inline-block text-neutral-500">
+              {rest.join(' ')}
+              <span aria-hidden className="caret ml-[0.05em] inline-block h-[0.78em] w-[0.03em] min-w-[2px] translate-y-[0.02em] bg-neutral-950 dark:bg-white" />
+            </span>
+          </span>
+        </h1>
+
+        <p style={delay(320)} className="halo rise mt-5 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <span className="font-display text-[1.6rem] font-bold uppercase leading-none tracking-[-0.005em] text-neutral-900 sm:text-[2rem] dark:text-neutral-100">
+            {HERO.role}
+          </span>
+          <span className="font-mono text-[12.5px] uppercase tracking-[0.08em] text-neutral-700 dark:text-neutral-300">
+            <span className="text-neutral-400 dark:text-neutral-500">/ </span>
+            {HERO.focus}
+          </span>
+        </p>
+
+        {/* the description, directly under the name */}
+        <p style={delay(440)} className="halo rise mt-8 max-w-2xl text-balance text-[1.15rem] font-medium leading-[1.4] tracking-[-0.01em] text-neutral-950 sm:mt-10 sm:text-[1.4rem] dark:text-white">
+          {HERO.motto} <span className="text-[#666] dark:text-neutral-400">{HERO.body}</span>
+        </p>
+
+        <div style={delay(540)} className="rise mt-8 sm:mt-10">
+          {/* phones: proper tap targets in one row */}
+          <div className="grid max-w-md grid-cols-[1fr_1fr_auto_auto] gap-2 sm:hidden">
+            <button onClick={() => scrollToSection('work')} className={`${tap} bg-neutral-950 text-white dark:bg-white dark:text-neutral-950`}>
+              View work <span aria-hidden>↓</span>
+            </button>
+            <a href={SITE.resume} target="_blank" rel="noopener noreferrer" className={`${tap} ${outline}`}>
+              Resume <span aria-hidden>↗</span>
+            </a>
+            <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className={`${tap} ${outline} w-11`}>
+              <Github className="h-[18px] w-[18px]" />
+            </a>
+            <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className={`${tap} ${outline} w-11`}>
+              <Linkedin className="h-[18px] w-[18px]" />
+            </a>
           </div>
-        </div>
 
-        <div style={delay(520)} className="rise mt-14">
-          <div className="border-t border-black/10 dark:border-white/10" />
-          <p className="mt-6 font-mono text-[13px] font-medium uppercase tracking-[0.06em] text-neutral-800 dark:text-neutral-200">
-            <span className="mr-2 text-neutral-400 dark:text-neutral-500">//</span>
-            {HERO.motto}
-          </p>
-
-          <div className="mt-10 grid items-end gap-8 md:grid-cols-2">
-            {/* phones: proper tap targets in one row */}
-            <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-2 sm:hidden">
-              <button onClick={() => scrollToSection('work')} className={`${tap} bg-neutral-950 text-white dark:bg-white dark:text-neutral-950`}>
-                View work <span aria-hidden>↓</span>
+          {/* larger screens: quiet mono links */}
+          <ul className="halo hidden flex-wrap items-center gap-x-6 gap-y-3 sm:flex">
+            <li>
+              <button onClick={() => scrollToSection('work')} className={link}>
+                Explore my work
+                <span aria-hidden className="transition group-hover:translate-y-0.5">↓</span>
               </button>
-              <a href={SITE.resume} target="_blank" rel="noopener noreferrer" className={`${tap} ${outline}`}>
+            </li>
+            <li>
+              <a href={SITE.resume} target="_blank" rel="noopener noreferrer" className={link}>
                 Resume <span aria-hidden>↗</span>
               </a>
-              <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className={`${tap} ${outline} w-11`}>
-                <Github className="h-[18px] w-[18px]" />
+            </li>
+            <li>
+              <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer" className={link}>
+                GitHub <span aria-hidden>↗</span>
               </a>
-              <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className={`${tap} ${outline} w-11`}>
-                <Linkedin className="h-[18px] w-[18px]" />
+            </li>
+            <li>
+              <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer" className={link}>
+                LinkedIn <span aria-hidden>↗</span>
               </a>
-            </div>
-
-            {/* larger screens: quiet mono links */}
-            <ul className="hidden flex-wrap items-center gap-x-6 gap-y-3 sm:flex">
-              <li>
-                <button onClick={() => scrollToSection('work')} className={link}>
-                  Explore my work
-                  <span aria-hidden className="transition group-hover:translate-y-0.5">↓</span>
-                </button>
-              </li>
-              <li>
-                <a href={SITE.resume} target="_blank" rel="noopener noreferrer" className={link}>
-                  Resume <span aria-hidden>↗</span>
-                </a>
-              </li>
-              <li>
-                <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer" className={link}>
-                  GitHub <span aria-hidden>↗</span>
-                </a>
-              </li>
-              <li>
-                <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer" className={link}>
-                  LinkedIn <span aria-hidden>↗</span>
-                </a>
-              </li>
-            </ul>
-            <p className="max-w-md font-mono text-[12.5px] leading-[1.75] text-neutral-600 md:justify-self-end dark:text-neutral-400">{HERO.body}</p>
-          </div>
-          <div className="mt-8 border-t border-black/10 dark:border-white/10" />
+            </li>
+          </ul>
         </div>
       </div>
     </section>

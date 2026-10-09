@@ -30,7 +30,7 @@ Every project has a working demo embedded in the site, plus a case study (proble
 
 ## What's in the site
 
-- **Editorial hero.** A giant condensed two-tone title (SOFTWARE / ENGINEER) over a dotted 3D wave drawn on a `<canvas>` (concentric rings displaced by travelling sine waves, perspective-projected, ~10k points batched by opacity). The wave follows the theme, leans gently toward the mouse, pauses off screen and holds still for reduced motion. The hero never mentions individual projects, so it scales as projects are added.
+- **Editorial hero.** Your name in giant condensed two-tone type, with your role and a short description below, over a dotted 3D wave drawn on a `<canvas>` (concentric rings displaced by travelling sine waves, perspective-projected, ~10k points batched by opacity). The wave follows the theme, leans gently toward the mouse, pauses off screen and holds still for reduced motion. The hero never mentions individual projects, so it scales as projects are added.
 - **Embedded live demos.** Each project opens in a browser-style overlay without leaving the page.
 - **Case-study pages** on a tiny hash router (`#/work/<id>`): links are shareable and the Back button closes the page.
 - **Keyboard command menu (⌘K / Ctrl+K).** Jump to any section, open a demo or case study, copy the email, grab the resume or switch theme from the keyboard.
@@ -88,7 +88,7 @@ Every list in `src/data/content.ts` can grow without touching a component:
 - **Experience:** add an object to `EXPERIENCE`, newest first. The first three show; the rest sit behind a "Show all" button.
 - **Certificates:** add an object to `CERTIFICATIONS`. Give it a `url` (opens in a new tab) or an `image` in `public/certificates/` (opens in a viewer on the page). The first six show; the rest fold away.
 - **Skills:** add to any group in `TOOLKIT`, or add a whole new group (`{ label: 'Cloud', items: [...] }`). CS fundamentals live in `EDUCATION.coursework` and show in the education card. List only what you could be interviewed on.
-- **Hero text:** `HERO` in `src/data/content.ts` (the two title words, byline, `//` line and the short intro). Section numbers in the nav and headings come from `NAV` in `src/data/site.ts`.
+- **Hero text:** `HERO` in `src/data/content.ts` (role, focus, the `//` line and the short intro; the name comes from `SITE`). Section numbers in the nav and headings come from `NAV` in `src/data/site.ts`.
 
 ### Adding a project
 

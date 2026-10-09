@@ -1,15 +1,17 @@
 /** Copy for the non-project sections. Edit freely: every list below can grow, and the layout adapts. */
 
 export const HERO = {
-  /** The two giant lines. The second is drawn in grey with a blinking caret. Keep each word short. */
-  title: ['Software', 'Engineer'] as const,
-  /** Small line under the title, right-aligned on wide screens. */
-  byline: 'Aditya Tiwari / CS undergrad, IILM University',
+  /** Under the giant name: what I am, then my focus in small mono text. (The name itself comes from SITE.) */
+  role: 'Software developer',
+  focus: 'Backend · Full-stack · Applied AI',
   /** The "// ..." line: how I work, in one sentence. */
   motto: 'I build reliable, scalable software end to end.',
-  /** Two sentences at most. About me, never about a specific project, so it stays true as projects change. */
+  /**
+   * Shown in grey right after the line above. Each sentence adds something the role line does not: who I am,
+   * my foundation, what I'm after. About me, never about a specific project, so it stays true as projects change.
+   */
   body:
-    'B.Tech Computer Science student (class of 2029, CGPA 8.79/10) working across backend, full-stack and applied AI in Java, Python and TypeScript. Looking for a software engineering internship.'
+    'From database schema and REST APIs to the interface people use, in Java, Python and TypeScript. CS undergrad at IILM University (CGPA 8.79), grounded in data structures, algorithms and OOP.'
 };
 
 export const STORY = {

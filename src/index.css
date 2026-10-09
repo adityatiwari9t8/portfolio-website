@@ -258,3 +258,7 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .line-up, .caret, .fade-in { animation: none; }
 }
+
+/* Soft halo in the page colour behind small hero text, so the dotted wave never runs through the letters */
+.halo { text-shadow: 0 0 6px #f4f4f2, 0 0 14px #f4f4f2, 0 0 22px #f4f4f2; }
+.dark .halo { text-shadow: 0 0 6px #0b0b0c, 0 0 14px #0b0b0c, 0 0 22px #0b0b0c; }

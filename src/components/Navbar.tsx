@@ -84,6 +84,19 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('home');
   const [scrolled, setScrolled] = useState(false);
+  // On phones the big name in the hero already says who this is, so the bar shows a monogram until it scrolls away.
+  const [heroName, setHeroName] = useState(true);
+
+  useEffect(() => {
+    const el = document.getElementById('hero-name');
+    if (!el) {
+      setHeroName(false);
+      return;
+    }
+    const io = new IntersectionObserver(([e]) => setHeroName(e.isIntersecting), { rootMargin: '-64px 0px 0px 0px' });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -104,6 +117,9 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
     });
     return () => io.disconnect();
   }, []);
+
+  const compact = heroName && !open;
+  const initials = SITE.name.split(' ').map((w) => w[0]);
 
   const goTo = (id: string) => {
     setOpen(false);
@@ -131,7 +147,11 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
           aria-label={`${SITE.name}, back to top`}
           className="whitespace-nowrap font-display text-[19px] font-bold uppercase tracking-[0.01em] text-neutral-950 dark:text-white"
         >
-          {SITE.name}
+          <span aria-hidden className={`${compact ? 'fade-up flex md:hidden' : 'hidden'} h-9 w-9 items-center justify-center rounded-[10px] bg-neutral-950 text-[15px] tracking-[-0.02em] text-white dark:bg-white dark:text-neutral-950`}>
+            {initials[0]}
+            <span className="text-neutral-400 dark:text-neutral-500">{initials[1]}</span>
+          </span>
+          <span className={compact ? 'fade-up max-md:hidden' : 'fade-up'}>{SITE.name}</span>
         </button>
 
         <ul className="hidden items-center gap-7 lg:flex">

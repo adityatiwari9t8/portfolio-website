@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
 import Projects from './components/Projects';
@@ -8,22 +8,36 @@ import CallToAction from './components/CallToAction';
 import ContactModal from './components/ContactModal';
 import DemoOverlay from './components/DemoOverlay';
 import CaseStudy from './components/CaseStudy';
+import CommandPalette from './components/CommandPalette';
 import ScrollProgress from './components/ScrollProgress';
-import Glance from './components/Glance';
 import Building from './components/Building';
 import MobileBar from './components/MobileBar';
 import Footer from './components/Footer';
 import Reveal from './components/Reveal';
-import SectionLift from './components/SectionLift';
 import { useStudyRoute } from './lib/route';
 import { useCursorLight } from './lib/useCursorLight';
 import { closeStudy } from './lib/transition';
 import { PROJECTS, Project } from './data/projects';
 
+const section = 'scroll-mt-24 pt-20 sm:pt-28';
+
 const App: React.FC = () => {
   const [contactOpen, setContactOpen] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
   const [demo, setDemo] = useState<Project | null>(null);
-  const openContact = () => setContactOpen(true);
+  const openContact = useCallback(() => setContactOpen(true), []);
+
+  // ⌘K / Ctrl+K opens the command menu from anywhere (and closes it again).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey) && !e.altKey && !e.shiftKey) {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, []);
 
   // Cards marked .glow light up under the mouse pointer.
   useEffect(() => {
@@ -56,6 +70,7 @@ const App: React.FC = () => {
       </a>
       <ScrollProgress />
       <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onOpenContact={openContact} onOpenDemo={setDemo} />
       <CaseStudy
         project={studyProject}
         onClose={() => closeStudy(study.close, study.id)}
@@ -66,38 +81,37 @@ const App: React.FC = () => {
       <Navbar onOpenContact={openContact} />
 
       <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-3 pt-24 outline-none sm:px-6">
-        <Hero onOpenContact={openContact} />
-        <Glance />
+        <Hero />
 
         {PROJECTS.length === 0 && (
-          <SectionLift as="section" id="building" className="scroll-mt-24 px-1 pt-16 sm:px-0 sm:pt-28">
+          <section id="building" className={`${section} px-1 sm:px-0`}>
             <Reveal>
               <Building />
             </Reveal>
-          </SectionLift>
+          </section>
         )}
 
         {PROJECTS.length > 0 && (
-          <section id="work" className="scroll-mt-24 px-1 pt-16 sm:px-0 sm:pt-28">
+          <section id="work" className={`${section} px-1 sm:px-0`}>
             <Projects onOpenDemo={setDemo} />
           </section>
         )}
 
-        <SectionLift as="section" id="story" className="scroll-mt-24 px-3 pt-16 sm:px-6 sm:pt-28">
+        <section id="background" className={`${section} px-1 sm:px-0`}>
+          <Background />
+        </section>
+
+        <section id="story" className={`${section} px-3 sm:px-6`}>
           <Reveal>
             <Story />
           </Reveal>
-        </SectionLift>
+        </section>
 
-        <SectionLift as="section" id="background" className="scroll-mt-24 px-1 pt-16 sm:px-0 sm:pt-28">
-          <Background />
-        </SectionLift>
-
-        <SectionLift as="section" id="contact" settle className="scroll-mt-24 pt-16 sm:pt-28">
+        <section id="contact" className={section}>
           <Reveal>
             <CallToAction onOpenContact={openContact} />
           </Reveal>
-        </SectionLift>
+        </section>
       </main>
 
       <MobileBar onOpenContact={openContact} />

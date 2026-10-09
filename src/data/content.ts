@@ -1,22 +1,22 @@
 /** Copy for the non-project sections. Edit freely: every list below can grow, and the layout adapts. */
-import { PROJECTS } from './projects';
 
 export const HERO = {
-  /** Small line above the headline, so the name is the first thing a visitor reads. */
-  intro: "Hi, I'm Aditya Tiwari",
-  headline: ['Software that', 'works,', 'from idea to live demo.'] as const,
-  /** Two sentences at most: the hero is meant to be read in five seconds. */
+  /** The two giant lines. The second is drawn in grey with a blinking caret. Keep each word short. */
+  title: ['Software', 'Engineer'] as const,
+  /** Small line under the title, right-aligned on wide screens. */
+  byline: 'Aditya Tiwari / CS undergrad, IILM University',
+  /** The "// ..." line: how I work, in one sentence. */
+  motto: 'I build reliable, scalable software end to end.',
+  /** Two sentences at most. About me, never about a specific project, so it stays true as projects change. */
   body:
-    'B.Tech CSE student at IILM University, Gurugram. I build web apps, dashboards and algorithm visualizers, and every project below has a live demo you can open right here.'
+    'B.Tech Computer Science student (class of 2029, CGPA 8.79/10) working across backend, full-stack and applied AI in Java, Python and TypeScript. Looking for a software engineering internship.'
 };
 
 export const STORY = {
-  lead:
-    "Most of what I build starts with a question I couldn't answer just by looking.",
-  fade:
-    ' Which prerequisite am I missing? Where is my balance heading? Why is one search strategy faster than another?',
+  lead: "I'm a software developer who likes owning a feature from the database schema to the last pixel.",
+  fade: ' I care about correctness, clean APIs and code the next engineer can read without asking me.',
   more:
-    "Each project turns one of those questions into something you can click: a learning roadmap, a 30-day balance forecast, a side-by-side solver race. I like small, complete things, and I write down what each one can't do yet."
+    "Underneath that are strong CS fundamentals (data structures, algorithms, operating systems, databases and networks) that I keep sharp with regular interview practice. Every project I ship comes with source code and a case study: the design decisions, the trade-offs and what I'd improve next. Right now I'm going deeper into backend systems, concurrency and applied machine learning."
 };
 
 /**
@@ -32,21 +32,23 @@ export interface StoryPhoto {
 }
 export const STORY_PHOTOS: [StoryPhoto] | [StoryPhoto, StoryPhoto] = [
   { src: '/story-notes.webp', alt: 'An open notebook, glasses and a pen in front of a screen of code', position: 'center', caption: 'Learning by building', kind: 'photo' },
-  { src: '/story-flowchart.webp', alt: 'A hand-drawn flowchart on paper', position: 'center', caption: 'Questions into logic', kind: 'photo' }
+  { src: '/story-flowchart.webp', alt: 'A hand-drawn flowchart on paper', position: 'center', caption: 'Design before code', kind: 'photo' }
 ];
 
 /** "Right now" list in the Background section. Keep it short and current. */
 export const NOW = [
-  'Adding new projects to this portfolio',
-  'Practising data structures and algorithms on LeetCode'
+  'Building a concurrency-safe booking backend: seat holds, idempotent payments and load tests',
+  'Solving data structures and algorithms problems for coding interviews, in Java',
+  'Studying system design: caching, queues, replication and sharding'
 ];
 
 export const EDUCATION = {
   degree: 'B.Tech in Computer Science & Engineering',
   school: 'IILM University, Gurugram',
   period: '2025 to 2029',
-  gpa: '8.8 / 10',
-  coursework: ['Data Structures', 'Algorithms', 'Operating Systems', 'DBMS', 'Computer Networks', 'OOP']
+  gpa: '8.79 / 10',
+  /** Shown as "CS fundamentals" in the education card: what top companies interview on. */
+  coursework: ['Data structures & algorithms', 'Object-oriented programming', 'Operating systems', 'Database systems (DBMS)', 'Computer networks']
 };
 
 /**
@@ -79,7 +81,10 @@ export const EXPERIENCE: Experience[] = [
  */
 export interface Certification {
   title: string;
+  /** Who issued it, and when if known: "BCG via Forage · Jun 2026". */
   issuer: string;
+  /** One line on what it covered. */
+  note?: string;
   url?: string;
   image?: { src: string; width: number; height: number };
 }
@@ -87,19 +92,22 @@ export interface Certification {
 export const CERTIFICATIONS: Certification[] = [
   {
     title: 'Introduction to Financial Engineering and Risk Management',
-    issuer: 'Columbia University, on Coursera',
+    issuer: 'Columbia University via Coursera',
+    note: 'Quantitative modelling of interest rates, fixed income and option pricing using binomial models.',
     url: 'https://www.coursera.org/account/accomplishments/records/PQPATI9HQWU0'
   },
   {
-    title: 'BCG Strategy Consulting Job Simulation',
-    issuer: 'Forage, June 2026. Market research, financial modelling, survey design and data analysis',
+    title: 'Strategy Consulting Job Simulation',
+    issuer: 'BCG via Forage · Jun 2026',
+    note: 'Market research, financial modelling, consumer survey design and data analysis for a client case.',
     image: { src: '/certificates/bcg-strategy-consulting.webp', width: 1600, height: 1130 }
   }
 ];
 
 /**
  * Skills in the Background section, as groups of chips. Add a skill to a group, or add a whole new group
- * (for example { label: 'Tools', items: [...] }). Skills that appear in a project's `stack` get a marker automatically.
+ * (for example { label: 'Cloud', items: [...] }). List only what you can be interviewed on: skills, not every tool you've opened.
+ * CS fundamentals are shown with education (EDUCATION.coursework), so they are not repeated here.
  */
 export interface SkillGroup {
   label: string;
@@ -107,23 +115,24 @@ export interface SkillGroup {
 }
 
 export const TOOLKIT: SkillGroup[] = [
-  { label: 'Core languages', items: ['Python', 'Java', 'JavaScript', 'C', 'TypeScript'] },
-  { label: 'I build with', items: ['HTML & CSS', 'React', 'Tailwind CSS', 'Vite', 'Git & GitHub'] }
+  { label: 'Backend & data', items: ['Spring Boot', 'Node.js', 'Express', 'REST APIs', 'PostgreSQL'] },
+  { label: 'Frontend', items: ['React', 'Tailwind CSS', 'HTML & CSS'] },
+  { label: 'DevOps & tools', items: ['Docker', 'Linux', 'Git & GitHub'] }
 ];
 
 /** Shown as the "open to" list in the Background section. */
 export const OPEN_TO = [
-  'Software and web-development internships',
-  'Remote, hybrid or on-site, anywhere',
-  'Team projects and collaborations'
+  'Software engineering internships',
+  'Backend, full-stack or ML-adjacent teams',
+  'Remote, hybrid or on-site, anywhere'
 ];
 
 /** Closing call-to-action. */
 export const CTA = {
-  before: 'Got an internship or project? Let’s',
+  before: 'Hiring software engineering interns? Let’s',
   accent: 'talk.',
   after: '',
-  body: 'Internship, team opportunity or collaboration, I’d love to hear about it. My resume and code are one click away.'
+  body: 'Internship roles, team projects or questions about my work. My resume and code are one click away.'
 };
 
 /** Text on the closing card of every case-study page. */
@@ -140,30 +149,8 @@ export interface QuickContact {
 }
 export const QUICK_CONTACT: QuickContact[] = [];
 
-export const CONTACT_OPTIONS = ['Internship or job opportunity', 'Collaboration', 'Something else'];
+export const CONTACT_OPTIONS = ['Internship or job opportunity', 'Interview or hiring process', 'Project or collaboration', 'Something else'];
 
-/**
- * Quick facts shown right under the hero, for a ten-second scan. Kept to things the hero does not already say.
- * The project count and latest role update themselves from PROJECTS and EXPERIENCE. Best with four cards.
- */
-const withDemo = PROJECTS.filter((p) => p.demo || p.live).length;
-const latest = EXPERIENCE[0];
-
-export const GLANCE: { key: 'role' | 'grad' | 'build' | 'exp'; label: string; value: string }[] = [
-  {
-    key: 'role',
-    label: 'Projects',
-    value:
-      withDemo === PROJECTS.length
-        ? `${PROJECTS.length} built, each with a live demo`
-        : `${PROJECTS.length} built, ${withDemo} with a live demo`
-  },
-  { key: 'grad', label: 'Academics', value: `CGPA ${EDUCATION.gpa}` },
-  { key: 'build', label: 'Built with', value: 'React, TypeScript, Tailwind' },
-  ...(latest
-    ? [{ key: 'exp' as const, label: 'Experience', value: `${latest.role}, ${latest.org.split(',')[0]}` }]
-    : [])
-];
 
 /**
  * Shown in the "building" section while PROJECTS is empty. Update `status` as work moves along;

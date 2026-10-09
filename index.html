@@ -4,30 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Aditya Tiwari | CS Student & Web Developer in Gurugram</title>
-  <meta name="description" content="Aditya Tiwari is a Computer Science student at IILM University, Gurugram, looking for a software or web-development internship. Live demos and source code for three projects, plus resume." />
+  <title>Aditya Tiwari | Software Developer</title>
+  <meta name="description" content="Aditya Tiwari is a software developer and B.Tech Computer Science student (class of 2029) at IILM University, working across backend, full-stack and applied AI in Java, Python and TypeScript. Looking for a software engineering internship." />
   <meta name="author" content="Aditya Tiwari" />
-  <meta name="theme-color" content="#0b0b0c" />
-  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#f4f4f2" />
+  <meta name="color-scheme" content="light dark" />
   <link rel="canonical" href="__SITE_URL__/" />
 
-  <link rel="preload" as="image" href="/img.webp" type="image/webp" fetchpriority="high" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Aditya Tiwari" />
-  <meta property="og:title" content="Aditya Tiwari | CS Student & Web Developer in Gurugram" />
-  <meta property="og:description" content="Three projects with live demos and source code, plus resume. Looking for a software or web-development internship." />
+  <meta property="og:title" content="Aditya Tiwari | Software Developer" />
+  <meta property="og:description" content="Software developer and B.Tech CS student working across backend, full-stack and applied AI. Looking for a software engineering internship." />
   <meta property="og:url" content="__SITE_URL__/" />
   <meta property="og:image" content="__SITE_URL__/og.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:image:alt" content="Aditya Tiwari, Computer Science student and developer" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Aditya Tiwari | CS Student & Web Developer in Gurugram" />
-  <meta name="twitter:description" content="Three projects with live demos and source code, plus resume. Looking for a software or web-development internship." />
+  <meta name="twitter:title" content="Aditya Tiwari | Software Developer" />
+  <meta name="twitter:description" content="Software developer and B.Tech CS student working across backend, full-stack and applied AI. Looking for a software engineering internship." />
   <meta name="twitter:image" content="__SITE_URL__/og.jpg" />
 
   <script type="application/ld+json">
@@ -37,11 +36,11 @@
     "name": "Aditya Tiwari",
     "url": "__SITE_URL__/",
     "image": "__SITE_URL__/og.jpg",
-    "jobTitle": "Computer Science student and developer",
+    "jobTitle": "Software developer",
     "affiliation": { "@type": "CollegeOrUniversity", "name": "IILM University" },
     "address": { "@type": "PostalAddress", "addressLocality": "Gurugram", "addressCountry": "IN" },
     "alumniOf": { "@type": "CollegeOrUniversity", "name": "IILM University" },
-    "knowsAbout": ["Web development", "React", "TypeScript", "Python", "Java", "C", "Data structures", "Algorithms"],
+    "knowsAbout": ["Software engineering", "Backend development", "Data structures", "Algorithms", "Java", "Python", "TypeScript", "SQL", "Spring Boot", "Node.js", "React", "PostgreSQL", "Docker"],
     "sameAs": [
       "https://github.com/adityatiwari9t8",
       "https://www.linkedin.com/in/adityatiwari9t8",
@@ -51,10 +50,13 @@
   </script>
 
   <script>
+    // Light by default; a visitor who picked dark gets it back before first paint.
     (function () {
       try {
-        var t = sessionStorage.getItem('theme');
-        if (t !== 'light') document.documentElement.classList.add('dark');
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0b0b0c');
+        }
       } catch (e) {}
     })();
   </script>
@@ -63,8 +65,8 @@
   <div id="root"></div>
   <noscript>
     <p style="font-family:system-ui,sans-serif;padding:2rem;max-width:40rem;margin:0 auto">
-      Aditya Tiwari is a Computer Science student at IILM University who builds web apps, dashboards and
-      data-driven tools. Please enable JavaScript to see the portfolio, or write to
+      Aditya Tiwari is a software developer and Computer Science student at IILM University, looking for a
+      software engineering internship. Please enable JavaScript to see the portfolio, or write to
       adityatiwari.connect@gmail.com.
     </p>
   </noscript>

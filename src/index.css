@@ -76,6 +76,38 @@ body {
   filter: none;
 }
 
+/* Entrance used by the hero (staggered with --d) and by menus and dialogs */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+.fade-up { animation: fade-up 0.35s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+
+/* Soft pulse on "available" status dots */
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+  50% { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+}
+.pulse-dot { animation: pulse-dot 2.4s ease-in-out infinite; }
+
+/* "Try dark mode" hint on the navbar moon: a dot that bounces like a notification badge */
+@keyframes hint-bounce {
+  0%, 100% { transform: translateY(0); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
+  50% { transform: translateY(-4px); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+}
+@keyframes hint-ping {
+  75%, 100% { transform: scale(2.2); opacity: 0; }
+}
+@keyframes moon-wiggle {
+  0%, 84%, 100% { transform: rotate(0); }
+  88% { transform: rotate(-18deg); }
+  92% { transform: rotate(14deg); }
+  96% { transform: rotate(-8deg); }
+}
+.hint-bounce { animation: hint-bounce 1s infinite; }
+.hint-ping { animation: hint-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite; }
+.moon-wiggle { animation: moon-wiggle 4s ease-in-out 2s infinite; transform-origin: 50% 50%; }
+
 /* Staggered entrance for the hero on page load */
 .rise {
   animation: fade-up 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
@@ -88,11 +120,6 @@ body {
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-.mask-linear-fade {
-  -webkit-mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
-  mask-image: linear-gradient(to right, transparent, black 4%, black 96%, transparent);
-}
 
 /* Hero: slow ambient colour wash plus a pointer-following highlight */
 .hero-glow {
@@ -107,29 +134,6 @@ body {
     radial-gradient(700px circle at 0% 100%, rgba(52, 211, 153, 0.10), transparent 55%);
 }
 
-/* Headline words rise in one by one */
-@keyframes word-in {
-  from { opacity: 0; transform: translateY(0.5em); filter: blur(8px); }
-  to { opacity: 1; transform: none; filter: none; }
-}
-.word {
-  display: inline-block;
-  animation: word-in 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
-  animation-delay: var(--d, 0ms);
-}
-
-/* Portrait float and its floating chips */
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-.float { animation: float 7s ease-in-out infinite; }
-@keyframes chip-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-.chip-float { animation: chip-float 5s ease-in-out infinite; }
-
 /* Cards that light up under the pointer */
 .glow {
   background-image: radial-gradient(320px circle at var(--gx, -400px) var(--gy, -400px), rgba(99, 102, 241, 0.09), transparent 70%);
@@ -139,8 +143,8 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .word { animation: none; }
-  .float, .chip-float { animation: none; }
+  .hint-bounce, .hint-ping, .moon-wiggle { animation: none; }
+  .hint-ping { display: none; }
   .hero-glow { transition: none; }
   .reveal { opacity: 1; transform: none; filter: none; transition: none; }
   .pulse-dot, .rise, .fade-up { animation: none; }
@@ -152,12 +156,9 @@ body {
 /* The card you are touching rises above its neighbours */
 .tilt[data-hot] { z-index: 20; }
 /* Children can sit at different depths inside a tilting card. `translate` composes with transform, so hover utilities still work. */
-.depth-1 { translate: 0 0 calc(18px * var(--dk, 1)); }
-.depth-2 { translate: 0 0 calc(40px * var(--dk, 1)); }
-.depth-3 { translate: 0 0 calc(70px * var(--dk, 1)); }
-/* Moving shadow under the card's first child while hovered */
-.tilt-shadow > :first-child { transition: box-shadow 0.25s ease; }
-.tilt-shadow[data-hot] > :first-child { box-shadow: var(--ts) !important; }
+.depth-1 { translate: 0 0 10px; }
+.depth-2 { translate: 0 0 20px; }
+.depth-3 { translate: 0 0 32px; }
 
 /* Highlight that follows the pointer across a tilting card */
 .tilt-glare {
@@ -174,17 +175,6 @@ body {
   .depth-1, .depth-2, .depth-3 { translate: none; }
 }
 
-/* 3D headlines (see Headline.tsx). Words sit at different depths and swing against each other when the heading tilts. */
-.w3d { display: inline-block; margin-right: 0.04em; translate: 0 0 calc(var(--z, 20) * 1px * var(--dk, 1)); }
-/* Soft shadow that slides with the pointer, only while the heading is being touched */
-.tilt[data-hot] .w3d {
-  text-shadow:
-    calc(var(--nx, 0) * var(--th, 0) * -7px) calc(var(--ny, 0) * var(--th, 0) * -7px + var(--th, 0) * 7px) calc(var(--th, 0) * 12px) rgba(15, 15, 25, 0.16);
-}
-.dark .tilt[data-hot] .w3d {
-  text-shadow:
-    calc(var(--nx, 0) * var(--th, 0) * -6px) calc(var(--ny, 0) * var(--th, 0) * -6px + var(--th, 0) * 6px) calc(var(--th, 0) * 12px) rgba(129, 140, 248, 0.3);
-}
 /* Scroll-in: each word flips up from below, one after another */
 .flip-word {
   transform-origin: 50% 100%;
@@ -197,8 +187,6 @@ body {
   transform: perspective(600px) rotateX(-75deg) translateY(0.35em);
 }
 @media (prefers-reduced-motion: reduce) {
-  .w3d { translate: none; }
-  .tilt[data-hot] .w3d, .dark .tilt[data-hot] .w3d { text-shadow: none; }
   .flip-word { transition: none; }
   .reveal:not(.is-visible) .flip-word { opacity: 1; transform: none; }
 }
@@ -254,34 +242,19 @@ body {
   .pmedia { translate: none; scale: none; }
 }
 
-/* Touch screens: the pose is driven by scroll, so keep it clean (no persistent text shadow under headings) */
-@media (hover: none) {
-  /* On a narrow screen layers pushed far forward would swell past the card edge, so depth is mostly flattened */
-  :root { --dk: 0.25; }
-  .tilt[data-hot] .w3d, .dark .tilt[data-hot] .w3d { text-shadow: none !important; }
+/* Hero (see Hero.tsx): each title line slides up out of its own mask, then a caret blinks */
+@keyframes line-up {
+  from { transform: translateY(105%); }
+  to { transform: none; }
 }
-
-/* Body copy that moves with its heading (see Story.tsx): same flip-in and pointer-following glow, gentler so it stays readable. */
-.wbody { display: inline-block; }
-.tilt[data-hot] .wbody {
-  text-shadow:
-    calc(var(--nx, 0) * var(--th, 0) * -4px) calc(var(--ny, 0) * var(--th, 0) * -4px + var(--th, 0) * 4px) calc(var(--th, 0) * 9px) rgba(15, 15, 25, 0.1);
+.line-up { animation: line-up 0.9s cubic-bezier(0.2, 0.75, 0.1, 1) both; animation-delay: var(--d, 0ms); }
+@keyframes caret {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
-.dark .tilt[data-hot] .wbody {
-  text-shadow:
-    calc(var(--nx, 0) * var(--th, 0) * -4px) calc(var(--ny, 0) * var(--th, 0) * -4px + var(--th, 0) * 4px) calc(var(--th, 0) * 9px) rgba(129, 140, 248, 0.22);
-}
-@media (hover: none), (prefers-reduced-motion: reduce) {
-  .tilt[data-hot] .wbody, .dark .tilt[data-hot] .wbody { text-shadow: none !important; }
-}
-
-/* Portrait bands (see Hero.tsx): permanent fluted-glass slices of the photo. */
-.pband { filter: blur(calc(var(--b, 0) * 1px)); }
-.dark .pband { filter: brightness(0.8) blur(calc(var(--b, 0) * 1px)); }
-/* Each rib catches a little light on its left edge and falls into shade on its right. */
-.prib {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 38%, rgba(0, 0, 0, 0.16) 100%);
-}
-.dark .prib {
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 38%, rgba(0, 0, 0, 0.3) 100%);
+.caret { animation: caret 1.05s step-end infinite; }
+@keyframes fade-in { from { opacity: 0; } }
+.fade-in { animation: fade-in 1.6s ease 0.2s both; }
+@media (prefers-reduced-motion: reduce) {
+  .line-up, .caret, .fade-in { animation: none; }
 }

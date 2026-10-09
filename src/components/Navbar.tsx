@@ -1,67 +1,104 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Menu, X, Github, Linkedin, Code2, Sun, Moon, ArrowUpRight } from 'lucide-react';
-import { NAV, SITE } from '../data/site';
-import { PROJECTS } from '../data/projects';
-import Tilt from './Tilt';
-import { changeTheme } from '../lib/transition';
-
-// "Work" appears once there is at least one project; until then "Building" stands in for it.
-const LINKS = NAV.filter((n) => (n.id === 'work' ? PROJECTS.length > 0 : n.id === 'building' ? PROJECTS.length === 0 : true));
+import React, { useEffect, useState } from 'react';
+import { Menu, X, Sun, Moon, ArrowUpRight } from 'lucide-react';
+import { SITE } from '../data/site';
+import { dismissThemeHint, toggleTheme, useTheme } from '../lib/theme';
+import { scrollToSection } from '../lib/scroll';
+import { SECTIONS, sectionNumber } from '../lib/sections';
 
 interface NavbarProps {
   onOpenContact: () => void;
 }
 
+/**
+ * Moon button for the light theme, with a bouncing dot and a small "Try dark mode" note
+ * until the visitor has switched once (remembered, so it never nags twice).
+ */
+const ThemeButton: React.FC<{ className: string }> = ({ className }) => {
+  const { dark, showHint } = useTheme();
+  const [bubble, setBubble] = useState(false);
+
+  // The note slides in a moment after load, so it doesn't compete with the hero, then tucks itself away.
+  useEffect(() => {
+    if (!showHint) {
+      setBubble(false);
+      return;
+    }
+    const show = window.setTimeout(() => setBubble(true), 2200);
+    const hide = window.setTimeout(() => setBubble(false), 11000);
+    return () => {
+      window.clearTimeout(show);
+      window.clearTimeout(hide);
+    };
+  }, [showHint]);
+
+  const onClick = (e: React.MouseEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    toggleTheme({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  };
+
+  return (
+    <div className="relative">
+      <button
+        onClick={onClick}
+        aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-describedby={showHint ? 'theme-hint' : undefined}
+        className={className}
+      >
+        {dark ? <Sun className="h-4 w-4" /> : <Moon className={`h-4 w-4 ${showHint ? 'moon-wiggle' : ''}`} />}
+        {showHint && (
+          <span aria-hidden className="pointer-events-none absolute right-1 top-1 flex h-2.5 w-2.5">
+            <span className="hint-ping absolute inline-flex h-full w-full rounded-full bg-indigo-500/60" />
+            <span className="hint-bounce relative inline-flex h-2.5 w-2.5 rounded-full bg-indigo-500 ring-2 ring-white" />
+          </span>
+        )}
+      </button>
+
+      {showHint && (
+        <div
+          id="theme-hint"
+          role="status"
+          className={`absolute right-0 top-[calc(100%+12px)] z-50 w-max max-w-[15rem] transition duration-300 ${
+            bubble ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-1 opacity-0'
+          }`}
+        >
+          <div className="relative flex items-center gap-2 rounded-2xl bg-neutral-950 py-2 pl-3.5 pr-2 text-[13px] font-medium text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.45)]">
+            <span aria-hidden className="absolute -top-1 right-3.5 h-2.5 w-2.5 rotate-45 bg-neutral-950" />
+            <Moon className="h-3.5 w-3.5 shrink-0 text-indigo-300" aria-hidden />
+            <span>Try dark mode for the best experience</span>
+            <button
+              onClick={dismissThemeHint}
+              aria-label="Dismiss dark mode tip"
+              tabIndex={bubble ? 0 : -1}
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-neutral-400 transition hover:bg-white/10 hover:text-white"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState('home');
-  const [dark, setDark] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    setDark(document.documentElement.classList.contains('dark'));
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const toggleTheme = (e: React.MouseEvent<HTMLElement>) => {
-    const next = !dark;
-    const r = e.currentTarget.getBoundingClientRect();
-    changeTheme(
-      () => {
-        setDark(next);
-        document.documentElement.classList.toggle('dark', next);
-        try {
-          sessionStorage.setItem('theme', next ? 'dark' : 'light');
-        } catch {
-          /* storage unavailable: theme still applies for this visit */
-        }
-      },
-      r.left + r.width / 2,
-      r.top + r.height / 2
-    );
-  };
-
-  // Sliding highlight: sits behind the hovered link, or the link for the section on screen.
-  const list = useRef<HTMLUListElement | null>(null);
-  const [hover, setHover] = useState<string | null>(null);
-  const [pill, setPill] = useState({ x: 0, w: 0, show: false });
-  const target = hover ?? active;
-  useLayoutEffect(() => {
-    const place = () => {
-      const el = list.current?.querySelector<HTMLElement>(`[data-nav="${target}"]`);
-      setPill((p) => (el ? { x: el.offsetLeft, w: el.offsetWidth, show: true } : { ...p, show: false }));
-    };
-    place();
-    window.addEventListener('resize', place);
-    document.fonts?.ready.then(place);
-    return () => window.removeEventListener('resize', place);
-  }, [target]);
-
+  // Highlight the link for the section in the middle of the screen.
   useEffect(() => {
-    const ids = ['home', ...LINKS.map((n) => n.id)];
     const io = new IntersectionObserver(
       (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
       { rootMargin: '-40% 0px -50% 0px' }
     );
-    ids.forEach((id) => {
+    ['home', ...SECTIONS.map((n) => n.id)].forEach((id) => {
       const el = document.getElementById(id);
       if (el) io.observe(el);
     });
@@ -70,128 +107,97 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
   const goTo = (id: string) => {
     setOpen(false);
-    const el = document.getElementById(id);
-    if (!el) return;
-    window.scrollTo({ top: el.getBoundingClientRect().top + window.pageYOffset - 96, behavior: 'smooth' });
+    scrollToSection(id);
   };
 
   const icon =
-    'flex h-9 w-9 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-white/10 dark:hover:text-white';
-  const activeChip = 'bg-neutral-100 text-neutral-900 dark:bg-white/10 dark:text-white';
+    'relative flex h-9 w-9 items-center justify-center rounded-full text-neutral-900 transition hover:bg-black/5 dark:text-neutral-100 dark:hover:bg-white/10';
+  const solid = scrolled || open;
 
   return (
-    <header className="fixed inset-x-0 top-4 z-40 flex justify-center px-4">
-      <Tilt scroll={false} max={4} scale={1.02} lift={18} glare radius="rounded-full" className="w-full max-w-[780px]">
-      <nav
-        aria-label="Primary"
-        className="preserve-3d relative flex items-center justify-between rounded-full border border-black/5 p-1.5 shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:border-white/10"
-      >
-        {/* frosted background sits in its own layer so the buttons above it can float forward in 3D */}
-        <span aria-hidden className="pointer-events-none absolute inset-0 rounded-full bg-white/85 backdrop-blur-xl dark:bg-neutral-900/80" />
-        <div className="depth-1 preserve-3d flex items-center gap-0.5">
-          {/* The name doubles as the home link, so it is on screen from the first second */}
-          <button
-            onClick={() => goTo('home')}
-            aria-label={`${SITE.name}, back to top`}
-            className={`whitespace-nowrap rounded-full px-3 py-1.5 text-[15px] font-medium tracking-[-0.01em] text-neutral-950 transition hover:bg-neutral-100 dark:text-white dark:hover:bg-white/10 ${active === 'home' ? activeChip : ''}`}
-          >
-            {SITE.firstName} <span className="accent text-[1.1em]">{SITE.name.split(' ').slice(1).join(' ')}</span>
-          </button>
+    <header
+      className={`fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${
+        open
+          ? 'border-b border-black/10 bg-[#f4f4f2] shadow-[0_20px_40px_-20px_rgba(0,0,0,0.25)] dark:border-white/10 dark:bg-[#0b0b0c]'
+          : solid
+            ? 'border-b border-black/10 bg-[#f4f4f2]/90 backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0b0c]/85'
+            : // over the hero: still frosted, so the dotted background never runs through the links
+              'border-b border-transparent bg-[#f4f4f2]/75 backdrop-blur-md dark:bg-[#0b0b0c]/70'
+      }`}
+    >
+      <nav aria-label="Primary" className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-4 sm:px-6">
+        <button
+          onClick={() => goTo('home')}
+          aria-label={`${SITE.name}, back to top`}
+          className="whitespace-nowrap font-display text-[19px] font-bold uppercase tracking-[0.01em] text-neutral-950 dark:text-white"
+        >
+          {SITE.name}
+        </button>
 
-          <ul
-            ref={list}
-            onMouseLeave={() => setHover(null)}
-            className="relative ml-1 hidden items-center gap-0.5 lg:flex"
+        <ul className="hidden items-center gap-7 lg:flex">
+          {SECTIONS.map((n) => (
+            <li key={n.id}>
+              <button
+                onClick={() => goTo(n.id)}
+                aria-current={active === n.id ? 'true' : undefined}
+                className={`font-mono text-[12.5px] font-semibold uppercase tracking-[0.06em] transition-colors ${
+                  active === n.id ? 'text-neutral-950 dark:text-white' : 'text-neutral-800 hover:text-neutral-950 dark:text-neutral-200 dark:hover:text-white'
+                }`}
+              >
+                <span aria-hidden className="font-medium text-neutral-500 dark:text-neutral-400">{sectionNumber(n.id)}/</span>
+                {n.label}
+                <span
+                  aria-hidden
+                  className={`mt-1 block h-px origin-left bg-current transition-transform duration-300 ${active === n.id ? 'scale-x-100' : 'scale-x-0'}`}
+                />
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        <div className="flex items-center gap-1">
+          <ThemeButton className={icon} />
+          <button
+            onClick={onOpenContact}
+            className="ml-2 hidden items-center gap-1.5 whitespace-nowrap rounded-full bg-neutral-950 px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-white transition hover:bg-neutral-800 sm:inline-flex dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
-            <span
-              aria-hidden
-              className="pointer-events-none absolute bottom-0 left-0 top-0 -z-10 rounded-full bg-neutral-100 transition-[transform,width,opacity] duration-[350ms] ease-[cubic-bezier(0.2,0.7,0.2,1)] dark:bg-white/10"
-              style={{ width: pill.w, transform: `translateX(${pill.x}px)`, opacity: pill.show ? 1 : 0, translate: '0 0 -2px' }}
-            />
-            {LINKS.map((n) => (
+            Get in touch
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </button>
+          <button onClick={() => setOpen((v) => !v)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} className={`${icon} lg:hidden`}>
+            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
+        </div>
+      </nav>
+
+      {open && (
+        <div className="fade-up mx-auto max-w-6xl px-4 pb-5 sm:px-6 lg:hidden">
+          <ul className="divide-y divide-black/10 border-t border-black/10 dark:divide-white/10 dark:border-white/10">
+            {SECTIONS.map((n) => (
               <li key={n.id}>
                 <button
-                  data-nav={n.id}
                   onClick={() => goTo(n.id)}
-                  onMouseEnter={() => setHover(n.id)}
-                  onFocus={() => setHover(n.id)}
-                  onBlur={() => setHover(null)}
-                  className={`rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors ${
-                    target === n.id || active === n.id
-                      ? 'text-neutral-900 dark:text-white'
-                      : 'text-neutral-600 dark:text-neutral-400'
+                  className={`flex w-full items-baseline gap-3 py-3.5 text-left font-display text-2xl font-bold uppercase ${
+                    active === n.id ? 'text-neutral-950 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'
                   }`}
                 >
+                  <span aria-hidden className="font-mono text-xs font-medium text-neutral-400">{sectionNumber(n.id)}/</span>
                   {n.label}
                 </button>
               </li>
             ))}
           </ul>
-
-          <span className="mx-1 hidden h-5 w-px bg-black/10 sm:block dark:bg-white/10" />
-
-          <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className={`${icon} hidden sm:flex`}>
-            <Github className="h-4 w-4" />
-          </a>
-          <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" className={`${icon} hidden sm:flex`}>
-            <Linkedin className="h-4 w-4" />
-          </a>
-          <a href={SITE.socials.leetcode} target="_blank" rel="noopener noreferrer" aria-label="LeetCode" className={`${icon} hidden sm:flex`}>
-            <Code2 className="h-4 w-4" />
-          </a>
-        </div>
-
-        <div className="depth-1 preserve-3d flex items-center gap-0.5">
-          <button
-            onClick={toggleTheme}
-            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-            className={icon}
-          >
-            {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-
-          {/* phones get this from the bottom bar (and the menu), so the top bar stays light */}
-          <button
-            onClick={onOpenContact}
-            className="ml-1 hidden items-center sm:inline-flex gap-1.5 whitespace-nowrap rounded-full bg-neutral-950 px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-          >
-            Get in touch
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </button>
-
-          <button
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-            className={`${icon} lg:hidden`}
-          >
-            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
-        </div>
-      </nav>
-      </Tilt>
-
-      {open && (
-        <div className="fade-up absolute inset-x-4 top-[60px] rounded-3xl border border-black/5 bg-white p-2 shadow-[0_20px_50px_rgba(0,0,0,0.12)] dark:border-white/10 dark:bg-neutral-900 lg:hidden">
-          {LINKS.map((n) => (
-            <button
-              key={n.id}
-              onClick={() => goTo(n.id)}
-              className={`block w-full rounded-2xl px-4 py-3 text-left text-[15px] font-medium transition ${
-                active === n.id
-                  ? activeChip
-                  : 'text-neutral-600 hover:bg-neutral-50 dark:text-neutral-300 dark:hover:bg-white/5'
-              }`}
-            >
-              {n.label}
-            </button>
-          ))}
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[12px] font-medium uppercase tracking-[0.08em]">
+            <a href={SITE.resume} target="_blank" rel="noopener noreferrer">Resume ↗</a>
+            <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
+          </div>
           <button
             onClick={() => {
               setOpen(false);
               onOpenContact();
             }}
-            className="mt-1 flex w-full items-center justify-between rounded-2xl bg-neutral-950 px-4 py-3 text-left text-[15px] font-semibold text-white sm:hidden dark:bg-white dark:text-neutral-950"
+            className="mt-5 flex w-full items-center justify-between rounded-full bg-neutral-950 px-5 py-3 font-mono text-[12px] font-semibold uppercase tracking-[0.06em] text-white sm:hidden dark:bg-white dark:text-neutral-950"
           >
             Get in touch
             <ArrowUpRight className="h-4 w-4" />

@@ -13,9 +13,11 @@ const ICONS = { ticket: Ticket, cpu: Cpu, search: FileSearch } as const;
 const Building: React.FC = () => (
   <div>
     <SectionTitle
+      id="building"
+      label="Building"
       before="What I'm"
       accent="building"
-      sub="Three projects, each built end to end with tests and a public repository. The case study for each one appears here when it ships."
+      sub="Projects in progress, each built end to end with a public repository. The case study for each one appears here when it ships."
     />
     <ul className="mx-auto mt-12 grid max-w-5xl gap-4 md:grid-cols-3">
       {BUILDING.map((b, i) => {
@@ -40,7 +42,7 @@ const Building: React.FC = () => (
                     {b.status}
                   </span>
                 </div>
-                <p className="mt-6 text-xs font-medium uppercase tracking-[0.18em] text-neutral-600 dark:text-neutral-400">
+                <p className="mt-6 font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#666] dark:text-neutral-400">
                   {b.kind}
                 </p>
                 <h3 className="mt-1.5 text-2xl font-medium tracking-[-0.02em] text-neutral-950 dark:text-white">{b.title}</h3>

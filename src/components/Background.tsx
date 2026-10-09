@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowUpRight, Award, Briefcase, Calendar, ChevronDown, GraduationCap, Check, Github } from 'lucide-react';
 import { CERTIFICATIONS, Certification, EDUCATION, EXPERIENCE, NOW, OPEN_TO, TOOLKIT } from '../data/content';
-import { PROJECTS } from '../data/projects';
 import { SITE } from '../data/site';
 import SectionTitle from './SectionTitle';
-import Tilt from './Tilt';
 import Reveal from './Reveal';
 import CertificateViewer from './CertificateViewer';
 
@@ -12,23 +10,10 @@ import CertificateViewer from './CertificateViewer';
 const SHOW_EXPERIENCE = 3;
 const SHOW_CERTIFICATIONS = 6;
 
-// How many projects use each skill, read from the projects' stacks so it stays right as projects are added.
-const usage = (skill: string) => PROJECTS.filter((p) => p.study.stack.some((s) => s.toLowerCase() === skill.toLowerCase())).length;
-const anyUsed = TOOLKIT.some((g) => g.items.some((i) => usage(i) > 0));
-const allOpenSource = PROJECTS.length > 0 && PROJECTS.every((p) => p.repo);
 
-const Chip: React.FC<{ children: React.ReactNode; used?: number }> = ({ children, used = 0 }) => (
-  <span
-    title={used ? `Used in ${used} project${used > 1 ? 's' : ''} on this page` : undefined}
-    className="inline-flex items-center gap-1.5 rounded-full bg-neutral-100 px-3.5 py-1.5 text-sm font-medium text-neutral-700 dark:bg-white/10 dark:text-neutral-200"
-  >
+const Chip: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <span className="inline-flex items-center rounded-full bg-neutral-100 px-3.5 py-1.5 text-sm font-medium text-neutral-700 dark:bg-white/10 dark:text-neutral-200">
     {children}
-    {used > 0 && (
-      <>
-        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-        <span className="sr-only">, used in {used} project{used > 1 ? 's' : ''}</span>
-      </>
-    )}
   </span>
 );
 
@@ -52,10 +37,10 @@ const MoreToggle: React.FC<{ total: number; limit: number; open: boolean; onTogg
   ) : null;
 
 const card =
-  'glow lit preserve-3d transition duration-300 hover:-translate-y-0.5 rounded-[1.5rem] border border-black/5 bg-white p-7 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.15)] dark:border-white/10 dark:bg-neutral-900';
+  'glow lit rounded-[1.5rem] border border-black/5 bg-white p-7 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.15)] dark:border-white/10 dark:bg-neutral-900';
 const certLink =
   'mt-3 inline-flex items-center gap-1 text-sm font-semibold text-neutral-800 underline-offset-4 hover:underline dark:text-neutral-200';
-const label = 'text-xs font-medium uppercase tracking-[0.18em] text-neutral-600 dark:text-neutral-400';
+const label = 'font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#666] dark:text-neutral-400';
 
 /** Education, experience, certifications, toolkit and availability in one place, for recruiters and clients. */
 const Background: React.FC = () => {
@@ -71,19 +56,20 @@ const Background: React.FC = () => {
     <CertificateViewer cert={cert} onClose={() => setCert(null)} />
     <Reveal>
       <SectionTitle
-        before="A bit of"
-        accent="background"
-        sub="Education, experience and what I'm open to right now."
+        id="background"
+        label="Experience"
+        before="Experience &"
+        accent="education"
+        sub="Education, skills and experience at a glance."
       />
     </Reveal>
 
     <div className="mx-auto mt-8 grid max-w-5xl gap-4 sm:mt-12 md:grid-cols-[1.4fr_1fr]">
       {/* education */}
       <Reveal variant="left" className="h-full">
-      <Tilt max={8} scale={1.025} lift={18} className="h-full">
       <div className={`${card} h-full`}>
-        <p className={`${label} depth-1`}>Education</p>
-        <h3 className="depth-2 mt-4 text-xl font-medium tracking-[-0.01em] text-neutral-950 sm:text-2xl dark:text-white">
+        <p className={label}>Education</p>
+        <h3 className="mt-4 text-xl font-medium tracking-[-0.01em] text-neutral-950 sm:text-2xl dark:text-white">
           {EDUCATION.degree}
         </h3>
         <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-neutral-600 dark:text-neutral-400">
@@ -100,21 +86,19 @@ const Background: React.FC = () => {
             CGPA {EDUCATION.gpa}
           </span>
         </div>
-        <p className={`${label} mt-7`}>Key coursework</p>
+        <p className={`${label} mt-7`}>CS fundamentals</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {EDUCATION.coursework.map((c) => (
             <Chip key={c}>{c}</Chip>
           ))}
         </div>
       </div>
-      </Tilt>
       </Reveal>
 
       {/* availability */}
       <Reveal variant="right" delay={120} className="h-full">
-      <Tilt max={8} scale={1.025} lift={18} className="h-full">
-      <div className="lit preserve-3d h-full rounded-[1.5rem] transition duration-300 hover:-translate-y-0.5 border border-emerald-200/60 bg-gradient-to-br from-emerald-50 to-white p-7 text-neutral-950 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.15)] dark:border-emerald-400/15 dark:from-emerald-500/10 dark:to-neutral-900 dark:text-white">
-        <p className="text-xs font-medium uppercase tracking-[0.18em] text-neutral-600 dark:text-neutral-400">
+      <div className="lit h-full rounded-[1.5rem] border border-emerald-200/60 bg-gradient-to-br from-emerald-50 to-white p-7 text-neutral-950 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.15)] dark:border-emerald-400/15 dark:from-emerald-500/10 dark:to-neutral-900 dark:text-white">
+        <p className={label}>
           Open to
         </p>
         <ul className="mt-5 space-y-3">
@@ -135,13 +119,31 @@ const Background: React.FC = () => {
           See my code on GitHub
         </a>
       </div>
-      </Tilt>
       </Reveal>
+
+      {/* toolkit: any number of groups, laid out side by side when there is room */}
+      {TOOLKIT.length > 0 && (
+      <Reveal variant="scale" delay={100} className="md:col-span-2">
+      <div className={card}>
+        <div className="grid gap-x-10 gap-y-7 sm:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]">
+          {TOOLKIT.map((g) => (
+            <div key={g.label}>
+              <p className={label}>{g.label}</p>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {g.items.map((t) => (
+                  <Chip key={t}>{t}</Chip>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      </Reveal>
+      )}
 
       {/* experience: one row per role, like a resume, so each new role just adds a row */}
       {EXPERIENCE.length > 0 && (
       <Reveal variant="scale" className="md:col-span-2">
-      <Tilt max={3} scale={1.008} lift={10}>
       <div className={card}>
         <p className={label}>Experience</p>
         <ol className="mt-2 divide-y divide-black/5 dark:divide-white/10">
@@ -181,14 +183,12 @@ const Background: React.FC = () => {
           what="roles"
         />
       </div>
-      </Tilt>
       </Reveal>
       )}
 
       {/* certifications: tiles that reflow from one to three per row as the list grows */}
       {CERTIFICATIONS.length > 0 && (
       <Reveal variant="scale" className="md:col-span-2">
-      <Tilt max={3} scale={1.008} lift={10}>
       <div className={card}>
         <p className={label}>{CERTIFICATIONS.length > 1 ? 'Certifications' : 'Certification'}</p>
         <ul className="mt-5 grid gap-3 sm:grid-cols-[repeat(auto-fit,minmax(16rem,1fr))]">
@@ -199,7 +199,8 @@ const Background: React.FC = () => {
             >
               <Award className="h-5 w-5 text-neutral-500 dark:text-neutral-400" aria-hidden />
               <p className="mt-3 text-[15px] font-medium leading-snug text-neutral-950 dark:text-white">{c.title}</p>
-              <p className="mt-1 text-sm leading-snug text-neutral-600 dark:text-neutral-400">{c.issuer}</p>
+              <p className="mt-1 font-mono text-[12px] leading-snug text-[#666] dark:text-neutral-400">{c.issuer}</p>
+              {c.note && <p className="mt-2.5 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">{c.note}</p>}
               {/* pushed to the bottom so buttons line up across a row of tiles */}
               <div className="mt-auto">
                 {c.url ? (
@@ -227,14 +228,12 @@ const Background: React.FC = () => {
           what="certificates"
         />
       </div>
-      </Tilt>
       </Reveal>
       )}
 
       {/* right now */}
       {NOW.length > 0 && (
       <Reveal variant="scale" className="md:col-span-2">
-      <Tilt max={4} scale={1.012} lift={12}>
       <div className={card}>
         <p className={label}>Right now</p>
         <ul className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -246,39 +245,9 @@ const Background: React.FC = () => {
           ))}
         </ul>
       </div>
-      </Tilt>
       </Reveal>
       )}
 
-      {/* toolkit: any number of groups, laid out side by side when there is room */}
-      {TOOLKIT.length > 0 && (
-      <Reveal variant="scale" delay={100} className="md:col-span-2">
-      <Tilt max={4} scale={1.012} lift={12}>
-      <div className={card}>
-        <div className="grid gap-x-8 gap-y-7 sm:grid-cols-[repeat(auto-fit,minmax(15rem,1fr))]">
-          {TOOLKIT.map((g) => (
-            <div key={g.label}>
-              <p className={label}>{g.label}</p>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {g.items.map((t) => (
-                  <Chip key={t} used={usage(t)}>
-                    {t}
-                  </Chip>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        {anyUsed && (
-          <p className="mt-6 flex items-center gap-2 text-sm text-neutral-600 dark:text-neutral-400">
-            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-            Used in the projects on this page.{allOpenSource && ' All of them have their source on GitHub.'}
-          </p>
-        )}
-      </div>
-      </Tilt>
-      </Reveal>
-      )}
     </div>
   </div>
   );

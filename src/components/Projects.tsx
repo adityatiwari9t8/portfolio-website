@@ -28,10 +28,11 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
   <div>
     <Reveal>
       <SectionTitle
-        before="Some of my"
-        accent="featured"
-        after="projects"
-        sub="Small, complete systems built around a real question. Open any live demo right here, or read the case study for the thinking behind it."
+        id="work"
+        label="Work"
+        before="Selected"
+        accent="work"
+        sub="A selection of what I have built. Open a live demo right here, read the case study for the design decisions behind it, or go straight to the source."
       />
     </Reveal>
 
@@ -43,20 +44,20 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
           style={{ top: `${96 + i * 18}px` }}
         >
           <Reveal variant="scale">
-          <Tilt max={7} scale={1.015} lift={26} glare radius="rounded-[1.75rem]">
+          <Tilt max={3.5} scale={1.01} lift={12} glare radius="rounded-[1.75rem]">
           <div
             data-media-host
             className={`lit group [transform-style:preserve-3d] rounded-[1.75rem] border border-black/5 bg-gradient-to-br p-5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] sm:p-7 dark:border-white/10 ${p.gradient}`}
           >
-            <div className="depth-1 flex items-center justify-between text-xs font-medium text-neutral-600 dark:text-neutral-400">
-              <span>{p.year ?? `Project 0${i + 1}`}</span>
+            <div className="depth-1 flex items-center justify-between font-mono text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-700 dark:text-neutral-300">
+              <span>{p.year ?? `Project ${String(i + 1).padStart(2, '0')}`}</span>
               <span className="flex items-center gap-2">
                 {p.sample && (
-                  <span className="rounded-full bg-amber-100 px-3 py-1 uppercase tracking-wider text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
+                  <span className="rounded-full bg-amber-100 px-3 py-1 text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
                     Sample
                   </span>
                 )}
-                <span className="rounded-full bg-white/70 px-3 py-1 uppercase tracking-wider text-neutral-600 dark:bg-white/10 dark:text-neutral-300">
+                <span className="rounded-full bg-white/70 px-3 py-1 text-neutral-700 dark:bg-white/10 dark:text-neutral-300">
                   {p.category}
                 </span>
               </span>

@@ -7,7 +7,7 @@ export const SITE = {
   firstName: 'Aditya',
   // Where the "Get in touch" form sends mail (opens the visitor's email app).
   email: 'adityatiwari.connect@gmail.com',
-  status: 'Open to internships & opportunities',
+  status: 'Open to software engineering internships',
   resume: '/resume.pdf',
   socials: {
     github: 'https://github.com/adityatiwari9t8',
@@ -17,9 +17,10 @@ export const SITE = {
   }
 } as const;
 
+/** Page sections in reading order. A recruiter's priorities first: work, how it's built, experience. */
 export const NAV = [
   { id: 'work', label: 'Work' },
   { id: 'building', label: 'Building' },
-  { id: 'story', label: 'Story' },
-  { id: 'background', label: 'Background' }
+  { id: 'background', label: 'Experience' },
+  { id: 'story', label: 'About' }
 ] as const;

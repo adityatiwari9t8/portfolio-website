@@ -3,7 +3,7 @@ import { FileText } from 'lucide-react';
 import { STORY, STORY_PHOTOS, StoryPhoto } from '../data/content';
 import { SITE } from '../data/site';
 import Headline from './Headline';
-import Tilt from './Tilt';
+import { sectionNumber } from '../lib/sections';
 
 /** `drift` is how far (px) the photo slides against the scroll; opposite signs make the two photos pass each other. */
 const Polaroid: React.FC<{ photo: StoryPhoto; className: string; drift: number }> = ({ photo, className, drift }) => (
@@ -60,62 +60,29 @@ const useDrift = () => {
 
 const Story: React.FC = () => {
   const photos = useDrift();
-  // One running index across both paragraphs, so the words flip in as a single wave.
-  let n = 0;
-  const words = (text: string, cls = '') =>
-    text
-      .split(' ')
-      .filter(Boolean)
-      .map((w) => {
-        const i = n++;
-        return (
-          <React.Fragment key={`${w}-${i}`}>
-            <span
-              className={`wbody flip-word ${cls}`}
-              style={{ '--i': i, '--step': '18ms', '--base': '420ms' } as React.CSSProperties}
-            >
-              {w}
-            </span>{' '}
-          </React.Fragment>
-        );
-      });
   return (
   <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-10">
     <div>
-      <Headline
-        before="My"
-        accent="story"
-        className="text-3xl font-medium tracking-[-0.03em] text-neutral-950 sm:text-4xl md:text-5xl dark:text-white"
-      />
+      <p className="mb-4 font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-neutral-600 dark:text-neutral-400">
+        {sectionNumber('story')} / About
+      </p>
+      <Headline before="About" accent="me" className="text-[2.75rem] sm:text-6xl md:text-7xl" />
 
-      {/* Both paragraphs are one slab: they tilt together, flip in word by word, and sit at slightly different depths. */}
-      <Tilt scroll={false} shadow={false} hint={false} max={4.5} scale={1.012} lift={14} className="mt-6">
-        <p
-          style={{ translate: '0 0 calc(16px * var(--dk, 1))' }}
-          className="text-lg font-medium leading-relaxed text-neutral-900 sm:text-xl dark:text-neutral-100"
-        >
-          {words(STORY.lead)}
-          {words(STORY.fade, 'text-neutral-600 dark:text-neutral-400')}
-        </p>
-        <p
-          style={{ translate: '0 0 calc(6px * var(--dk, 1))' }}
-          className="mt-5 text-[15px] leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400"
-        >
-          {words(STORY.more)}
-        </p>
-      </Tilt>
+      <p className="mt-6 text-lg font-medium leading-relaxed text-neutral-900 sm:text-xl dark:text-neutral-100">
+        {STORY.lead}
+        <span className="text-neutral-600 dark:text-neutral-400">{STORY.fade}</span>
+      </p>
+      <p className="mt-5 text-[15px] leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400">{STORY.more}</p>
 
-      <Tilt scroll={false} max={10} scale={1.06} lift={18} glare radius="rounded-full" className="mt-8 inline-block">
-        <a
-          href={SITE.resume}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="preserve-3d inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-semibold text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.5)] transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-        >
-          <FileText className="depth-1 h-4 w-4" />
-          <span className="depth-1">View my resume</span>
-        </a>
-      </Tilt>
+      <a
+        href={SITE.resume}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-8 inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 active:scale-[0.98] dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+      >
+        <FileText className="h-4 w-4" />
+        View my resume
+      </a>
     </div>
 
     <div ref={photos} className="relative mx-auto h-[400px] w-full max-w-[440px] sm:h-[460px]">

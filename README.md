@@ -2,9 +2,9 @@
 
 # Aditya Tiwari — Portfolio
 
-**Computer Science student at IILM University, looking for a software or web-development internship.**
+**B.Tech Computer Science student at IILM University (class of 2029), looking for a software engineering internship.**
 
-Three projects, each with a live demo you can open right inside the page, and a case study explaining the thinking behind it.
+Projects with live demos you can open right inside the page, source code, and a case study for each one.
 
 [**Live site**](https://portfolio-website-pi-lac.vercel.app) · [GitHub](https://github.com/adityatiwari9t8) · [LinkedIn](https://www.linkedin.com/in/adityatiwari9t8) · [LeetCode](https://leetcode.com/Aditya_Tiwari_98/)
 
@@ -30,12 +30,14 @@ Every project has a working demo embedded in the site, plus a case study (proble
 
 ## What's in the site
 
+- **Editorial hero.** A giant condensed two-tone title (SOFTWARE / ENGINEER) over a dotted 3D wave drawn on a `<canvas>` (concentric rings displaced by travelling sine waves, perspective-projected, ~10k points batched by opacity). The wave follows the theme, leans gently toward the mouse, pauses off screen and holds still for reduced motion. The hero never mentions individual projects, so it scales as projects are added.
 - **Embedded live demos.** Each project opens in a browser-style overlay without leaving the page.
 - **Case-study pages** on a tiny hash router (`#/work/<id>`): links are shareable and the Back button closes the page.
-- **Interaction, in plain CSS and a little JavaScript.** Pointer-driven 3D tilt on cards, cursor-lit borders, scroll-linked section lift, word-by-word headline reveals and View Transitions between pages. On touch devices the same effects follow scrolling instead of the pointer. All of it switches off for visitors who prefer reduced motion.
-- **Dark by default, with a light toggle.**
+- **Keyboard command menu (⌘K / Ctrl+K).** Jump to any section, open a demo or case study, copy the email, grab the resume or switch theme from the keyboard.
+- **Restrained motion.** Scroll reveals, a gentle hover tilt on project cards, cursor-lit borders, and View Transitions for the theme switch and case-study pages. Touch screens get still cards, and everything switches off for visitors who prefer reduced motion.
+- **Light by default, with a dark toggle.** A bouncing dot on the moon icon suggests dark mode until the visitor switches once; the choice is remembered in `localStorage`.
 - **No backend.** The contact button opens the visitor's email app, and there is a copy-email button for people without one.
-- **Fonts are bundled** (Inter and Instrument Serif), so the site makes no Google Fonts request and looks the same everywhere.
+- **Fonts are bundled** (Roboto Condensed for display, Roboto Mono for labels, Inter for body text), so the site makes no Google Fonts request and looks the same everywhere.
 - **Optional visitor analytics.** Cookie-less and off by default (see below).
 
 ## Run it locally
@@ -65,7 +67,7 @@ src/
 │   └── projects.ts      the projects and their case studies
 ├── components/          sections, effects (Tilt, SectionLift, Reveal, ...)
 │   └── demos/           the three embedded project demos
-└── lib/                 router, scroll bus, cursor light, dialog helper
+└── lib/                 router, theme store, scroll helper, cursor light, dialog helper, view transitions
 public/                  photos, project screenshots and demo videos, resume, social preview
 resume/                  source of the resume PDF
 ```
@@ -77,7 +79,6 @@ All copy and links live in `src/data/`, so updating the site rarely means touchi
 | Name, email, social links | `src/data/site.ts` |
 | Hero, story, education, experience, certifications, skills | `src/data/content.ts` |
 | Projects and case studies | `src/data/projects.ts` |
-| Photo | `public/img.webp` |
 | Resume | edit `resume/resume.html`, open it in Chrome, Print → Save as PDF (A4, no headers) to `public/resume.pdf` |
 
 ### Adding experience, certificates or skills
@@ -86,8 +87,8 @@ Every list in `src/data/content.ts` can grow without touching a component:
 
 - **Experience:** add an object to `EXPERIENCE`, newest first. The first three show; the rest sit behind a "Show all" button.
 - **Certificates:** add an object to `CERTIFICATIONS`. Give it a `url` (opens in a new tab) or an `image` in `public/certificates/` (opens in a viewer on the page). The first six show; the rest fold away.
-- **Skills:** add to any group in `TOOLKIT`, or add a whole new group (`{ label: 'Tools', items: [...] }`). Skills that appear in a project's `stack` get a green dot automatically.
-- **Quick facts under the hero:** the project count and latest role update themselves from `PROJECTS` and `EXPERIENCE`.
+- **Skills:** add to any group in `TOOLKIT`, or add a whole new group (`{ label: 'Cloud', items: [...] }`). CS fundamentals live in `EDUCATION.coursework` and show in the education card. List only what you could be interviewed on.
+- **Hero text:** `HERO` in `src/data/content.ts` (the two title words, byline, `//` line and the short intro). Section numbers in the nav and headings come from `NAV` in `src/data/site.ts`.
 
 ### Adding a project
 
@@ -105,6 +106,6 @@ The site is a plain Vite app, so Vercel needs no extra settings: import the repo
 
 ## Contact
 
-**adityatiwari.connect@gmail.com** — I'm open to software and web-development internships (remote, hybrid or on-site, anywhere) and to team projects.
+**adityatiwari.connect@gmail.com** — I'm open to software engineering internships on backend, full-stack or ML-adjacent teams (remote, hybrid or on-site, anywhere).
 
 

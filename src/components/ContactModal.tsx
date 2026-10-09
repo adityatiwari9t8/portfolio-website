@@ -46,8 +46,8 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
         </button>
 
         <div className="p-6 sm:p-10">
-          <h2 className="pr-10 text-3xl font-medium tracking-[-0.03em] text-neutral-950 sm:text-4xl dark:text-white">
-            Let&rsquo;s <span className="accent text-[1.1em]">talk</span>
+          <h2 className="pr-10 font-display text-4xl font-bold uppercase tracking-[-0.01em] text-neutral-950 sm:text-5xl dark:text-white">
+            Let&rsquo;s <span className="text-neutral-500">talk</span>
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-400">
             Send a note and it opens in your email app, addressed to{' '}

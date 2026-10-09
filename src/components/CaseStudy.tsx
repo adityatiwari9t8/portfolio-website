@@ -16,7 +16,7 @@ interface CaseStudyProps {
   onOpenContact: () => void;
 }
 
-const label = 'text-xs font-medium uppercase tracking-[0.18em] text-neutral-600 dark:text-neutral-400';
+const label = 'font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#666] dark:text-neutral-400';
 const primary =
   'inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200';
 const secondary =
@@ -75,7 +75,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ project, onClose, onOpenDemo, onO
 
       <article className="mx-auto max-w-4xl px-4 pb-24 pt-10 sm:px-6 sm:pt-14">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-white px-3 py-1 text-xs font-medium uppercase tracking-wider text-neutral-600 ring-1 ring-black/5 dark:bg-white/10 dark:text-neutral-300 dark:ring-white/10">
+          <span className="rounded-full bg-white px-3 py-1 font-mono text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-700 ring-1 ring-black/5 dark:bg-white/10 dark:text-neutral-300 dark:ring-white/10">
             {project.category}
           </span>
           {project.sample && (
@@ -86,7 +86,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ project, onClose, onOpenDemo, onO
           {project.year && <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">{project.year}</span>}
         </div>
 
-        <h1 id="case-title" className="mt-5 text-4xl font-medium leading-[1.05] tracking-[-0.03em] sm:text-6xl">
+        <h1 id="case-title" className="mt-5 font-display text-5xl font-bold uppercase leading-[0.92] tracking-[-0.01em] sm:text-7xl">
           {project.title}
         </h1>
         <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg dark:text-neutral-400">

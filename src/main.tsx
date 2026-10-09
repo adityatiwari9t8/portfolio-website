@@ -4,6 +4,8 @@ import { inject } from '@vercel/analytics';
 // Self-hosted fonts: no request to Google, works offline and in every region.
 import '@fontsource-variable/inter/wght.css';
 import '@fontsource/instrument-serif/latin-400-italic.css';
+import '@fontsource-variable/roboto-condensed/wght.css';
+import '@fontsource-variable/roboto-mono/wght.css';
 import App from './App';
 import './index.css';
 

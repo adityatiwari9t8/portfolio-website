@@ -147,6 +147,15 @@ export const CASE_CTA = {
   body: 'I’m happy to walk through the code, the trade-offs or what I’d do next.'
 };
 
+/**
+ * The "Ask AI" chat panel's own text. The assistant answers from the data in this folder (see api/_profile.ts);
+ * the starter questions and their instant answers are in quickAnswers.ts.
+ */
+export const CHAT = {
+  intro: 'Ask about my skills, projects, education or availability. The answers come only from my resume and this site.',
+  note: "AI answers can be wrong, so email me to confirm anything important. Questions are sent to Google's Gemini API."
+};
+
 /** Optional faster ways to reach me (shown next to the main button when present). */
 export interface QuickContact {
   label: string;

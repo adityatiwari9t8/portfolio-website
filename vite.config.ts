@@ -1,4 +1,4 @@
-import { defineConfig, Plugin } from 'vite';
+import { defineConfig, loadEnv, Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 
 /**
@@ -35,8 +35,45 @@ function seo(): Plugin {
   };
 }
 
+/**
+ * `npm run dev` has no Vercel runtime, so this serves the /api functions through Vite's module loader,
+ * with the same Web Request/Response signature Vercel uses. Variables from .env.local (GEMINI_API_KEY)
+ * are made visible to them. Production is unaffected: Vercel runs /api itself.
+ */
+function devApi(): Plugin {
+  return {
+    name: 'dev-api',
+    apply: 'serve',
+    configureServer(server) {
+      for (const [key, value] of Object.entries(loadEnv(server.config.mode, process.cwd(), ''))) {
+        process.env[key] ??= value;
+      }
+      server.middlewares.use('/api/chat', async (req, res) => {
+        const chunks: Buffer[] = [];
+        for await (const chunk of req) chunks.push(chunk as Buffer);
+        const headers = new Headers();
+        for (const [key, value] of Object.entries(req.headers)) {
+          if (typeof value === 'string') headers.set(key, value);
+        }
+        const request = new Request(`http://localhost${req.originalUrl ?? '/api/chat'}`, {
+          method: req.method,
+          headers,
+          body: req.method === 'GET' || req.method === 'HEAD' ? undefined : new Uint8Array(Buffer.concat(chunks))
+        });
+        const { default: handler } = await server.ssrLoadModule('/api/chat.ts');
+        const response: Response = await handler.fetch(request);
+        res.statusCode = response.status;
+        response.headers.forEach((value, key) => res.setHeader(key, value));
+        const reader = response.body?.getReader();
+        for (let part = await reader?.read(); part && !part.done; part = await reader!.read()) res.write(part.value);
+        res.end();
+      });
+    }
+  };
+}
+
 export default defineConfig({
-  plugins: [react(), seo()],
+  plugins: [react(), seo(), devApi()],
   server: {
     port: 5173,
     open: true

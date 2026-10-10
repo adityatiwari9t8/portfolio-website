@@ -5,6 +5,7 @@
 export const SITE = {
   name: 'Aditya Tiwari',
   firstName: 'Aditya',
+  location: 'Gurugram, India',
   // Where the "Get in touch" form sends mail (opens the visitor's email app).
   email: 'adityatiwari.connect@gmail.com',
   status: 'Open to SWE internships · Class of 2029',

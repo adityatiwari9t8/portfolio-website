@@ -33,6 +33,7 @@ Each project has a working demo embedded in the site and a case-study page (prob
 - **Editorial hero.** My name in large condensed two-tone type over a dotted 3D wave drawn on a `<canvas>` (concentric rings displaced by travelling sine waves, perspective-projected, ~10k points batched by opacity). The wave follows the theme, leans gently toward the mouse, pauses off screen and holds still for reduced motion.
 - **Embedded live demos.** Each project opens in a browser-style overlay without leaving the page.
 - **Case-study pages** on a tiny hash router (`#/work/<id>`): links are shareable and the Back button closes the page.
+- **"Ask AI" assistant.** A chat panel where recruiters can ask about my skills, projects and availability. Answers stream from Gemini through a small Vercel function (`api/chat.ts`), and the assistant's knowledge is built from the same `src/data/` files the page renders, so it never drifts from the site. It is told to answer only from that data and to say so (and point to my email) when it doesn't know. Inputs are length-capped and rate-limited per visitor. The four starter questions are answered instantly from the same data (`src/data/quickAnswers.ts`) without calling the AI, and each answer is labelled as a quick answer or an AI answer.
 - **Keyboard command menu (⌘K / Ctrl+K).** Jump to any section, open a demo or case study, copy the email, open the resume or switch theme.
 - **Built for phones too.** A separate small-screen layout (left-aligned headings, tighter spacing, compact hero), a dropdown menu card instead of a full-screen menu, and a contact sheet that slides up from the bottom. The desktop layout is untouched by any of it.
 - **Restrained motion.** Scroll reveals, a gentle hover tilt on project cards, cursor-lit borders, and View Transitions for the theme switch and case-study pages. Touch screens get still cards, and everything switches off for visitors who prefer reduced motion.
@@ -55,7 +56,7 @@ npm run build      # type-check, then production build into dist/
 npm run preview    # serve the production build locally
 ```
 
-Needs Node 18 or newer.
+Needs Node 18 or newer. For the AI assistant to answer locally, put a free [Google AI Studio](https://aistudio.google.com/apikey) key in `.env.local` as `GEMINI_API_KEY=...` (the file is git-ignored); `npm run dev` serves `/api/chat` itself.
 
 ## How it's organised
 
@@ -69,6 +70,7 @@ src/
 ├── components/          page sections and effects (DotWave, Tilt, Reveal, ...)
 │   └── demos/           the embedded project demos
 └── lib/                 router, theme store, scroll and active-section helpers, cursor light, dialog helper, view transitions
+api/                     Vercel functions: chat.ts (the AI assistant) and _profile.ts (its instructions, built from src/data)
 public/                  photos, project screenshots and demo videos, resume, social preview image
 resume/                  source of the resume PDF
 ```
@@ -114,6 +116,7 @@ On macOS, use `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"` i
 The site is a plain Vite app, so Vercel needs no extra settings: import the repo, keep the framework preset on **Vite**, and every push to `main` redeploys.
 
 - **Site address.** On Vercel the address is picked up at build time (canonical link, sitemap, absolute preview-image URLs). Anywhere else, set `SITE_URL=https://your-domain.com` before `npm run build`.
+- **AI assistant.** Add `GEMINI_API_KEY` (a free Google AI Studio key) to the Vercel project's environment variables and redeploy. Keep billing off on that Google project and it can never cost anything; past the free quota the chat shows a friendly "email me" message. It tries three free models in turn (each has its own free quota); set `GEMINI_MODELS` (comma-separated) to change the list without a code change.
 - **Analytics (optional).** Enable **Analytics** in the Vercel project, add the environment variable `VITE_ANALYTICS=1` and redeploy.
 
 ## Contact

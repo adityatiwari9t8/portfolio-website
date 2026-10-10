@@ -1,4 +1,5 @@
 import React from 'react';
+import { Sparkles } from 'lucide-react';
 import { HERO } from '../data/content';
 import { SITE } from '../data/site';
 import { scrollToSection } from '../lib/scroll';
@@ -15,7 +16,7 @@ const link =
  * Deliberately says nothing about individual projects (that is what "Work" is for),
  * so it stays right however many projects the site grows to.
  */
-const Hero: React.FC = () => {
+const Hero: React.FC<{ onOpenChat: () => void }> = ({ onOpenChat }) => {
   const [first, ...rest] = SITE.name.split(' ');
 
   return (
@@ -86,6 +87,11 @@ const Hero: React.FC = () => {
               <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer" className={link}>
                 LinkedIn <span aria-hidden>↗</span>
               </a>
+            </li>
+            <li>
+              <button onClick={onOpenChat} className={link}>
+                Ask my AI <Sparkles aria-hidden className="h-3.5 w-3.5 transition group-hover:rotate-12" />
+              </button>
             </li>
           </ul>
         </div>

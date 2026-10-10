@@ -6,6 +6,7 @@ import Story from './components/Story';
 import Background from './components/Background';
 import CallToAction from './components/CallToAction';
 import ContactModal from './components/ContactModal';
+import ChatPanel from './components/ChatPanel';
 import DemoOverlay from './components/DemoOverlay';
 import CaseStudy from './components/CaseStudy';
 import CommandPalette from './components/CommandPalette';
@@ -24,7 +25,9 @@ const App: React.FC = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [demo, setDemo] = useState<Project | null>(null);
+  const [chatOpen, setChatOpen] = useState(false);
   const openContact = useCallback(() => setContactOpen(true), []);
+  const openChat = useCallback(() => setChatOpen(true), []);
 
   // ⌘K / Ctrl+K opens the command menu from anywhere (and closes it again).
   useEffect(() => {
@@ -68,7 +71,8 @@ const App: React.FC = () => {
         Skip to content
       </a>
       <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
-      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onOpenContact={openContact} onOpenDemo={setDemo} />
+      <ChatPanel open={chatOpen} onClose={() => setChatOpen(false)} />
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onOpenContact={openContact} onOpenDemo={setDemo} onOpenChat={openChat} />
       <CaseStudy
         project={studyProject}
         onClose={() => closeStudy(study.close, study.id)}
@@ -76,10 +80,10 @@ const App: React.FC = () => {
         onOpenContact={openContact}
       />
       <DemoOverlay project={demo} onClose={() => setDemo(null)} />
-      <Navbar onOpenContact={openContact} />
+      <Navbar onOpenContact={openContact} onOpenChat={openChat} />
 
       <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-3 pt-24 outline-none sm:px-6">
-        <Hero />
+        <Hero onOpenChat={openChat} />
 
         {PROJECTS.length === 0 && (
           <section id="building" className={`${section} px-1 sm:px-0`}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, BookOpen, Copy, CornerDownLeft, FileText, Github, Hash, Linkedin, Mail, Moon, Play, Search, Sun } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Copy, CornerDownLeft, FileText, Github, Hash, Linkedin, Mail, Moon, Play, Search, Sparkles, Sun } from 'lucide-react';
 import { PROJECTS, Project } from '../data/projects';
 import { SITE } from '../data/site';
 import { useDialog } from '../lib/useDialog';
@@ -14,6 +14,7 @@ interface CommandPaletteProps {
   onClose: () => void;
   onOpenContact: () => void;
   onOpenDemo: (p: Project) => void;
+  onOpenChat: () => void;
 }
 
 interface Item {
@@ -26,7 +27,7 @@ interface Item {
 }
 
 /** ⌘K / Ctrl+K menu: jump to any section, open a demo or case study, grab the resume or email. */
-const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenContact, onOpenDemo }) => {
+const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenContact, onOpenDemo, onOpenChat }) => {
   const root = useRef<HTMLDivElement | null>(null);
   const listRef = useRef<HTMLUListElement | null>(null);
   const [query, setQuery] = useState('');
@@ -52,6 +53,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
         { id: `study-${p.id}`, group: 'Projects', label: `${p.title}`, hint: 'Case study', icon: BookOpen, run: () => (window.location.hash = studyHref(p.id)) }
       ]),
       { id: 'resume', group: 'Actions', label: 'Open resume (PDF)', icon: FileText, run: ext(SITE.resume) },
+      { id: 'chat', group: 'Actions', label: 'Ask my AI assistant', icon: Sparkles, run: onOpenChat },
       { id: 'contact', group: 'Actions', label: 'Send a message', icon: Mail, run: onOpenContact },
       {
         id: 'copy',
@@ -68,7 +70,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
       { id: 'gh', group: 'Elsewhere', label: 'GitHub', icon: Github, run: ext(SITE.socials.github) },
       { id: 'li', group: 'Elsewhere', label: 'LinkedIn', icon: Linkedin, run: ext(SITE.socials.linkedin) }
     ];
-  }, [dark, onOpenContact, onOpenDemo]);
+  }, [dark, onOpenContact, onOpenDemo, onOpenChat]);
 
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();

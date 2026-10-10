@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Sun, Moon, ArrowUpRight, Menu, X } from 'lucide-react';
+import { Sun, Moon, ArrowUpRight, Menu, X, Sparkles } from 'lucide-react';
 import { SITE } from '../data/site';
 import { toggleTheme, useTheme } from '../lib/theme';
 import { scrollToSection } from '../lib/scroll';
@@ -8,6 +8,7 @@ import { useActiveSection } from '../lib/useActiveSection';
 
 interface NavbarProps {
   onOpenContact: () => void;
+  onOpenChat: () => void;
 }
 
 /**
@@ -32,7 +33,7 @@ const ThemeButton: React.FC<{ className: string }> = ({ className }) => {
   );
 };
 
-const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
+const Navbar: React.FC<NavbarProps> = ({ onOpenContact, onOpenChat }) => {
   const active = useActiveSection();
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement | null>(null);
@@ -138,8 +139,15 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
         <div className="flex items-center gap-1">
           <ThemeButton className={icon} />
           <button
+            onClick={onOpenChat}
+            className="ml-2 hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-black/15 px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-neutral-900 transition hover:bg-black/5 sm:inline-flex dark:border-white/20 dark:text-white dark:hover:bg-white/10"
+          >
+            <Sparkles className="h-3.5 w-3.5" aria-hidden />
+            Ask AI
+          </button>
+          <button
             onClick={onOpenContact}
-            className="ml-2 hidden items-center gap-1.5 whitespace-nowrap rounded-full bg-neutral-950 px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-white transition hover:bg-neutral-800 sm:inline-flex dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+            className="ml-1 hidden items-center gap-1.5 whitespace-nowrap rounded-full bg-neutral-950 px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-white transition hover:bg-neutral-800 sm:inline-flex dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             Get in touch
             <ArrowUpRight className="h-3.5 w-3.5" />
@@ -181,6 +189,16 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
               </li>
             ))}
           </ul>
+          <button
+            onClick={() => {
+              setOpen(false);
+              onOpenChat();
+            }}
+            className="mt-1.5 flex h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-black/10 text-sm font-semibold text-neutral-900 transition hover:bg-black/[0.04] sm:hidden dark:border-white/15 dark:text-white dark:hover:bg-white/[0.06]"
+          >
+            <Sparkles className="h-4 w-4" aria-hidden />
+            Ask AI about me
+          </button>
           <button
             onClick={() => {
               setOpen(false);

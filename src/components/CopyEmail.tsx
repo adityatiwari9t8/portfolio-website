@@ -5,10 +5,11 @@ import { SITE } from '../data/site';
 interface CopyEmailProps {
   /** "dark" is for the black closing card, "auto" for normal surfaces. */
   tone?: 'auto' | 'dark';
+  className?: string;
 }
 
 /** Shows the email address with a one-click copy, for people who don't use a mail app. */
-const CopyEmail: React.FC<CopyEmailProps> = ({ tone = 'auto' }) => {
+const CopyEmail: React.FC<CopyEmailProps> = ({ tone = 'auto', className = '' }) => {
   const [copied, setCopied] = useState(false);
 
   const copy = async () => {
@@ -42,7 +43,7 @@ const CopyEmail: React.FC<CopyEmailProps> = ({ tone = 'auto' }) => {
     <button
       type="button"
       onClick={copy}
-      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${styles}`}
+      className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${styles} ${className}`}
     >
       {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
       <span>{SITE.email}</span>

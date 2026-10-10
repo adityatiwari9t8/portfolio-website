@@ -3,7 +3,6 @@ import { FileText } from 'lucide-react';
 import { STORY, STORY_PHOTOS, StoryPhoto } from '../data/content';
 import { SITE } from '../data/site';
 import Headline from './Headline';
-import { sectionNumber } from '../lib/sections';
 
 /** `drift` is how far (px) the photo slides against the scroll; opposite signs make the two photos pass each other. */
 const Polaroid: React.FC<{ photo: StoryPhoto; className: string; drift: number }> = ({ photo, className, drift }) => (
@@ -61,31 +60,31 @@ const useDrift = () => {
 const Story: React.FC = () => {
   const photos = useDrift();
   return (
-  <div className="grid items-center gap-12 md:grid-cols-[1.1fr_1fr] md:gap-10">
+  <div className="grid items-center gap-12 max-sm:gap-6 md:grid-cols-[1.1fr_1fr] md:gap-10">
     <div>
-      <p className="mb-4 font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-neutral-600 dark:text-neutral-400">
-        {sectionNumber('story')} / About
+      <p className="mb-4 font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] max-sm:mb-3 text-neutral-600 dark:text-neutral-400">
+        About
       </p>
-      <Headline before="About" accent="me" className="text-[2.75rem] sm:text-6xl md:text-7xl" />
+      <Headline before="About" accent="me" className="text-[2.75rem] max-sm:text-[2.5rem] sm:text-6xl md:text-7xl" />
 
-      <p className="mt-6 text-lg font-medium leading-relaxed text-neutral-900 sm:text-xl dark:text-neutral-100">
+      <p className="mt-6 text-lg font-medium leading-relaxed max-sm:mt-4 max-sm:text-[17px] text-neutral-900 sm:text-xl dark:text-neutral-100">
         {STORY.lead}
         <span className="text-neutral-600 dark:text-neutral-400">{STORY.fade}</span>
       </p>
-      <p className="mt-5 text-[15px] leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-400">{STORY.more}</p>
+      <p className="mt-5 text-[15px] leading-relaxed max-sm:mt-4 text-neutral-600 sm:text-base dark:text-neutral-400">{STORY.more}</p>
 
       <a
         href={SITE.resume}
         target="_blank"
         rel="noopener noreferrer"
-        className="mt-8 inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 active:scale-[0.98] dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+        className="mt-8 inline-flex items-center gap-2 rounded-full bg-neutral-950 max-sm:mt-6 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 active:scale-[0.98] dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
       >
         <FileText className="h-4 w-4" />
         View my resume
       </a>
     </div>
 
-    <div ref={photos} className="relative mx-auto h-[400px] w-full max-w-[440px] sm:h-[460px]">
+    <div ref={photos} className="relative mx-auto h-[400px] w-full max-w-[440px] max-sm:h-[330px] max-sm:max-w-[360px] sm:h-[460px]">
       {STORY_PHOTOS.length === 1 ? (
         <Polaroid photo={STORY_PHOTOS[0]} drift={-34} className="left-[20%] top-[6%] w-[60%] -rotate-[5deg]" />
       ) : (

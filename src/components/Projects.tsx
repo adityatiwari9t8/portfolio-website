@@ -32,24 +32,24 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
         label="Work"
         before="Selected"
         accent="work"
-        sub="A selection of what I have built. Open a live demo right here, read the case study for the design decisions behind it, or go straight to the source."
+        sub="Things I have built, each with its source code and a case study on the design decisions, the trade-offs and the honest limits."
       />
     </Reveal>
 
-    <div className="mx-auto mt-8 max-w-4xl sm:mt-12">
+    <div className="mx-auto mt-8 max-w-4xl max-sm:mt-6 sm:mt-12">
       {PROJECTS.map((p, i) => (
         <article
           key={p.id}
-          className="mb-8 last:mb-0 md:sticky"
+          className="mb-8 last:mb-0 max-sm:mb-4 md:sticky"
           style={{ top: `${96 + i * 18}px` }}
         >
           <Reveal variant="scale">
           <Tilt max={3.5} scale={1.01} lift={12} glare radius="rounded-[1.75rem]">
           <div
             data-media-host
-            className={`lit group [transform-style:preserve-3d] rounded-[1.75rem] border border-black/5 bg-gradient-to-br p-5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] sm:p-7 dark:border-white/10 ${p.gradient}`}
+            className={`lit group [transform-style:preserve-3d] rounded-[1.75rem] border border-black/5 bg-gradient-to-br p-5 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.18)] max-sm:rounded-[1.5rem] max-sm:p-4 sm:p-7 dark:border-white/10 ${p.gradient}`}
           >
-            <div className="depth-1 flex items-center justify-between font-mono text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-700 dark:text-neutral-300">
+            <div className="depth-1 flex items-center justify-between font-mono text-[11.5px] max-sm:text-[10.5px] font-medium uppercase tracking-[0.1em] text-neutral-700 dark:text-neutral-300">
               <span>{p.year ?? `Project ${String(i + 1).padStart(2, '0')}`}</span>
               <span className="flex items-center gap-2">
                 {p.sample && (
@@ -63,9 +63,9 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
               </span>
             </div>
 
-            <div className="mt-5 grid grid-cols-[minmax(0,1fr)] [transform-style:preserve-3d] items-center gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] md:gap-8">
+            <div className="mt-5 grid grid-cols-[minmax(0,1fr)] [transform-style:preserve-3d] items-center gap-6 max-sm:mt-4 max-sm:gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] md:gap-8">
               <div className="depth-1 order-2 [transform-style:preserve-3d] md:order-1">
-                <h3 className="text-2xl font-medium leading-tight tracking-[-0.02em] text-neutral-950 sm:text-[1.75rem] dark:text-white">
+                <h3 className="text-2xl font-medium leading-tight tracking-[-0.02em] max-sm:text-[1.375rem] text-neutral-950 sm:text-[1.75rem] dark:text-white">
                   {p.title}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-neutral-600 sm:text-[15px] dark:text-neutral-400">
@@ -89,7 +89,7 @@ const Projects: React.FC<ProjectsProps> = ({ onOpenDemo }) => (
                   ))}
                 </dl>
 
-                <div className="depth-2 mt-6 flex flex-wrap items-center gap-2">
+                <div className="depth-2 mt-6 flex flex-wrap items-center gap-2 max-sm:mt-5">
                   {p.demo ? (
                     <button onClick={() => onOpenDemo(p)} className={primary}>
                       Live demo

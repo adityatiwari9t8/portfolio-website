@@ -2,23 +2,23 @@
 
 export const HERO = {
   /** Under the giant name: what I am, then my focus in small mono text. (The name itself comes from SITE.) */
-  role: 'Software developer',
-  focus: 'Backend · Full-stack · Applied AI',
+  role: 'Software engineer',
+  focus: 'Algorithms · Backend · Full-stack',
   /** The "// ..." line: how I work, in one sentence. */
-  motto: 'I build reliable, scalable software end to end.',
+  motto: 'I write software that is correct first, then fast.',
   /**
    * Shown in grey right after the line above. Each sentence adds something the role line does not: who I am,
    * my foundation, what I'm after. About me, never about a specific project, so it stays true as projects change.
    */
   body:
-    'From database schema and REST APIs to the interface people use, in Java, Python and TypeScript. CS undergrad at IILM University (CGPA 8.79), grounded in data structures, algorithms and OOP.'
+    'B.Tech CS student at IILM University (class of 2029, CGPA 8.79), working in Java, Python and TypeScript. I care about the whole job: solid data structures and algorithms, clean APIs, and code that is easy to test and change.'
 };
 
 export const STORY = {
-  lead: "I'm a software developer who likes owning a feature from the database schema to the last pixel.",
-  fade: ' I care about correctness, clean APIs and code the next engineer can read without asking me.',
+  lead: "I'm a CS student who likes problems with a provably right answer.",
+  fade: ' I care about correctness, honest trade-offs and code the next engineer can read without asking me.',
   more:
-    "Underneath that are strong CS fundamentals (data structures, algorithms, operating systems, databases and networks) that I keep sharp with regular interview practice. Every project I ship comes with source code and a case study: the design decisions, the trade-offs and what I'd improve next. Right now I'm going deeper into backend systems, concurrency and applied machine learning."
+    "Underneath that are the fundamentals software engineering is built on: data structures and algorithms, object-oriented design, operating systems, databases and networks. I practise problem solving in Java, and for everything I build I write up the design, the trade-offs and what I would change next. Right now I'm going deeper into backend systems: concurrency, caching and system design."
 };
 
 /**
@@ -33,7 +33,7 @@ export interface StoryPhoto {
   kind: 'photo' | 'shot';
 }
 export const STORY_PHOTOS: [StoryPhoto] | [StoryPhoto, StoryPhoto] = [
-  { src: '/story-notes.webp', alt: 'An open notebook, glasses and a pen in front of a screen of code', position: 'center', caption: 'Learning by building', kind: 'photo' },
+  { src: '/portrait.webp', alt: 'Portrait of Aditya Tiwari', position: 'center 30%', caption: "Hi, I'm Aditya", kind: 'photo' },
   { src: '/story-flowchart.webp', alt: 'A hand-drawn flowchart on paper', position: 'center', caption: 'Design before code', kind: 'photo' }
 ];
 
@@ -117,6 +117,7 @@ export interface SkillGroup {
 }
 
 export const TOOLKIT: SkillGroup[] = [
+  { label: 'Languages', items: ['Java', 'Python', 'TypeScript', 'JavaScript', 'SQL', 'C'] },
   { label: 'Backend & data', items: ['Spring Boot', 'Node.js', 'Express', 'REST APIs', 'PostgreSQL'] },
   { label: 'Frontend', items: ['React', 'Tailwind CSS', 'HTML & CSS'] },
   { label: 'DevOps & tools', items: ['Docker', 'Linux', 'Git & GitHub'] }
@@ -125,7 +126,8 @@ export const TOOLKIT: SkillGroup[] = [
 /** Shown as the "open to" list in the Background section. */
 export const OPEN_TO = [
   'Software engineering internships',
-  'Backend, full-stack or ML-adjacent teams',
+  'Second-year and early-career intern programs',
+  'Backend or full-stack teams',
   'Remote, hybrid or on-site, anywhere'
 ];
 
@@ -150,9 +152,6 @@ export interface QuickContact {
   kind: 'call' | 'chat';
 }
 export const QUICK_CONTACT: QuickContact[] = [];
-
-export const CONTACT_OPTIONS = ['Internship or job opportunity', 'Interview or hiring process', 'Project or collaboration', 'Something else'];
-
 
 /**
  * Shown in the "building" section while PROJECTS is empty. Update `status` as work moves along;

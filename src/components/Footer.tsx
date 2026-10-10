@@ -8,8 +8,7 @@ const LINKS = SECTIONS;
 
 const ELSEWHERE = [
   { label: 'GitHub', url: SITE.socials.github },
-  { label: 'LinkedIn', url: SITE.socials.linkedin },
-  { label: 'LeetCode', url: SITE.socials.leetcode }
+  { label: 'LinkedIn', url: SITE.socials.linkedin }
 ];
 
 const heading = 'font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#666] dark:text-neutral-400';
@@ -27,7 +26,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
   };
 
   return (
-    <footer className="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:px-6 sm:pt-16 md:pb-6">
+    <footer className="mx-auto max-w-6xl px-4 pb-8 pt-12 sm:px-6 sm:pt-16 lg:pb-6">
       <div className="border-t border-black/10 pt-8 dark:border-white/10">
         <div className="grid grid-cols-2 gap-x-6 gap-y-7 lg:grid-cols-[1.6fr_0.8fr_0.8fr_1.2fr]">
           <div className="col-span-2 space-y-2 lg:col-span-1">
@@ -35,7 +34,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
               {SITE.firstName} <span className="text-neutral-500">{SITE.name.split(' ').slice(1).join(' ')}</span>
             </p>
             <p className="max-w-xs text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-              Software developer and CS student building reliable software, from the database schema to the deployed product.
+              Software engineer and CS student (class of 2029) focused on algorithms, correctness and clean backend code.
             </p>
           </div>
 

@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { Menu, X, Sun, Moon, ArrowUpRight } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { Sun, Moon, ArrowUpRight, Menu, X } from 'lucide-react';
 import { SITE } from '../data/site';
 import { toggleTheme, useTheme } from '../lib/theme';
 import { scrollToSection } from '../lib/scroll';
-import { SECTIONS, sectionNumber } from '../lib/sections';
+import { SECTIONS } from '../lib/sections';
+import { useActiveSection } from '../lib/useActiveSection';
 
 interface NavbarProps {
   onOpenContact: () => void;
@@ -32,8 +33,9 @@ const ThemeButton: React.FC<{ className: string }> = ({ className }) => {
 };
 
 const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
+  const active = useActiveSection();
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState('home');
+  const toggle = useRef<HTMLButtonElement | null>(null);
   const [scrolled, setScrolled] = useState(false);
   // On phones the big name in the hero already says who this is, so the bar shows a monogram until it scrolls away.
   const [heroName, setHeroName] = useState(true);
@@ -56,18 +58,23 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Highlight the link for the section in the middle of the screen.
+  // The phone menu closes on Escape (handing focus back to its button), and by itself at desktop width.
   useEffect(() => {
-    const io = new IntersectionObserver(
-      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
-      { rootMargin: '-40% 0px -50% 0px' }
-    );
-    ['home', ...SECTIONS.map((n) => n.id)].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) io.observe(el);
-    });
-    return () => io.disconnect();
-  }, []);
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setOpen(false);
+      toggle.current?.focus();
+    };
+    const wide = window.matchMedia('(min-width: 1024px)');
+    const onWide = () => wide.matches && setOpen(false);
+    document.addEventListener('keydown', onKey);
+    wide.addEventListener('change', onWide);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      wide.removeEventListener('change', onWide);
+    };
+  }, [open]);
 
   const compact = heroName && !open;
   const initials = SITE.name.split(' ').map((w) => w[0]);
@@ -79,17 +86,20 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
 
   const icon =
     'relative flex h-9 w-9 items-center justify-center rounded-full text-neutral-900 transition hover:bg-black/5 dark:text-neutral-100 dark:hover:bg-white/10';
-  const solid = scrolled || open;
+
+  const row =
+    'flex h-10 w-full items-center justify-between rounded-xl px-3 text-[15px] font-medium transition-colors';
 
   return (
+    <>
+    {/* invisible layer: a tap anywhere outside the open menu closes it */}
+    {open && <div aria-hidden className="fixed inset-0 z-[35] lg:hidden" onClick={() => setOpen(false)} />}
     <header
       className={`fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${
-        open
-          ? 'border-b border-black/10 bg-[#f4f4f2] shadow-[0_20px_40px_-20px_rgba(0,0,0,0.25)] dark:border-white/10 dark:bg-[#0b0b0c]'
-          : solid
-            ? 'border-b border-black/10 bg-[#f4f4f2]/90 backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0b0c]/85'
-            : // over the hero: still frosted, so the dotted background never runs through the links
-              'border-b border-transparent bg-[#f4f4f2]/75 backdrop-blur-md dark:bg-[#0b0b0c]/70'
+        scrolled
+          ? 'border-b border-black/10 bg-[#f4f4f2]/90 backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0b0c]/85'
+          : // over the hero: still frosted, so the dotted background never runs through the links
+            'border-b border-transparent bg-[#f4f4f2]/75 backdrop-blur-md dark:bg-[#0b0b0c]/70'
       }`}
     >
       <nav aria-label="Primary" className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-4 sm:px-6">
@@ -115,7 +125,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
                   active === n.id ? 'text-neutral-950 dark:text-white' : 'text-neutral-800 hover:text-neutral-950 dark:text-neutral-200 dark:hover:text-white'
                 }`}
               >
-                <span aria-hidden className="font-medium text-neutral-500 dark:text-neutral-400">{sectionNumber(n.id)}/</span>
                 {n.label}
                 <span
                   aria-hidden
@@ -135,47 +144,57 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact }) => {
             Get in touch
             <ArrowUpRight className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => setOpen((v) => !v)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} className={`${icon} lg:hidden`}>
+          <button
+            ref={toggle}
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            aria-controls="phone-menu"
+            className={`${icon} lg:hidden ${open ? 'bg-black/5 dark:bg-white/10' : ''}`}
+          >
             {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
           </button>
         </div>
       </nav>
 
+      {/* phone menu: a small card under the menu button, so the page stays visible beside it */}
       {open && (
-        <div className="fade-up mx-auto max-w-6xl px-4 pb-5 sm:px-6 lg:hidden">
-          <ul className="divide-y divide-black/10 border-t border-black/10 dark:divide-white/10 dark:border-white/10">
+        <div
+          id="phone-menu"
+          className="fade-up absolute right-3 top-[calc(100%+0.5rem)] w-56 rounded-2xl border border-black/10 bg-white p-1.5 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.35)] sm:right-5 lg:hidden dark:border-white/10 dark:bg-neutral-900"
+        >
+          <ul>
             {SECTIONS.map((n) => (
               <li key={n.id}>
                 <button
                   onClick={() => goTo(n.id)}
-                  className={`flex w-full items-baseline gap-3 py-3.5 text-left font-display text-2xl font-bold uppercase ${
-                    active === n.id ? 'text-neutral-950 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'
+                  aria-current={active === n.id ? 'true' : undefined}
+                  className={`${row} ${
+                    active === n.id
+                      ? 'bg-black/[0.06] text-neutral-950 dark:bg-white/10 dark:text-white'
+                      : 'text-neutral-700 hover:bg-black/[0.04] dark:text-neutral-300 dark:hover:bg-white/[0.06]'
                   }`}
                 >
-                  <span aria-hidden className="font-mono text-xs font-medium text-neutral-400">{sectionNumber(n.id)}/</span>
                   {n.label}
+                  {active === n.id && <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
                 </button>
               </li>
             ))}
           </ul>
-          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[12px] font-medium uppercase tracking-[0.08em]">
-            <a href={SITE.resume} target="_blank" rel="noopener noreferrer">Resume ↗</a>
-            <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-            <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
-          </div>
           <button
             onClick={() => {
               setOpen(false);
               onOpenContact();
             }}
-            className="mt-5 flex w-full items-center justify-between rounded-full bg-neutral-950 px-5 py-3 font-mono text-[12px] font-semibold uppercase tracking-[0.06em] text-white sm:hidden dark:bg-white dark:text-neutral-950"
+            className="mt-1.5 flex h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-neutral-950 text-sm font-semibold text-white transition hover:bg-neutral-800 sm:hidden dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             Get in touch
-            <ArrowUpRight className="h-4 w-4" />
+            <ArrowUpRight className="h-4 w-4" aria-hidden />
           </button>
         </div>
       )}
     </header>
+    </>
   );
 };
 

@@ -9,9 +9,7 @@ import ContactModal from './components/ContactModal';
 import DemoOverlay from './components/DemoOverlay';
 import CaseStudy from './components/CaseStudy';
 import CommandPalette from './components/CommandPalette';
-import ScrollProgress from './components/ScrollProgress';
 import Building from './components/Building';
-import MobileBar from './components/MobileBar';
 import Footer from './components/Footer';
 import Reveal from './components/Reveal';
 import { useStudyRoute } from './lib/route';
@@ -19,7 +17,8 @@ import { useCursorLight } from './lib/useCursorLight';
 import { closeStudy } from './lib/transition';
 import { PROJECTS, Project } from './data/projects';
 
-const section = 'scroll-mt-24 pt-20 sm:pt-28';
+// Phones get a tighter rhythm between sections; from sm up the spacing is unchanged.
+const section = 'scroll-mt-24 pt-20 max-sm:scroll-mt-20 max-sm:pt-16 sm:pt-28';
 
 const App: React.FC = () => {
   const [contactOpen, setContactOpen] = useState(false);
@@ -68,7 +67,6 @@ const App: React.FC = () => {
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <ScrollProgress />
       <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onOpenContact={openContact} onOpenDemo={setDemo} />
       <CaseStudy
@@ -97,24 +95,22 @@ const App: React.FC = () => {
           </section>
         )}
 
-        <section id="background" className={`${section} px-1 sm:px-0`}>
-          <Background />
-        </section>
-
-        <section id="story" className={`${section} px-3 sm:px-6`}>
+        <section id="story" className={`${section} px-3 max-sm:px-1 sm:px-6`}>
           <Reveal>
             <Story />
           </Reveal>
         </section>
 
-        <section id="contact" className={section}>
+        <section id="background" className={`${section} px-1 sm:px-0`}>
+          <Background />
+        </section>
+
+        <section id="contact" className={`${section} max-sm:px-1`}>
           <Reveal>
             <CallToAction onOpenContact={openContact} />
           </Reveal>
         </section>
       </main>
-
-      <MobileBar onOpenContact={openContact} />
 
       <Footer onOpenContact={openContact} />
     </div>

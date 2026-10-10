@@ -9,9 +9,3 @@ export const SECTIONS: { id: string; label: string }[] = [
   ...NAV.filter((n) => (n.id === 'work' ? PROJECTS.length > 0 : n.id === 'building' ? PROJECTS.length === 0 : true)),
   { id: 'contact', label: 'Contact' }
 ];
-
-/** "01", "02", ... for a section id, so the nav and the section headings always agree. */
-export const sectionNumber = (id: string) => {
-  const i = SECTIONS.findIndex((s) => s.id === id);
-  return i < 0 ? '' : String(i + 1).padStart(2, '0');
-};

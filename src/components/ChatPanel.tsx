@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUp, RotateCcw, Sparkles, Square, X } from 'lucide-react';
+import { ArrowUp, LoaderCircle, RotateCcw, Sparkles, Square, X } from 'lucide-react';
 import { SITE } from '../data/site';
 import { CHAT } from '../data/content';
 import { QUICK_ANSWERS } from '../data/quickAnswers';
@@ -71,29 +71,49 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
 
   useEffect(() => () => abort.current?.abort(), []);
 
-  if (!open) return null;
+  const setLast = (text: string, source?: Turn['source'], error = false) =>
+    setTurns((t) => [...t.slice(0, -1), { role: 'model', text, source, error }]);
+  const setAnswer = (text: string, error = false) => setLast(text, error ? undefined : 'ai', error);
 
-  const setAnswer = (text: string, error = false) =>
-    setTurns((t) => [...t.slice(0, -1), { role: 'model', text, source: error ? undefined : 'ai', error }]);
+  /**
+   * Shows a prepared answer the way an AI answer arrives: a short "thinking" pause, then the words appear in
+   * small bursts. It stays labelled "Quick answer". Stopping or closing shows the rest at once; visitors who
+   * prefer reduced motion get it straight away.
+   */
+  const reveal = async (text: string, signal: AbortSignal) => {
+    const wait = (ms: number) =>
+      new Promise<void>((done) => {
+        const timer = window.setTimeout(done, ms);
+        signal.addEventListener('abort', () => (window.clearTimeout(timer), done()), { once: true });
+      });
+    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    await wait(still ? 250 : 700 + Math.random() * 400);
+    const words = text.split(/(\s+)/);
+    for (let i = 0; !still && !signal.aborted && i < words.length; i += 4) {
+      setLast(words.slice(0, i + 4).join(''), 'quick');
+      await wait(35);
+    }
+    setLast(text, 'quick');
+  };
 
   const ask = async (question: string) => {
     const q = question.trim().slice(0, MAX_CHARS);
     if (!q || busy) return;
     const prepared = quickAnswer(q);
-    if (prepared) {
-      setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: prepared, source: 'quick' }]);
-      setInput('');
-      if (field.current) field.current.style.height = '';
-      return;
-    }
     const history: Turn[] = [...turns.filter((t) => !t.error && t.text), { role: 'user', text: q }];
-    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: '' }]);
+    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: '', source: prepared ? 'quick' : undefined }]);
     setInput('');
     if (field.current) field.current.style.height = '';
     setBusy(true);
 
     const controller = new AbortController();
     abort.current = controller;
+    if (prepared) {
+      await reveal(prepared, controller.signal);
+      setBusy(false);
+      abort.current = null;
+      return;
+    }
     let answer = '';
     try {
       const response = await fetch('/api/chat', {
@@ -126,6 +146,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
       abort.current = null;
     }
   };
+
+  if (!open) return null;
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -218,10 +240,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
                       {t.text ? (
                         linkify(t.text)
                       ) : (
-                        <span className="inline-flex gap-1 py-1.5" aria-label="Thinking">
-                          {[0, 150, 300].map((d) => (
-                            <span key={d} className="pulse-dot h-1.5 w-1.5 rounded-full bg-neutral-400" style={{ animationDelay: `${d}ms` }} />
-                          ))}
+                        <span className="inline-flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
+                          <LoaderCircle aria-hidden className="h-4 w-4 animate-spin motion-reduce:animate-none" />
+                          Thinking…
                         </span>
                       )}
                     </div>

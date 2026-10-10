@@ -239,6 +239,21 @@ body {
   .line-up, .caret, .fade-in { animation: none; }
 }
 
+/*
+ * Animated gradient outline that marks the AI entry points. The element sets --ring-fill to the colour
+ * behind its content (the outline is the gradient showing through a 1px transparent border).
+ */
+.ai-ring {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--ring-fill, #f4f4f2), var(--ring-fill, #f4f4f2)) padding-box,
+    linear-gradient(90deg, #818cf8, #34d399, #22d3ee, #818cf8) border-box;
+  background-size: 100% 100%, 300% 100%;
+  animation: ai-ring 6s linear infinite;
+}
+@keyframes ai-ring { to { background-position: 0 0, 300% 0; } }
+@media (prefers-reduced-motion: reduce) { .ai-ring { animation: none; } }
+
 /* Soft halo in the page colour behind small hero text, so the dotted wave never runs through the letters */
 .halo { text-shadow: 0 0 6px #f4f4f2, 0 0 14px #f4f4f2, 0 0 22px #f4f4f2; }
 .dark .halo { text-shadow: 0 0 6px #0b0b0c, 0 0 14px #0b0b0c, 0 0 22px #0b0b0c; }

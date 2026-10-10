@@ -83,7 +83,7 @@ const App: React.FC = () => {
       <Navbar onOpenContact={openContact} onOpenChat={openChat} />
 
       <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-3 pt-24 outline-none sm:px-6">
-        <Hero onOpenChat={openChat} />
+        <Hero />
 
         {PROJECTS.length === 0 && (
           <section id="building" className={`${section} px-1 sm:px-0`}>

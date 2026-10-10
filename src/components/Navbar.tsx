@@ -140,7 +140,7 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact, onOpenChat }) => {
           <ThemeButton className={icon} />
           <button
             onClick={onOpenChat}
-            className="ml-2 hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-black/15 px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-neutral-900 transition hover:bg-black/5 sm:inline-flex dark:border-white/20 dark:text-white dark:hover:bg-white/10"
+            className="ai-ring ml-2 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-neutral-900 transition hover:-translate-y-px max-sm:ml-1 max-sm:px-3 max-sm:py-1.5 max-sm:text-[10.5px] dark:text-white [--ring-fill:#f4f4f2] dark:[--ring-fill:#0b0b0c]"
           >
             <Sparkles className="h-3.5 w-3.5" aria-hidden />
             Ask AI
@@ -189,16 +189,6 @@ const Navbar: React.FC<NavbarProps> = ({ onOpenContact, onOpenChat }) => {
               </li>
             ))}
           </ul>
-          <button
-            onClick={() => {
-              setOpen(false);
-              onOpenChat();
-            }}
-            className="mt-1.5 flex h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-black/10 text-sm font-semibold text-neutral-900 transition hover:bg-black/[0.04] sm:hidden dark:border-white/15 dark:text-white dark:hover:bg-white/[0.06]"
-          >
-            <Sparkles className="h-4 w-4" aria-hidden />
-            Ask AI about me
-          </button>
           <button
             onClick={() => {
               setOpen(false);

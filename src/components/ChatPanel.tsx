@@ -77,8 +77,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
 
   /**
    * Shows a prepared answer the way an AI answer arrives: a short "thinking" pause, then the words appear in
-   * small bursts. It stays labelled "Quick answer". Stopping or closing shows the rest at once; visitors who
-   * prefer reduced motion get it straight away.
+   * small bursts. It stays labelled "Quick answer". Stopping or closing shows the rest at once. Text appearing
+   * is not movement, so this runs for every visitor, including those who prefer reduced motion.
    */
   const reveal = async (text: string, signal: AbortSignal) => {
     const wait = (ms: number) =>
@@ -86,12 +86,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
         const timer = window.setTimeout(done, ms);
         signal.addEventListener('abort', () => (window.clearTimeout(timer), done()), { once: true });
       });
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    await wait(still ? 250 : 700 + Math.random() * 400);
+    await wait(900 + Math.random() * 500);
     const words = text.split(/(\s+)/);
-    for (let i = 0; !still && !signal.aborted && i < words.length; i += 4) {
-      setLast(words.slice(0, i + 4).join(''), 'quick');
-      await wait(35);
+    for (let i = 0; !signal.aborted && i < words.length; i += 3) {
+      setLast(words.slice(0, i + 3).join(''), 'quick');
+      await wait(40);
     }
     setLast(text, 'quick');
   };
@@ -241,7 +240,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
                         linkify(t.text)
                       ) : (
                         <span className="inline-flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-                          <LoaderCircle aria-hidden className="h-4 w-4 animate-spin motion-reduce:animate-none" />
+                          <LoaderCircle aria-hidden className="h-4 w-4 animate-spin motion-reduce:[animation-duration:2s]" />
                           Thinking…
                         </span>
                       )}

@@ -23,17 +23,19 @@ export const STORY = {
 
 /**
  * The two Polaroids in "My story". A `shot` is a project screenshot shown in colour.
+ * `srcDark` is an optional version of the image used in dark mode (for example a portrait whose light background is darkened).
  * To use a second real photo: drop it in /public and change `src` (and set kind: 'photo').
  */
 export interface StoryPhoto {
   src: string;
+  srcDark?: string;
   alt: string;
   position: string;
   caption: string;
   kind: 'photo' | 'shot';
 }
 export const STORY_PHOTOS: [StoryPhoto] | [StoryPhoto, StoryPhoto] = [
-  { src: '/portrait.webp', alt: 'Portrait of Aditya Tiwari', position: 'center 30%', caption: "Hi, I'm Aditya", kind: 'photo' },
+  { src: '/portrait.webp', srcDark: '/portrait-dark.webp', alt: 'Portrait of Aditya Tiwari', position: 'center 30%', caption: "Hi, I'm Aditya", kind: 'photo' },
   { src: '/story-flowchart.webp', alt: 'A hand-drawn flowchart on paper', position: 'center', caption: 'Design before code', kind: 'photo' }
 ];
 

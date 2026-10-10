@@ -20,9 +20,21 @@ const Polaroid: React.FC<{ photo: StoryPhoto; className: string; drift: number }
       loading="lazy"
       width={400}
       height={500}
-      className={`aspect-[4/5] w-full rounded-[3px] object-cover dark:brightness-90 ${photo.kind === 'photo' ? 'grayscale' : ''}`}
+      className={`aspect-[4/5] w-full rounded-[3px] object-cover dark:brightness-90 ${photo.srcDark ? 'dark:hidden' : ''} ${photo.kind === 'photo' ? 'grayscale' : ''}`}
       style={{ objectPosition: photo.position }}
     />
+    {/* dark-mode version, already toned for the dark page, so it skips the brightness dip */}
+    {photo.srcDark && (
+      <img
+        src={photo.srcDark}
+        alt={photo.alt}
+        loading="lazy"
+        width={400}
+        height={500}
+        className={`hidden aspect-[4/5] w-full rounded-[3px] object-cover dark:block ${photo.kind === 'photo' ? 'grayscale' : ''}`}
+        style={{ objectPosition: photo.position }}
+      />
+    )}
     <figcaption className="accent absolute inset-x-0 bottom-1.5 text-center text-[15px] text-neutral-700 sm:text-base">
       {photo.caption}
     </figcaption>

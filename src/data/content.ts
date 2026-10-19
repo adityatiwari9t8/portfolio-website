@@ -119,10 +119,10 @@ export interface SkillGroup {
 }
 
 export const TOOLKIT: SkillGroup[] = [
-  { label: 'Languages', items: ['Java', 'Python', 'TypeScript', 'JavaScript', 'SQL', 'C'] },
-  { label: 'Backend & data', items: ['Spring Boot', 'Node.js', 'Express', 'REST APIs', 'PostgreSQL'] },
+  { label: 'Languages', items: ['Java', 'Python', 'TypeScript', 'JavaScript', 'C'] },
+  { label: 'Backend & data', items: ['SQL', 'Node.js', 'Express', 'REST APIs', 'MongoDB'] },
   { label: 'Frontend', items: ['React', 'Tailwind CSS', 'HTML & CSS'] },
-  { label: 'DevOps & tools', items: ['Docker', 'Linux', 'Git & GitHub'] }
+  { label: 'DevOps & tools', items: ['Linux', 'Git & GitHub'] }
 ];
 
 /** Shown as the "open to" list in the Background section. */

@@ -37,7 +37,7 @@ Each project has a working demo embedded in the site and a case-study page (prob
 - **Direct contact.** Email, copy-email, and LinkedIn actions. No form or implied delivery; email links explicitly open the visitor's email app. Failed clipboard writes show manual-copy guidance.
 - **An optional AI assistant.** Available from the desktop navigation, mobile menu, or command menu. Answers stream through `api/chat.ts`; its profile comes from the same data files as the site. Starter questions use instant local quick answers. Custom questions are limited to four per rolling minute, with a friendly pause message before the fifth (no visible quota or countdown). The allowance persists across resets, panel closes and reloads; quick answers stay available. A matching API guard and provider-cooldown fallback protect the endpoint. The API guard is best-effort per IP within each serverless instance; Google’s project quota is shared across visitors.
 - **Keyboard command menu.** Cmd+K / Ctrl+K for navigation, projects, resume, contact, and theme.
-- **Light by default, with a dark toggle.** An explicit choice is remembered. Shared buttons, surfaces, typography, visible focus states, and short transitions keep both themes consistent. Content stays visible before scroll animations run.
+- **Light by default, with a dark toggle.** Every page load starts light; a toggle affects only the current document. Shared buttons, surfaces, typography, visible focus states, and short transitions keep both themes consistent. Content stays visible before scroll animations run.
 - **Self-hosted fonts and optional analytics.** Latin font subsets are bundled; cookie-less analytics are off by default.
 
 ## Run it locally

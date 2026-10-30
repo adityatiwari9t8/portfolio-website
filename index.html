@@ -50,15 +50,15 @@
   </script>
 
   <script>
-    // Light by default; restore an explicit dark preference before first paint.
-    (function () {
-      try {
-        if (localStorage.getItem('theme') === 'dark') {
-          document.documentElement.classList.add('dark');
-          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#0b0b0c');
-        }
-      } catch (e) {}
-    })();
+    // Start each page load in light mode, including visits restored from browser history.
+    function resetTheme() {
+      document.documentElement.classList.remove('dark');
+      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f4f4f2');
+    }
+    resetTheme();
+    window.addEventListener('pageshow', function (event) {
+      if (event.persisted) { resetTheme(); window.dispatchEvent(new Event('theme-reset')); }
+    });
   </script>
 </head>
 <body>

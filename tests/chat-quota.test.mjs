@@ -122,18 +122,19 @@ test('shared provider exhaustion returns a friendly cooldown with Retry-After', 
   } finally { state.status = 0; }
 });
 
-test('first paint is light by default, including when storage is unavailable', async () => {
+test('every load starts light regardless of prior preferences, without accessing storage', async () => {
   const html = await readFile('index.html', 'utf8');
   assert.match(html, /<html lang="en">/);
   assert.match(html, /name="theme-color" content="#f4f4f2"/);
   const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
   for (const preference of [null, 'light', 'dark', 'blocked']) {
-    let dark = false;
+    let dark = true;
     const context = {
-      localStorage: { getItem: () => { if (preference === 'blocked') throw new Error('Blocked'); return preference; } },
-      document: { documentElement: { classList: { add: () => { dark = true; } } }, querySelector: () => ({ setAttribute() {} }) }
+      localStorage: { getItem: () => { throw new Error('Theme must not read storage'); }, setItem: () => { throw new Error('Theme must not write storage'); } },
+      window: { addEventListener() {} },
+      document: { documentElement: { classList: { remove: () => { dark = false; } } }, querySelector: () => ({ setAttribute() {} }) }
     };
     vm.runInNewContext(script, context);
-    assert.equal(dark, preference === 'dark');
+    assert.equal(dark, false);
   }
 });

@@ -1,28 +1,15 @@
 import { useSyncExternalStore } from 'react';
 import { changeTheme } from './transition';
 
-/**
- * One source of truth for light/dark. Light is the default; a visitor's choice is remembered in
- * localStorage (the inline script in index.html applies it before first paint, so there is no flash).
- * The navbar toggle and the command palette both go through here, so they never disagree.
- */
-const THEME_KEY = 'theme';
-
+/** Theme is held only in the current document. Every load starts light. */
 const subs = new Set<() => void>();
 const emit = () => subs.forEach((fn) => fn());
+if (typeof window !== 'undefined') window.addEventListener('theme-reset', emit);
 const subscribe = (fn: () => void) => {
   subs.add(fn);
   return () => {
     subs.delete(fn);
   };
-};
-
-const write = (key: string, value: string) => {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    /* storage unavailable: the choice still applies for this visit */
-  }
 };
 
 const isDark = () => {
@@ -36,7 +23,6 @@ export function toggleTheme(origin?: { x: number; y: number }) {
   const apply = () => {
     document.documentElement.classList.toggle('dark', next);
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next ? '#0b0b0c' : '#f4f4f2');
-    write(THEME_KEY, next ? 'dark' : 'light');
     emit();
   };
   const x = origin?.x ?? window.innerWidth / 2;

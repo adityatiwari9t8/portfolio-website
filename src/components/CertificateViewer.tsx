@@ -33,7 +33,7 @@ const CertificateViewer: React.FC<CertificateViewerProps> = ({ cert, onClose }) 
           data-autofocus
           onClick={onClose}
           aria-label="Close"
-          className="absolute -top-12 right-0 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+          className="absolute -top-12 right-0 flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
         >
           <X className="h-4 w-4" />
         </button>

@@ -14,12 +14,11 @@ import Building from './components/Building';
 import Footer from './components/Footer';
 import Reveal from './components/Reveal';
 import { useStudyRoute } from './lib/route';
-import { useCursorLight } from './lib/useCursorLight';
 import { closeStudy } from './lib/transition';
 import { PROJECTS, Project } from './data/projects';
 
-// Phones get a tighter rhythm between sections; from sm up the spacing is unchanged.
-const section = 'scroll-mt-24 pt-20 max-sm:scroll-mt-20 max-sm:pt-16 sm:pt-28';
+// Section spacing is separate from anchor offsets, so headings land below the fixed navbar.
+const section = 'mt-16 sm:mt-24';
 
 const App: React.FC = () => {
   const [contactOpen, setContactOpen] = useState(false);
@@ -41,22 +40,6 @@ const App: React.FC = () => {
     return () => document.removeEventListener('keydown', onKey);
   }, []);
 
-  // Cards marked .glow light up under the mouse pointer.
-  useEffect(() => {
-    const onMove = (e: PointerEvent) => {
-      if (e.pointerType !== 'mouse') return;
-      const el = (e.target as HTMLElement | null)?.closest<HTMLElement>('.glow');
-      if (!el) return;
-      const r = el.getBoundingClientRect();
-      el.style.setProperty('--gx', `${e.clientX - r.left}px`);
-      el.style.setProperty('--gy', `${e.clientY - r.top}px`);
-    };
-    document.addEventListener('pointermove', onMove, { passive: true });
-    return () => document.removeEventListener('pointermove', onMove);
-  }, []);
-
-  useCursorLight();
-
   const study = useStudyRoute();
   const studyProject = PROJECTS.find((p) => p.id === study.id) ?? null;
   // A link to a project that doesn't exist just lands on the home page.
@@ -65,7 +48,7 @@ const App: React.FC = () => {
   }, [study, studyProject]);
 
   return (
-    // overflow-x-clip (not hidden) so the sticky project cards keep working
+    // Clip the decorative hero canvas without changing page scroll behavior.
     <div className="relative min-h-screen overflow-x-clip bg-[#f4f4f2] font-sans text-neutral-950 transition-colors duration-300 dark:bg-[#0b0b0c] dark:text-neutral-100">
       <a href="#main" className="skip-link">
         Skip to content
@@ -82,11 +65,11 @@ const App: React.FC = () => {
       <DemoOverlay project={demo} onClose={() => setDemo(null)} />
       <Navbar onOpenContact={openContact} onOpenChat={openChat} />
 
-      <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-3 pt-24 outline-none sm:px-6">
+      <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-5 pt-24 outline-none sm:px-8">
         <Hero />
 
         {PROJECTS.length === 0 && (
-          <section id="building" className={`${section} px-1 sm:px-0`}>
+          <section id="building" className={`${section}`}>
             <Reveal>
               <Building />
             </Reveal>
@@ -94,22 +77,22 @@ const App: React.FC = () => {
         )}
 
         {PROJECTS.length > 0 && (
-          <section id="work" className={`${section} px-1 sm:px-0`}>
+          <section id="work" className="mt-14 sm:mt-16">
             <Projects onOpenDemo={setDemo} />
           </section>
         )}
 
-        <section id="story" className={`${section} px-3 max-sm:px-1 sm:px-6`}>
+        <section id="story" className={`${section}`}>
           <Reveal>
             <Story />
           </Reveal>
         </section>
 
-        <section id="background" className={`${section} px-1 sm:px-0`}>
+        <section id="background" className={`${section}`}>
           <Background />
         </section>
 
-        <section id="contact" className={`${section} max-sm:px-1`}>
+        <section id="contact" className={`${section}`}>
           <Reveal>
             <CallToAction onOpenContact={openContact} />
           </Reveal>

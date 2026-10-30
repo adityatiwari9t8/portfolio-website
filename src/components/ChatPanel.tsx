@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUp, LoaderCircle, RotateCcw, Sparkles, Square, X } from 'lucide-react';
+import { ArrowUp, RotateCcw, Sparkles, Square, X } from 'lucide-react';
 import { SITE } from '../data/site';
 import { CHAT } from '../data/content';
-import { QUICK_ANSWERS } from '../data/quickAnswers';
+import { QUICK_ANSWERS, getQuickAnswer } from '../data/quickAnswers';
+import { CHAT_QUOTA_KEY, chatQuota } from '../lib/chatQuota';
 import { useDialog } from '../lib/useDialog';
 
 interface ChatPanelProps {
@@ -20,10 +21,6 @@ interface Turn {
   source?: 'quick' | 'ai';
   error?: boolean;
 }
-
-/** Starter questions (clicked or typed) get their prepared answer instantly, without calling the AI. */
-const quickAnswer = (question: string) =>
-  QUICK_ANSWERS.find((q) => q.question.toLowerCase() === question.toLowerCase().replace(/\s+/g, ' '))?.answer;
 
 const MAX_CHARS = 1000;
 const FALLBACK = `The assistant isn't reachable right now. Email ${SITE.firstName} at ${SITE.email} and you'll get a direct answer.`;
@@ -51,96 +48,127 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  const inFlight = useRef(false);
+  const [, refreshQuota] = useState(0);
+  const cooldownSeconds = Math.ceil(chatQuota.read().retryAfterMs / 1000);
+  const customPaused = cooldownSeconds > 0 && !getQuickAnswer(input);
   const dialog = useRef<HTMLDivElement | null>(null);
   const scroller = useRef<HTMLDivElement | null>(null);
   const field = useRef<HTMLTextAreaElement | null>(null);
   const abort = useRef<AbortController | null>(null);
+  const followLatest = useRef(true);
 
-  // Closing the panel stops an answer that is still streaming, so it doesn't use quota nobody reads.
+  // Closing the panel cancels transport and any remaining text animation.
   const close = () => {
     abort.current?.abort();
     onClose();
   };
   useDialog(open, close, dialog);
 
+  // The allowance survives clearing the conversation. Refresh eligibility and cross-tab changes.
+  useEffect(() => {
+    if (!open) return;
+    const refresh = () => refreshQuota((n) => n + 1);
+    const onStorage = (e: StorageEvent) => { if (e.key === CHAT_QUOTA_KEY) refresh(); };
+    refresh();
+    const timer = window.setInterval(refresh, 1000);
+    window.addEventListener('storage', onStorage);
+    return () => { window.clearInterval(timer); window.removeEventListener('storage', onStorage); };
+  }, [open]);
+
   // Keep the newest text in view while an answer streams in.
   useEffect(() => {
     const el = scroller.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el && followLatest.current) el.scrollTop = el.scrollHeight;
   }, [turns]);
 
   useEffect(() => () => abort.current?.abort(), []);
 
-  const setLast = (text: string, source?: Turn['source'], error = false) =>
-    setTurns((t) => [...t.slice(0, -1), { role: 'model', text, source, error }]);
-  const setAnswer = (text: string, error = false) => setLast(text, error ? undefined : 'ai', error);
-
-  /**
-   * Shows a prepared answer the way an AI answer arrives: a short "thinking" pause, then the words appear in
-   * small bursts. It stays labelled "Quick answer". Stopping or closing shows the rest at once. Text appearing
-   * is not movement, so this runs for every visitor, including those who prefer reduced motion.
-   */
-  const reveal = async (text: string, signal: AbortSignal) => {
-    const wait = (ms: number) =>
-      new Promise<void>((done) => {
-        const timer = window.setTimeout(done, ms);
-        signal.addEventListener('abort', () => (window.clearTimeout(timer), done()), { once: true });
-      });
-    await wait(900 + Math.random() * 500);
-    const words = text.split(/(\s+)/);
-    for (let i = 0; !signal.aborted && i < words.length; i += 3) {
-      setLast(words.slice(0, i + 3).join(''), 'quick');
-      await wait(40);
-    }
-    setLast(text, 'quick');
-  };
-
   const ask = async (question: string) => {
     const q = question.trim().slice(0, MAX_CHARS);
-    if (!q || busy) return;
-    const prepared = quickAnswer(q);
-    const history: Turn[] = [...turns.filter((t) => !t.error && t.text), { role: 'user', text: q }];
-    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: '', source: prepared ? 'quick' : undefined }]);
+    if (!q || inFlight.current) return;
+    const prepared = getQuickAnswer(q);
+    if (!prepared) {
+      const quota = chatQuota.reserve();
+      refreshQuota((n) => n + 1);
+      if (!quota.accepted) return;
+    }
+    inFlight.current = true;
+    followLatest.current = true;
+    const history = [...turns.filter((t) => !t.error && t.text), { role: 'user', text: q }];
+    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: '', source: prepared ? 'quick' : 'ai' }]);
     setInput('');
     if (field.current) field.current.style.height = '';
     setBusy(true);
-
     const controller = new AbortController();
     abort.current = controller;
-    if (prepared) {
-      await reveal(prepared, controller.signal);
-      setBusy(false);
-      abort.current = null;
-      return;
-    }
     let answer = '';
+    let shown = '';
+    let finished = false;
+    let discarded = false;
+    let failed = false;
+    const started = Date.now();
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const render = (text: string) => setTurns((t) => [...t.slice(0, -1), {
+      role: 'model', text, source: failed ? undefined : prepared ? 'quick' : 'ai', error: failed
+    }]);
+    // Buffer network bursts so both prepared and streamed replies have a readable rhythm.
+    // Keep transport and presentation independent: stopping cancels both immediately.
+    const presentation = (async () => {
+      while (!controller.signal.aborted && !discarded) {
+        if ((reducedMotion || Date.now() - started >= 450) && answer.length > shown.length) {
+          const step = reducedMotion ? answer.length : Math.max(4, Math.ceil((answer.length - shown.length) / 35));
+          shown = answer.slice(0, shown.length + step);
+          render(shown);
+        }
+        if (finished && shown.length >= answer.length) break;
+        await new Promise((resolve) => window.setTimeout(resolve, 25));
+      }
+    })();
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: history.map(({ role, text }) => ({ role, text })) }),
-        signal: controller.signal
-      });
-      const plain = response.headers.get('Content-Type')?.startsWith('text/plain');
-      if (!response.ok || !response.body || !plain) {
-        // The endpoint's own error messages are written for visitors; anything else gets the fallback.
-        setAnswer(plain ? (await response.text()) || FALLBACK : FALLBACK, true);
-        return;
+      if (prepared) {
+        answer = prepared;
+      } else {
+        const response = await fetch('/api/chat', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ messages: history.map(({ role, text }) => ({ role, text })) }),
+          signal: controller.signal
+        });
+        if (response.status === 429) {
+          const retry = Number(response.headers.get('Retry-After'));
+          chatQuota.backoff(Number.isFinite(retry) && retry > 0 ? retry : 60);
+          refreshQuota((n) => n + 1);
+          discarded = true;
+          setTurns((t) => t.slice(0, -2));
+          setInput(q);
+          return;
+        }
+        const isText = response.headers.get('Content-Type')?.startsWith('text/plain');
+        if (!response.ok || !response.body || !isText) {
+          failed = true;
+          answer = isText ? (await response.text()) || FALLBACK : FALLBACK;
+        } else {
+          const reader = response.body.getReader();
+          const decoder = new TextDecoder();
+          for (;;) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            answer += decoder.decode(value, { stream: true });
+          }
+          answer += decoder.decode();
+          if (!answer.trim()) { failed = true; answer = FALLBACK; }
+        }
       }
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      for (;;) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        answer += decoder.decode(value, { stream: true });
-        setAnswer(answer);
-      }
-      if (!answer.trim()) setAnswer(FALLBACK, true);
     } catch {
-      // Stopped by the visitor: keep whatever arrived. A network failure: say so.
-      if (controller.signal.aborted) setAnswer(answer || 'Stopped.', !answer);
-      else setAnswer(FALLBACK, true);
+      if (!controller.signal.aborted) { failed = true; answer = FALLBACK; shown = ''; }
     } finally {
+      finished = true;
+      await presentation;
+      if (controller.signal.aborted && !discarded) {
+        failed = !shown;
+        render(shown || 'Stopped.');
+      }
+      inFlight.current = false;
       setBusy(false);
       abort.current = null;
     }
@@ -161,7 +189,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
   };
 
   const iconButton =
-    'flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-neutral-600 transition hover:bg-black/10 dark:bg-white/10 dark:text-neutral-300 dark:hover:bg-white/20';
+    'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-black/5 text-neutral-600 transition hover:bg-black/10 dark:bg-white/10 dark:text-neutral-300 dark:hover:bg-white/20';
 
   return (
     <div
@@ -178,13 +206,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
         {/* grab handle, phones only */}
         <div aria-hidden className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-neutral-300 sm:hidden dark:bg-neutral-700" />
 
-        <header className="flex shrink-0 items-start gap-3 border-b border-black/5 px-5 pb-4 pt-3 sm:pt-5 dark:border-white/10">
-          <span className="mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+        <header className="flex shrink-0 items-start gap-2 border-b border-black/5 px-5 pb-4 pt-3 sm:pt-5 dark:border-white/10">
+          <span className="mt-0.5 hidden h-9 w-9 shrink-0 place-items-center min-[380px]:grid rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
             <Sparkles className="h-[18px] w-[18px]" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id="chat-title" className="font-display text-2xl font-bold uppercase leading-none tracking-[-0.01em] text-neutral-950 dark:text-white">
-              Ask about <span className="text-neutral-500">{SITE.firstName}</span>
+            <h2 id="chat-title" className="font-display text-xl font-bold sm:text-2xl uppercase leading-none tracking-[-0.01em] text-neutral-950 dark:text-white">
+              Ask about <span className="text-neutral-500 dark:text-neutral-400">{SITE.firstName}</span>
             </h2>
             <p className="mt-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.1em] text-neutral-600 dark:text-neutral-400">
               AI assistant
@@ -200,7 +228,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
           </button>
         </header>
 
-        <div ref={scroller} className="flex-1 overflow-y-auto overscroll-contain px-5 py-5" aria-live="polite">
+        <div ref={scroller} className="flex-1 overflow-y-auto overscroll-contain px-5 py-5" onScroll={(e) => { const el = e.currentTarget; followLatest.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80; }}>
           {turns.length === 0 ? (
             <div>
               <p className="text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-400">{CHAT.intro}</p>
@@ -221,7 +249,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
               </ul>
             </div>
           ) : (
-            <ol className="space-y-4">
+            <ol className="space-y-4" aria-live="polite" aria-busy={busy}>
               {turns.map((t, i) =>
                 t.role === 'user' ? (
                   <li key={i} className="ml-auto w-fit max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-tr-md bg-neutral-950 px-4 py-2.5 text-[15px] leading-relaxed text-white dark:bg-white dark:text-neutral-950">
@@ -237,11 +265,11 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
                       }`}
                     >
                       {t.text ? (
-                        linkify(t.text)
+                        <>{linkify(t.text)}{busy && i === turns.length - 1 && <span aria-hidden className="chat-caret" />}</>
                       ) : (
                         <span className="inline-flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-                          <LoaderCircle aria-hidden className="h-4 w-4 animate-spin motion-reduce:[animation-duration:2s]" />
-                          Thinking…
+                          <span aria-hidden className="chat-thinking"><span /><span /><span /></span>
+                          {t.source === 'quick' ? 'Finding that in my profile…' : 'Thinking…'}
                         </span>
                       )}
                     </div>
@@ -256,6 +284,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
             </ol>
           )}
         </div>
+        {turns.length > 0 && <div className="shrink-0 px-4 pb-3">
+          <p className="mb-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">Keep exploring</p>
+          <ul aria-label="Suggested questions" className="custom-scrollbar flex gap-2 overflow-x-auto pb-1">{QUICK_ANSWERS.map(({ question }) => <li key={question} className="shrink-0">
+            <button disabled={busy} onClick={() => ask(question)} className="min-h-11 max-w-[240px] rounded-xl border border-black/10 bg-white px-3 py-2 text-left text-xs leading-relaxed text-neutral-700 transition-colors hover:border-emerald-700/40 disabled:opacity-50 dark:border-white/15 dark:bg-white/[0.04] dark:text-neutral-300">{question}</button>
+          </li>)}</ul>
+        </div>}
 
         <form
           onSubmit={(e) => {
@@ -264,6 +298,9 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
           }}
           className="shrink-0 border-t border-black/5 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/10"
         >
+          {cooldownSeconds > 0 && <div className="mb-3 rounded-lg border border-emerald-700/20 bg-emerald-700/[0.05] px-3 py-2 text-sm text-emerald-900 dark:border-emerald-400/20 dark:text-emerald-200">
+            <p role="status">Let’s take a little breather. I’ll be ready for your next question shortly.</p>
+          </div>}
           <div className="flex items-end gap-2 rounded-2xl border border-black/10 bg-white p-1.5 pl-4 focus-within:border-neutral-950 dark:border-white/10 dark:bg-white/[0.04] dark:focus-within:border-white">
             <label htmlFor="chat-input" className="sr-only">
               Your question
@@ -280,18 +317,18 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
               }}
               onKeyDown={onKeyDown}
               placeholder={`Ask about ${SITE.firstName}…`}
-              className="max-h-32 min-h-[36px] flex-1 resize-none bg-transparent py-2 text-[16px] text-neutral-950 placeholder:text-neutral-400 focus:outline-none sm:text-[15px] dark:text-white dark:placeholder:text-neutral-500"
+              className="max-h-32 min-h-[44px] min-w-0 flex-1 resize-none bg-transparent py-2 text-[16px] text-neutral-950 placeholder:text-neutral-400 focus:outline-none sm:text-[15px] dark:text-white dark:placeholder:text-neutral-500"
             />
             {busy ? (
-              <button type="button" onClick={() => abort.current?.abort()} aria-label="Stop the answer" className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+              <button type="button" onClick={() => abort.current?.abort()} aria-label="Stop the answer" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
                 <Square className="h-3.5 w-3.5 fill-current" />
               </button>
             ) : (
               <button
                 type="submit"
-                disabled={!input.trim()}
+                disabled={!input.trim() || customPaused}
                 aria-label="Send"
-                className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-neutral-950 text-white transition disabled:opacity-30 dark:bg-white dark:text-neutral-950"
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-neutral-950 text-white transition disabled:opacity-30 dark:bg-white dark:text-neutral-950"
               >
                 <ArrowUp className="h-4 w-4" />
               </button>

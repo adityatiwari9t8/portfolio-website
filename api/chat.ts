@@ -9,6 +9,8 @@
 import { ApiError, GoogleGenAI, ThinkingLevel, type Content } from '@google/genai';
 import { SITE } from '../src/data/site.js';
 import { SYSTEM_INSTRUCTION } from './_profile.js';
+import { getQuickAnswer } from '../src/data/quickAnswers.js';
+import { CHAT_WINDOW_MS, reserveChatQuestion } from '../src/lib/chatQuota.js';
 
 /**
  * Free-tier models, tried in order. The free quota is counted per model (5 requests a minute each in testing),
@@ -22,22 +24,24 @@ const MODELS = (process.env.GEMINI_MODELS || 'gemini-3.6-flash,gemini-3.5-flash-
 
 const MAX_TURNS = 12; // messages of history sent to the model
 const MAX_CHARS = 1000; // per message from the visitor
-const LIMIT = 20; // questions per visitor...
-const WINDOW_MS = 10 * 60 * 1000; // ...per 10 minutes
-
-/**
- * Best-effort per-IP limit. It lives in the function instance's memory, so it resets when the instance
- * is recycled; Google's own free-tier quota is the hard ceiling behind it.
- */
+/** Best-effort per-IP guard within this function instance; Gemini's quota is shared across visitors. */
 const hits = new Map<string, number[]>();
-const limited = (ip: string) => {
+const reserve = (ip: string) => {
   const now = Date.now();
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS);
-  recent.push(now);
-  hits.set(ip, recent);
-  if (hits.size > 5000) hits.clear(); // never let the map grow without bound
-  return recent.length > LIMIT;
+  for (const [key, times] of hits) {
+    if (!times.some((t) => t > now - CHAT_WINDOW_MS)) hits.delete(key);
+  }
+  const quota = reserveChatQuestion(hits.get(ip) ?? [], now);
+  if (quota.accepted) hits.set(ip, quota.hits);
+  // Bound retained clients without clearing active limits for everyone at once.
+  if (hits.size > 5000) hits.delete(hits.keys().next().value!);
+  return quota;
 };
+
+const cooldown = (seconds: number) => new Response(
+  'Let’s take a little breather. I’ll be ready for your next question shortly.',
+  { status: 429, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store', 'Retry-After': String(seconds) } }
+);
 
 type Turn = { role: 'user' | 'model'; text: string };
 
@@ -56,12 +60,6 @@ export default {
   async fetch(request: Request): Promise<Response> {
     if (request.method !== 'POST') return text('Method not allowed', 405);
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) return text(`The assistant isn't set up yet. ${fallback}`, 503);
-
-    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
-    if (limited(ip)) return text(`That's a lot of questions in a short time. Try again in a few minutes, or ${fallback.toLowerCase()}`, 429);
-
     let turns: unknown;
     try {
       turns = (await request.json())?.messages;
@@ -69,6 +67,18 @@ export default {
       return text('Bad request', 400);
     }
     if (!isTurns(turns) || turns.length === 0 || turns[turns.length - 1].role !== 'user') return text('Bad request', 400);
+    const question = turns[turns.length - 1].text.trim().slice(0, MAX_CHARS);
+    if (!question) return text('Bad request', 400);
+    const prepared = getQuickAnswer(question);
+    if (prepared) return text(prepared, 200);
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return text(`The assistant isn't set up yet. ${fallback}`, 503);
+
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
+    const quota = reserve(ip);
+    if (!quota.accepted) return cooldown(Math.ceil(quota.retryAfterMs / 1000));
+
 
     const contents: Content[] = turns.slice(-MAX_TURNS).map((t) => ({
       role: t.role,
@@ -99,7 +109,7 @@ export default {
         return text(`Something went wrong on my side. ${fallback}`, 502);
       }
     }
-    if (!stream) return text(`The assistant has reached its free limit for now. ${fallback}`, 429);
+    if (!stream) return cooldown(60);
 
     const encoder = new TextEncoder();
     const body = new ReadableStream<Uint8Array>({

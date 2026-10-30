@@ -1,14 +1,13 @@
 /**
- * The starter questions in the "Ask AI" panel and their instant answers. The answers are written from the
+ * The starter questions in the "Ask AI" panel and their prepared answers. The answers are written from the
  * same data the page shows, so they stay right as projects, skills or plans change, and they never call the
- * AI (no wait, no quota). The panel labels them "Quick answer" so they are never passed off as AI replies.
+ * AI (no API request or quota usage). The panel labels them "Quick answer" so they are never passed off as AI replies.
  *
- * Keep this file out of api/: the server imports content.ts directly, and this file's imports would
- * not resolve there.
+ * Shared by the client and endpoint so predefined questions never consume the AI allowance.
  */
-import { SITE } from './site';
-import { EDUCATION, NOW, OPEN_TO, TOOLKIT } from './content';
-import { PROJECTS } from './projects';
+import { SITE } from './site.js';
+import { EDUCATION, NOW, OPEN_TO, TOOLKIT } from './content.js';
+import { PROJECTS } from './projects.js';
 
 export interface QuickAnswer {
   question: string;
@@ -43,3 +42,9 @@ export const QUICK_ANSWERS: QuickAnswer[] = [
     answer: `Right now, ${name} is:\n${bullets(NOW)}`
   }
 ];
+
+/** Typed versions of the starter questions are free too, including case/spacing differences. */
+export const getQuickAnswer = (question: string) => {
+  const normalize = (value: string) => value.trim().toLowerCase().replace(/\s+/g, ' ');
+  return QUICK_ANSWERS.find((q) => normalize(q.question) === normalize(question))?.answer;
+};

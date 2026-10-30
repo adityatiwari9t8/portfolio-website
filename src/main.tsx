@@ -2,10 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { inject } from '@vercel/analytics';
 // Self-hosted fonts: no request to Google, works offline and in every region.
-import '@fontsource-variable/inter/wght.css';
 import '@fontsource/instrument-serif/latin-400-italic.css';
-import '@fontsource-variable/roboto-condensed/wght.css';
-import '@fontsource-variable/roboto-mono/wght.css';
+import './fonts.css';
 import App from './App';
 import './index.css';
 

@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { changeTheme } from './transition';
 
 /**
- * One source of truth for light/dark. Dark is the default; a visitor's choice is remembered in
+ * One source of truth for light/dark. Light is the default; a visitor's choice is remembered in
  * localStorage (the inline script in index.html applies it before first paint, so there is no flash).
  * The navbar toggle and the command palette both go through here, so they never disagree.
  */
@@ -26,7 +26,7 @@ const write = (key: string, value: string) => {
 };
 
 const isDark = () => {
-  if (typeof document === 'undefined') return true;
+  if (typeof document === 'undefined') return false;
   return document.documentElement.classList.contains('dark');
 };
 
@@ -45,6 +45,6 @@ export function toggleTheme(origin?: { x: number; y: number }) {
 }
 
 export function useTheme() {
-  const dark = useSyncExternalStore(subscribe, isDark, () => true);
+  const dark = useSyncExternalStore(subscribe, isDark, () => false);
   return { dark };
 }

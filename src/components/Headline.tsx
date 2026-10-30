@@ -33,7 +33,7 @@ const Headline: React.FC<HeadlineProps> = ({ as: Tag = 'h2', before, accent, aft
   return (
     <Tag className={`font-display font-bold uppercase leading-[0.92] tracking-[-0.01em] text-neutral-950 dark:text-white ${className}`}>
       {words(before)}
-      {words(accent, 'text-neutral-500')}
+      {words(accent, 'text-neutral-500 dark:text-neutral-400')}
       {after ? words(after) : null}
     </Tag>
   );

@@ -30,17 +30,15 @@ Each project has a working demo embedded in the site and a case-study page (prob
 
 ## What's in the site
 
-- **Editorial hero.** My name in large condensed two-tone type over a dotted 3D wave drawn on a `<canvas>` (concentric rings displaced by travelling sine waves, perspective-projected, ~10k points batched by opacity). The wave follows the theme, leans gently toward the mouse, pauses off screen and holds still for reduced motion.
-- **Embedded live demos.** Each project opens in a browser-style overlay without leaving the page.
-- **Case-study pages** on a tiny hash router (`#/work/<id>`): links are shareable and the Back button closes the page.
-- **"Ask AI" assistant.** A chat panel where recruiters can ask about my skills, projects and availability. Answers stream from Gemini through a small Vercel function (`api/chat.ts`), and the assistant's knowledge is built from the same `src/data/` files the page renders, so it never drifts from the site. It is told to answer only from that data and to say so (and point to my email) when it doesn't know. Inputs are length-capped and rate-limited per visitor. The four starter questions are answered instantly from the same data (`src/data/quickAnswers.ts`) without calling the AI, and each answer is labelled as a quick answer or an AI answer.
-- **Keyboard command menu (⌘K / Ctrl+K).** Jump to any section, open a demo or case study, copy the email, open the resume or switch theme.
-- **Built for phones too.** A separate small-screen layout (left-aligned headings, tighter spacing, compact hero), a dropdown menu card instead of a full-screen menu, and a contact sheet that slides up from the bottom. The desktop layout is untouched by any of it.
-- **Restrained motion.** Scroll reveals, a gentle hover tilt on project cards, cursor-lit borders, and View Transitions for the theme switch and case-study pages. Touch screens get still cards, and everything switches off for visitors who prefer reduced motion.
-- **Dark by default, with a light toggle.** The choice is remembered in `localStorage`, and the About portrait has a version toned for each theme.
-- **No backend.** The contact form (name, email, message) opens the visitor's email app with everything filled in, offers to copy the message if no app opens, and lists email and LinkedIn for anyone who would rather skip the form.
-- **Fonts are bundled** (Roboto Condensed for display, Roboto Mono for labels, Inter for body text), so the site makes no Google Fonts request and looks the same everywhere.
-- **Optional visitor analytics.** Cookie-less and off by default (see [Deploying](#deploying)).
+- **A concise introduction.** Clear project and resume actions, visible contact, and a quiet dotted-wave illustration. The wave holds still on phones and for reduced motion, pauses off screen, and is capped at 30 fps on larger screens.
+- **A flexible project grid.** The three current applications are working examples while more substantial work is in progress. Each has a demo, source link, and case study. Only the current theme’s screenshot is loaded; walkthrough videos are played on request within case studies. A future main project can use `featured: true` for a full-width lead card.
+- **Readable case studies.** Section navigation, architecture flows, stack, implementation details, learning, and honest limitations, with shareable links at `#/work/<id>`.
+- **Compact background.** Education and experience in a timeline, grouped skills, current interests, and expandable certificates.
+- **Direct contact.** Email, copy-email, and LinkedIn actions. No form or implied delivery; email links explicitly open the visitor's email app. Failed clipboard writes show manual-copy guidance.
+- **An optional AI assistant.** Available from the desktop navigation, mobile menu, or command menu. Answers stream through `api/chat.ts`; its profile comes from the same data files as the site. Starter questions use instant local quick answers. Custom questions are limited to four per rolling minute, with a friendly pause message before the fifth (no visible quota or countdown). The allowance persists across resets, panel closes and reloads; quick answers stay available. A matching API guard and provider-cooldown fallback protect the endpoint. The API guard is best-effort per IP within each serverless instance; Google’s project quota is shared across visitors.
+- **Keyboard command menu.** Cmd+K / Ctrl+K for navigation, projects, resume, contact, and theme.
+- **Light by default, with a dark toggle.** An explicit choice is remembered. Shared buttons, surfaces, typography, visible focus states, and short transitions keep both themes consistent. Content stays visible before scroll animations run.
+- **Self-hosted fonts and optional analytics.** Latin font subsets are bundled; cookie-less analytics are off by default.
 
 ## Run it locally
 
@@ -52,6 +50,7 @@ npm run dev        # http://localhost:5173
 ```
 
 ```bash
+npm test           # quota, API fallback and default-theme regression checks (no Gemini calls)
 npm run build      # type-check, then production build into dist/
 npm run preview    # serve the production build locally
 ```
@@ -80,7 +79,7 @@ All copy and links live in `src/data/`, so updating the site rarely means touchi
 | To change… | Edit |
 | --- | --- |
 | Name, email, social links, status line | `src/data/site.ts` |
-| Hero, about, education, experience, certificates, skills | `src/data/content.ts` |
+| Hero, project introduction, about, education, experience, certificates, skills | `src/data/content.ts` |
 | Projects and case studies | `src/data/projects.ts` |
 | Resume | `resume/resume.html`, then save it as `public/resume.pdf` (see below) |
 
@@ -92,7 +91,7 @@ Every list in `src/data/content.ts` can grow without touching a component:
 - **Certificates:** add an object to `CERTIFICATIONS`. Give it a `url` (opens in a new tab) or an `image` in `public/certificates/` (opens in a viewer on the page). The first six show; the rest fold away.
 - **Skills:** add to any group in `TOOLKIT`, or add a whole new group (`{ label: 'Cloud', items: [...] }`). CS fundamentals live in `EDUCATION.coursework` and show in the education card.
 - **Hero text:** `HERO` (role, focus line, the one-line motto and the short intro). The name and status line come from `SITE`, and the section order in the nav comes from `NAV`, both in `src/data/site.ts`.
-- **About photos:** `STORY_PHOTOS`. A photo can have a `srcDark` version that is shown in dark mode.
+- **About portrait:** the first entry of `STORY_PHOTOS` supplies the portrait and alternative text. Both themes use the original photo with a consistent CSS treatment.
 
 ### Adding a project
 
@@ -124,3 +123,9 @@ The site is a plain Vite app, so Vercel needs no extra settings: import the repo
 **adityatiwari.connect@gmail.com** · [LinkedIn](https://www.linkedin.com/in/adityatiwari9t8)
 
 Open to software engineering internships and second-year or early-career intern programs, on backend or full-stack teams. Remote, hybrid or on-site, anywhere.
+
+Chat replies use a short loading state and buffered text reveal, with a Stop control and persistent suggested questions. Prepared answers remain local and labeled as profile content; reduced-motion preferences skip the text animation.
+
+The work section keeps current projects alongside the first in-progress entry from `BUILDING`. Its goals are presented as planned work; the callout disappears when a published project uses the same ID. Featured projects sort ahead of other entries automatically.
+
+Demo failures are contained within the overlay, with reload, source-code and return controls. The command menu and contact actions share confirmed clipboard feedback, including a fallback inside active dialogs. `npm test` covers clipboard failure and cleanup alongside chat policy.

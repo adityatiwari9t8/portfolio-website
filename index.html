@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Aditya Tiwari | Software Engineer</title>
-  <meta name="description" content="Aditya Tiwari is a software engineer and B.Tech Computer Science student (class of 2029) at IILM University, focused on algorithms, backend and full-stack work in Java, Python and TypeScript. Looking for a software engineering internship." />
+  <meta name="description" content="Aditya Tiwari is a software engineer and B.Tech Computer Science student (class of 2029) at IILM University, focused on algorithms, reliable backend systems and thoughtful software. Looking for a software engineering internship." />
   <meta name="author" content="Aditya Tiwari" />
-  <meta name="theme-color" content="#0b0b0c" />
-  <meta name="color-scheme" content="dark light" />
+  <meta name="theme-color" content="#f4f4f2" />
+  <meta name="color-scheme" content="light dark" />
   <link rel="canonical" href="__SITE_URL__/" />
+
+  <link rel="preload" href="/node_modules/@fontsource-variable/roboto-condensed/files/roboto-condensed-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
 
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32" />
@@ -39,8 +41,7 @@
     "jobTitle": "Software engineering student",
     "affiliation": { "@type": "CollegeOrUniversity", "name": "IILM University" },
     "address": { "@type": "PostalAddress", "addressLocality": "Gurugram", "addressCountry": "IN" },
-    "alumniOf": { "@type": "CollegeOrUniversity", "name": "IILM University" },
-    "knowsAbout": ["Software engineering", "Backend development", "Data structures", "Algorithms", "Java", "Python", "TypeScript", "SQL", "Spring Boot", "Node.js", "React", "PostgreSQL", "Docker"],
+    "knowsAbout": ["Software engineering", "Backend development", "Data structures", "Algorithms", "Java", "Python", "TypeScript", "SQL", "Node.js", "Express", "React", "MongoDB"],
     "sameAs": [
       "https://github.com/adityatiwari9t8",
       "https://www.linkedin.com/in/adityatiwari9t8"
@@ -49,12 +50,12 @@
   </script>
 
   <script>
-    // Dark by default; a visitor who picked light gets it back before first paint.
+    // Light by default; restore an explicit dark preference before first paint.
     (function () {
       try {
-        if (localStorage.getItem('theme') === 'light') {
-          document.documentElement.classList.remove('dark');
-          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#f4f4f2');
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.classList.add('dark');
+          document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#0b0b0c');
         }
       } catch (e) {}
     })();

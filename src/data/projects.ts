@@ -1,19 +1,25 @@
 /**
  * ADD NEW PROJECTS HERE.
- * Copy one object, change the fields, and it appears as a new stacked card
+ * Copy one object, change the fields, and it appears as a project card
  * plus its own case-study page at  #/work/<id>.
  *
  *  - demo  : id of a built-in live demo (see components/DemoOverlay.tsx), optional
  *  - live  : link to the deployed app, optional (shows a "Live site" button)
  *  - repo  : link to the GitHub repository, optional (shows a "Source" button)
- *  - year  : shown in the card header, optional
+ *  - year  : shown in the case study, optional
+ *  - summary : optional short card description
+ *  - featured : full-width lead card for your main project; put it first
  *  - study : the write-up shown on the case-study page (problem / what I built / what I learned)
  *
  * Put screenshots in /public (WebP, 960x600) and reference them by path. A short demo loop
- * (MP4, 960x600, no audio) per theme can go in /public/demo and plays when the card is hovered.
+ * (MP4, 960x600, no audio) per theme can go in /public/demo. Visitors can play it in the case study.
  * Only write things that are true and that you can explain in an interview.
  */
 export interface CaseStudy {
+  /** Optional architecture flow, ordered from input to output. */
+  flow?: { title: string; description: string }[];
+  /** Real measurements or validation evidence; never fill with illustrative numbers. */
+  evidence?: { label: string; detail: string; href?: string }[];
   problem: string;
   built: string[];
   learned: string;
@@ -25,6 +31,10 @@ export interface CaseStudy {
 }
 
 export interface Project {
+  /** Optional concise card copy; the full description remains in the case study. */
+  summary?: string;
+  /** Give a future main project a full-width card. Place it first in this list. */
+  featured?: boolean;
   id: string;
   title: string;
   category: string;
@@ -54,6 +64,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'sudoku-visualizer',
     title: 'Sudoku Algorithm Visualizer',
+    summary: 'Watch four search strategies solve the same board, then compare their steps and backtracks.',
     category: 'Search algorithms',
     description:
       'Four search strategies (DFS backtracking, BFS, greedy and MRV) solve the same Sudoku step by step, then get compared on steps, backtracks and time.',
@@ -72,6 +83,11 @@ export const PROJECTS: Project[] = [
     demo: 'sudoku-visualizer',
     repo: 'https://github.com/adityatiwari9t8/sudoku-algorithm-visualizer',
     study: {
+      flow: [
+        { title: 'One starting board', description: 'Validate the puzzle and give each strategy the same starting state.' },
+        { title: 'Generator-based solvers', description: 'Yield placements and backtracks so the animation can pause or advance one step.' },
+        { title: 'Compare the work', description: 'Run the same solvers without animation to report steps, backtracks and elapsed time.' }
+      ],
       problem:
         'Backtracking is easy to describe and hard to picture. I wanted to watch a solver work, and to compare different search strategies on exactly the same board.',
       built: [
@@ -99,6 +115,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'academic-path',
     title: 'Academic Path Intelligence',
+    summary: 'Turn existing skills into a learning roadmap, with every prerequisite in the right order.',
     category: 'Graph algorithms',
     description:
       'Turns the skills you already have into an ordered learning roadmap. Subjects and their prerequisites form a graph, and a depth-first topological sort puts every prerequisite first.',
@@ -117,6 +134,11 @@ export const PROJECTS: Project[] = [
     demo: 'academic-path',
     repo: 'https://github.com/adityatiwari9t8/academic-path-intelligence',
     study: {
+      flow: [
+        { title: 'Select existing skills', description: 'Match the selected skills against the subject models and their trigger rules.' },
+        { title: 'Resolve prerequisites', description: 'Walk the dependency graph, placing prerequisites first and flagging gaps.' },
+        { title: 'Build the roadmap', description: 'Show the ordered subjects, learning resources and reasons for each recommendation.' }
+      ],
       problem:
         'Deciding what to study next is hard when you cannot tell which prerequisites you are missing. I wanted a tool that takes the skills you already have and suggests what to learn next, in a sensible order.',
       built: [
@@ -142,6 +164,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'expense-pro',
     title: 'Expense Insight Pro',
+    summary: 'Explore spending patterns and a 30-day balance trend, with regression written from scratch.',
     category: 'Data & statistics',
     description:
       'A finance dashboard that tracks income and expenses in five currencies and forecasts the balance 30 days ahead with a least-squares trend line written from scratch.',
@@ -160,6 +183,11 @@ export const PROJECTS: Project[] = [
     demo: 'expense-pro',
     repo: 'https://github.com/adityatiwari9t8/expense-insight-pro',
     study: {
+      flow: [
+        { title: 'Record transactions', description: 'Store income and expenses in the browser, using fixed rates for currency conversion.' },
+        { title: 'Calculate the balance', description: 'Build a running balance from the transaction history and group spending by category.' },
+        { title: 'Fit a trend line', description: 'Use least-squares regression to draw an illustrative 30-day trend and report the fit.' }
+      ],
       problem:
         'A running balance tells you where you are, not where you are heading. I wanted a small dashboard that records transactions and shows the trend of the balance, with a forecast a month ahead.',
       built: [

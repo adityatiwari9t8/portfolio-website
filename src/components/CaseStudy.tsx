@@ -1,12 +1,10 @@
 import React, { useEffect, useRef } from 'react';
-import { ArrowLeft, ArrowRight, ArrowUpRight, Check, ExternalLink, Github, Lightbulb, Minus, X } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUpRight, Github, Play, X } from 'lucide-react';
 import { PROJECTS, Project } from '../data/projects';
 import { CASE_CTA } from '../data/content';
 import { studyHref } from '../lib/route';
 import { useDialog } from '../lib/useDialog';
 import ProjectMedia from './ProjectMedia';
-import BrowserBar from './BrowserBar';
-import CountUp from './CountUp';
 import { CASE_MEDIA } from '../lib/transition';
 
 interface CaseStudyProps {
@@ -16,214 +14,98 @@ interface CaseStudyProps {
   onOpenContact: () => void;
 }
 
-const label = 'font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#666] dark:text-neutral-400';
-const primary =
-  'inline-flex items-center gap-2 rounded-full bg-neutral-950 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200';
-const secondary =
-  'inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-neutral-800 ring-1 ring-black/10 transition hover:bg-neutral-100 dark:bg-white/10 dark:text-neutral-100 dark:ring-white/10 dark:hover:bg-white/20';
+const StudySection: React.FC<{ id: string; title: string; children: React.ReactNode }> = ({ id, title, children }) => (
+  <section id={id} className="study-section grid gap-4 border-t border-black/10 py-8 md:grid-cols-[180px_minmax(0,1fr)] md:gap-8 dark:border-white/10">
+    <h2 className="text-base font-semibold tracking-tight">{title}</h2>
+    <div className="min-w-0 text-[15px] leading-relaxed text-neutral-600 sm:text-base dark:text-neutral-300">{children}</div>
+  </section>
+);
 
-/** Full-page write-up for one project: problem, what was built, what was learned. */
 const CaseStudy: React.FC<CaseStudyProps> = ({ project, onClose, onOpenDemo, onOpenContact }) => {
   const root = useRef<HTMLDivElement | null>(null);
-  const open = !!project;
-  useDialog(open, onClose, root);
-
-  // Jump back to the top when moving between projects; keep the tab title meaningful.
+  useDialog(!!project, onClose, root);
   useEffect(() => {
     if (!project) return;
     root.current?.scrollTo({ top: 0 });
     const before = document.title;
     document.title = `${project.title} | Case study`;
-    return () => {
-      document.title = before;
-    };
+    return () => { document.title = before; };
   }, [project]);
-
   if (!project) return null;
-
-  const i = PROJECTS.findIndex((p) => p.id === project.id);
-  const next = PROJECTS.length > 1 ? PROJECTS[(i + 1) % PROJECTS.length] : null;
-
+  const index = PROJECTS.findIndex((p) => p.id === project.id);
+  const next = PROJECTS.length > 1 ? PROJECTS[(index + 1) % PROJECTS.length] : null;
+  const jump = (id: string) => {
+    const section = root.current?.querySelector<HTMLElement>(`#${id}`);
+    if (!section || !root.current) return;
+    const top = section.getBoundingClientRect().top - root.current.getBoundingClientRect().top + root.current.scrollTop - 120;
+    root.current.scrollTo({ top, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+  const navigation = [
+    { id: 'study-overview', label: 'Overview' },
+    { id: 'study-built', label: 'Implementation' },
+    ...(project.study.evidence?.length ? [{ id: 'study-evidence', label: 'Validation' }] : []),
+    { id: 'study-learned', label: 'Lessons' }
+  ];
   return (
-    <div
-      ref={root}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="case-title"
-      tabIndex={-1}
-      className="custom-scrollbar fixed inset-0 z-[90] overflow-y-auto bg-[#f4f4f2] text-neutral-950 outline-none dark:bg-[#0b0b0c] dark:text-neutral-100"
-    >
-      <div className="sticky top-0 z-10 border-b border-black/5 bg-[#f4f4f2]/85 backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0b0c]/85">
+    <div ref={root} role="dialog" aria-modal="true" aria-labelledby="case-title" tabIndex={-1}
+      className="custom-scrollbar fixed inset-0 z-[90] overflow-y-auto overscroll-contain bg-[#f4f4f2] text-neutral-950 outline-none dark:bg-[#0b0b0c] dark:text-neutral-100">
+      <header className="sticky top-0 z-10 border-b border-black/10 bg-[#f4f4f2]/95 backdrop-blur-md dark:border-white/10 dark:bg-[#0b0b0c]/95">
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4 sm:px-6">
-          <button
-            data-autofocus
-            onClick={onClose}
-            className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-neutral-600 transition hover:bg-neutral-200/60 hover:text-neutral-950 dark:text-neutral-300 dark:hover:bg-white/10 dark:hover:text-white"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Back to work
-          </button>
-          <button
-            onClick={onClose}
-            aria-label="Close case study"
-            className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-200/70 text-neutral-600 transition hover:bg-neutral-300 dark:bg-white/10 dark:text-neutral-300 dark:hover:bg-white/20"
-          >
-            <X className="h-4 w-4" />
-          </button>
+          <button data-autofocus onClick={onClose} className="text-link"><ArrowLeft size={17} aria-hidden /> Back to work</button>
+          <button onClick={onClose} aria-label="Close case study" className="icon-button"><X size={20} aria-hidden /></button>
         </div>
-      </div>
+        <nav aria-label="Case study sections" className="mx-auto flex max-w-4xl gap-5 overflow-x-auto px-4 sm:px-6">
+          {navigation.map((item) => <button key={item.id} onClick={() => jump(item.id)} className="text-link shrink-0 text-xs">{item.label}</button>)}
+        </nav>
+      </header>
 
-      <article className="mx-auto max-w-4xl px-4 pb-24 pt-10 sm:px-6 sm:pt-14">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-white px-3 py-1 font-mono text-[11.5px] font-medium uppercase tracking-[0.1em] text-neutral-700 ring-1 ring-black/5 dark:bg-white/10 dark:text-neutral-300 dark:ring-white/10">
-            {project.category}
-          </span>
-          {project.sample && (
-            <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium uppercase tracking-wider text-amber-800 dark:bg-amber-500/15 dark:text-amber-300">
-              Sample project
-            </span>
-          )}
-          {project.year && <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">{project.year}</span>}
+      <article className="mx-auto max-w-4xl px-5 pb-16 pt-8 sm:px-6 sm:pt-12">
+        <div className="eyebrow flex flex-wrap gap-3"><span>{project.category}</span>{project.year && <span>{project.year}</span>}{project.sample && <span>Concept project</span>}</div>
+        <h1 id="case-title" className="mt-4 max-w-3xl font-display text-4xl font-bold uppercase leading-none tracking-tight sm:text-6xl">{project.title}</h1>
+        <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg dark:text-neutral-300">{project.description}</p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          {project.demo && <button onClick={() => onOpenDemo(project)} className="button-primary">Open live demo <Play size={15} aria-hidden /></button>}
+          {project.live && <a href={project.live} target="_blank" rel="noopener noreferrer" className={project.demo ? 'button-secondary' : 'button-primary'}>Live site <ArrowUpRight size={15} aria-hidden /></a>}
+          {project.repo && <a href={project.repo} target="_blank" rel="noopener noreferrer" className="button-secondary">Source code <Github size={16} aria-hidden /></a>}
         </div>
-
-        <h1 id="case-title" className="mt-5 font-display text-5xl font-bold uppercase leading-[0.92] tracking-[-0.01em] sm:text-7xl">
-          {project.title}
-        </h1>
-        <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg dark:text-neutral-400">
-          {project.description}
-        </p>
-        {project.tryIt && (
-          <p className="mt-3 max-w-2xl text-[15px] font-medium text-neutral-800 dark:text-neutral-200">
-            <span className="mr-2 rounded-full bg-neutral-950 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white dark:bg-white dark:text-neutral-950">
-              Try it
-            </span>
-            {project.tryIt}
-          </p>
-        )}
-
-        <div className="mt-7 flex flex-wrap gap-2">
-          {project.demo && (
-            <button onClick={() => onOpenDemo(project)} className={primary}>
-              Open live demo <ArrowUpRight className="h-4 w-4" />
-            </button>
-          )}
-          {project.live && (
-            <a href={project.live} target="_blank" rel="noopener noreferrer" className={project.demo ? secondary : primary}>
-              <ExternalLink className="h-4 w-4" /> Live site
-            </a>
-          )}
-          {project.repo && (
-            <a href={project.repo} target="_blank" rel="noopener noreferrer" className={secondary}>
-              <Github className="h-4 w-4" /> Source code
-            </a>
-          )}
-        </div>
-
-        {/* preview */}
-        <div className={`mt-10 overflow-hidden rounded-[1.75rem] border border-black/5 bg-gradient-to-br p-4 sm:p-8 dark:border-white/10 ${project.gradient}`}>
-          <div
-            style={{ viewTransitionName: CASE_MEDIA } as React.CSSProperties}
-            className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_20px_50px_-20px_rgba(0,0,0,0.3)] dark:border-white/10 dark:bg-neutral-900"
-          >
-            <BrowserBar label={`${project.demo ? "Live demo" : "Preview"} · ${project.title}`} />
+        <ul aria-label="Built with" className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-xs text-neutral-600 dark:text-neutral-400">{project.study.stack.map((tech) => <li key={tech}>{tech}</li>)}</ul>
+        <figure className="mt-8">
+          <div style={{ viewTransitionName: CASE_MEDIA } as React.CSSProperties} className="surface overflow-hidden">
             <ProjectMedia key={project.id} project={project} mode="study" lazy={false} />
           </div>
+          {project.tryIt && <figcaption className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400"><span className="font-medium text-neutral-900 dark:text-neutral-100">Try it: </span>{project.tryIt}</figcaption>}
+        </figure>
+        {project.sample && <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">A concept built to explore an idea, not a client project. Business details are illustrative.</p>}
+        <dl className="my-8 grid gap-5 sm:grid-cols-2">{project.highlights.map((highlight) => <div key={highlight.value} className="border-l-2 border-emerald-700 pl-4 dark:border-emerald-400">
+          <dt className="text-base font-semibold">{highlight.value}</dt><dd className="mt-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{highlight.label}</dd>
+        </div>)}</dl>
+
+        <StudySection id="study-overview" title="The problem"><p>{project.study.problem}</p></StudySection>
+        {!!project.study.flow?.length && <section className="border-t border-black/10 py-8 dark:border-white/10">
+          <h2 className="text-base font-semibold tracking-tight">How it works</h2>
+          <ol className="mt-5 grid gap-4 sm:grid-cols-3">{project.study.flow.map((step, i) => <li key={step.title} className="surface relative p-5">
+            <span className="eyebrow text-emerald-800 dark:text-emerald-300">{String(i + 1).padStart(2, '0')}</span>
+            <h3 className="mt-3 text-sm font-semibold">{step.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{step.description}</p>
+            {i < project.study.flow!.length - 1 && <ArrowRight size={15} aria-hidden className="absolute right-5 top-5 text-neutral-500" />}
+          </li>)}</ol>
+        </section>}
+        <StudySection id="study-built" title="What I built"><ul className="list-disc space-y-4 pl-4 marker:text-emerald-700 dark:marker:text-emerald-400">{project.study.built.map((item) => <li key={item}>{item}</li>)}</ul></StudySection>
+        {!!project.study.evidence?.length && <StudySection id="study-evidence" title="Validation"><dl className="space-y-5">{project.study.evidence.map((item) => <div key={item.label}>
+          <dt className="font-semibold text-neutral-900 dark:text-white">{item.label}</dt>
+          <dd className="mt-1">{item.detail}{item.href && <a href={item.href} target="_blank" rel="noopener noreferrer" className="text-link mt-1">View evidence <ArrowUpRight size={14} aria-hidden /></a>}</dd>
+        </div>)}</dl></StudySection>}
+        <StudySection id="study-learned" title="What I learned"><p>{project.study.learned}</p></StudySection>
+        <StudySection id="study-limits" title="Known limitations"><ul className="list-disc space-y-3 pl-4">{project.study.limits.map((item) => <li key={item}>{item}</li>)}</ul></StudySection>
+        <StudySection id="study-next" title="What I’d explore next"><ul className="list-disc space-y-3 pl-4">{project.study.ideas.map((item) => <li key={item}>{item}</li>)}</ul><p className="mt-4 text-xs text-neutral-500 dark:text-neutral-400">Ideas for further exploration.</p></StudySection>
+        <div className="surface mt-5 p-6 sm:p-8">
+          <h2 className="text-xl font-semibold tracking-tight">{CASE_CTA.title}</h2>
+          <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{CASE_CTA.body}</p>
+          <button onClick={onOpenContact} className="button-primary mt-5">Get in touch <ArrowUpRight size={16} aria-hidden /></button>
         </div>
-
-        {project.sample && (
-          <p className="mt-4 rounded-2xl bg-amber-50 px-5 py-3 text-sm text-amber-900 dark:bg-amber-500/10 dark:text-amber-200">
-            This is a concept I built to show what I can do. It is not a client project and any business details in it are made up.
-          </p>
-        )}
-
-        <dl className="mt-10 grid grid-cols-2 gap-4">
-          {project.highlights.map((h) => (
-            <div key={h.value} className="rounded-2xl border border-black/5 bg-white p-5 dark:border-white/10 dark:bg-neutral-900">
-              <dt className="text-lg font-semibold tracking-[-0.01em]"><CountUp text={h.value} /></dt>
-              <dd className="mt-1 text-sm text-neutral-600 dark:text-neutral-400">{h.label}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <div className="mt-14 grid gap-12 md:grid-cols-[200px_1fr] md:gap-10">
-          <p className={label}>The problem</p>
-          <p className="text-lg leading-relaxed sm:text-xl">{project.study.problem}</p>
-
-          <p className={label}>What I built</p>
-          <ul className="space-y-3">
-            {project.study.built.map((b) => (
-              <li key={b} className="flex items-start gap-3 text-[15px] leading-relaxed text-neutral-700 sm:text-base dark:text-neutral-300">
-                <Check className="mt-1 h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                {b}
-              </li>
-            ))}
-          </ul>
-
-          <p className={label}>What I learned</p>
-          <p className="text-[15px] leading-relaxed text-neutral-700 sm:text-base dark:text-neutral-300">{project.study.learned}</p>
-
-          <p className={label}>Limits</p>
-          <ul className="space-y-3">
-            {project.study.limits.map((l) => (
-              <li key={l} className="flex items-start gap-3 text-[15px] leading-relaxed text-neutral-700 sm:text-base dark:text-neutral-300">
-                <Minus className="mt-1 h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
-                {l}
-              </li>
-            ))}
-          </ul>
-
-          <p className={label}>Where it could go next</p>
-          <div>
-            <ul className="space-y-3">
-              {project.study.ideas.map((d) => (
-                <li key={d} className="flex items-start gap-3 text-[15px] leading-relaxed text-neutral-700 sm:text-base dark:text-neutral-300">
-                  <Lightbulb className="mt-1 h-4 w-4 shrink-0 text-indigo-600 dark:text-indigo-400" />
-                  {d}
-                </li>
-              ))}
-            </ul>
-            <p className="mt-3 text-xs text-neutral-600 dark:text-neutral-400">Ideas, not commitments.</p>
-          </div>
-
-          <p className={label}>Built with</p>
-          <ul className="flex flex-wrap gap-2">
-            {project.study.stack.map((t) => (
-              <li key={t} className="rounded-full bg-white px-3.5 py-1.5 text-sm font-medium text-neutral-700 ring-1 ring-black/5 dark:bg-white/10 dark:text-neutral-200 dark:ring-white/10">
-                {t}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* closing */}
-        <div className="mt-16 rounded-[1.75rem] border border-black/5 bg-white p-7 text-neutral-950 sm:p-10 dark:border-white/10 dark:bg-neutral-900 dark:text-white">
-          <h2 className="text-2xl font-medium tracking-[-0.02em] sm:text-3xl">{CASE_CTA.title}</h2>
-          <p className="mt-2 max-w-xl text-[15px] text-neutral-600 dark:text-neutral-400">{CASE_CTA.body}</p>
-          <button
-            onClick={() => {
-              onOpenContact();
-            }}
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-neutral-950 px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-          >
-            Get in touch <ArrowUpRight className="h-4 w-4" />
-          </button>
-        </div>
-
-        {next && next.id !== project.id && (
-          <a
-            href={studyHref(next.id)}
-            className="group mt-6 flex items-center justify-between rounded-[1.75rem] border border-black/5 bg-white p-6 transition hover:bg-neutral-50 sm:p-8 dark:border-white/10 dark:bg-neutral-900 dark:hover:bg-neutral-800/70"
-          >
-            <span>
-              <span className={label}>Next project</span>
-              <span className="mt-2 block text-xl font-medium tracking-[-0.02em] sm:text-2xl">{next.title}</span>
-            </span>
-            <ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" />
-          </a>
-        )}
+        {next && <a href={studyHref(next.id)} className="text-link mt-5 flex justify-between gap-5 border-b border-black/10 py-5 dark:border-white/10"><span><span className="eyebrow block">Next project</span><span className="mt-1 block text-base text-neutral-900 dark:text-neutral-100">{next.title}</span></span><ArrowRight size={20} className="shrink-0" aria-hidden /></a>}
       </article>
     </div>
   );
 };
-
 export default CaseStudy;

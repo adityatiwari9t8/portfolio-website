@@ -7,6 +7,8 @@ import { RefObject, useEffect, useRef } from 'react';
  */
 const stack: symbol[] = [];
 let lockCount = 0;
+let previousOverflow = '';
+const inertLocks = new Map<HTMLElement, { count: number; previous: boolean }>();
 const FOCUSABLE = 'a[href],button:not([disabled]),textarea,input,select,[tabindex]:not([tabindex="-1"])';
 
 export function useDialog(open: boolean, onClose: () => void, ref: RefObject<HTMLElement | null>) {
@@ -18,9 +20,24 @@ export function useDialog(open: boolean, onClose: () => void, ref: RefObject<HTM
     const id = Symbol('dialog');
     stack.push(id);
     const previous = document.activeElement as HTMLElement | null;
-    if (lockCount++ === 0) document.body.style.overflow = 'hidden';
+    if (lockCount++ === 0) {
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+    }
 
     const node = ref.current;
+    // Hide the background from pointer input and assistive technology, including nested dialogs.
+    const locked: HTMLElement[] = [];
+    for (let branch: HTMLElement | null = node; branch?.parentElement && branch !== document.body; branch = branch.parentElement) {
+      for (const sibling of Array.from(branch.parentElement.children)) {
+        if (!(sibling instanceof HTMLElement) || sibling === branch) continue;
+        const lock = inertLocks.get(sibling) ?? { count: 0, previous: sibling.inert };
+        lock.count++;
+        inertLocks.set(sibling, lock);
+        sibling.inert = true;
+        locked.push(sibling);
+      }
+    }
     const focusTimer = window.setTimeout(() => {
       const target = node?.querySelector<HTMLElement>('[data-autofocus]') ?? node?.querySelector<HTMLElement>(FOCUSABLE) ?? node;
       target?.focus();
@@ -29,7 +46,8 @@ export function useDialog(open: boolean, onClose: () => void, ref: RefObject<HTM
     const onKey = (e: KeyboardEvent) => {
       if (stack[stack.length - 1] !== id) return;
       if (e.key === 'Escape') {
-        e.stopPropagation();
+        e.preventDefault();
+        e.stopImmediatePropagation();
         closeRef.current();
         return;
       }
@@ -58,7 +76,14 @@ export function useDialog(open: boolean, onClose: () => void, ref: RefObject<HTM
       window.clearTimeout(focusTimer);
       document.removeEventListener('keydown', onKey);
       stack.splice(stack.indexOf(id), 1);
-      if (--lockCount === 0) document.body.style.overflow = '';
+      for (const element of locked) {
+        const lock = inertLocks.get(element);
+        if (lock && --lock.count === 0) {
+          element.inert = lock.previous;
+          inertLocks.delete(element);
+        }
+      }
+      if (--lockCount === 0) document.body.style.overflow = previousOverflow;
       previous?.focus?.();
     };
   }, [open, ref]);

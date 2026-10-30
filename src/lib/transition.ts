@@ -37,7 +37,7 @@ export function changeTheme(apply: () => void, x: number, y: number) {
   t.ready
     .then(() => {
       const options = {
-        duration: 700,
+        duration: 300,
         easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
         pseudoElement: '::view-transition-new(root)'
       };

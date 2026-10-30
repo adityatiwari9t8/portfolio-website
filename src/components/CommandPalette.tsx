@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowUpRight, BookOpen, Copy, CornerDownLeft, FileText, Github, Hash, Linkedin, Mail, Moon, Play, Search, Sparkles, Sun } from 'lucide-react';
+import { ArrowUpRight, BookOpen, Copy, CornerDownLeft, FileText, Github, Hash, Linkedin, Mail, Moon, Play, Search, Sparkles, Sun, X } from 'lucide-react';
 import { PROJECTS, Project } from '../data/projects';
 import { SITE } from '../data/site';
 import { useDialog } from '../lib/useDialog';
-import { scrollToSection } from '../lib/scroll';
+import { copyText } from '../lib/clipboard';
 import { toggleTheme, useTheme } from '../lib/theme';
 import { studyHref } from '../lib/route';
 import { SECTIONS } from '../lib/sections';
@@ -32,7 +32,8 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
   const listRef = useRef<HTMLUListElement | null>(null);
   const [query, setQuery] = useState('');
   const [index, setIndex] = useState(0);
-  const [copied, setCopied] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle');
+  const copyPending = useRef(false);
   const { dark } = useTheme();
   useDialog(open, onClose, root);
 
@@ -40,14 +41,14 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
     if (open) {
       setQuery('');
       setIndex(0);
-      setCopied(false);
+      setCopyStatus('idle');
     }
   }, [open]);
 
   const items = useMemo<Item[]>(() => {
     const ext = (url: string) => () => window.open(url, '_blank', 'noopener,noreferrer');
     return [
-      ...SECTIONS.map<Item>((n) => ({ id: `nav-${n.id}`, group: 'Navigate', label: n.label, icon: Hash, run: () => scrollToSection(n.id) })),
+      ...SECTIONS.map<Item>((n) => ({ id: `nav-${n.id}`, group: 'Navigate', label: n.label, icon: Hash, run: () => { window.location.hash = `#${n.id}`; } })),
       ...PROJECTS.flatMap<Item>((p) => [
         ...(p.demo ? [{ id: `demo-${p.id}`, group: 'Projects' as const, label: `${p.title}`, hint: 'Live demo', icon: Play, run: () => onOpenDemo(p) }] : []),
         { id: `study-${p.id}`, group: 'Projects', label: `${p.title}`, hint: 'Case study', icon: BookOpen, run: () => (window.location.hash = studyHref(p.id)) }
@@ -61,9 +62,12 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
         label: 'Copy email address',
         hint: SITE.email,
         icon: Copy,
-        run: () => {
-          navigator.clipboard?.writeText(SITE.email).catch(() => undefined);
-          setCopied(true);
+        run: async () => {
+          if (copyPending.current) return;
+          copyPending.current = true;
+          const success = await copyText(SITE.email);
+          setCopyStatus(success ? 'copied' : 'failed');
+          copyPending.current = false;
         }
       },
       { id: 'theme', group: 'Actions', label: dark ? 'Switch to light mode' : 'Switch to dark mode', icon: dark ? Sun : Moon, run: () => toggleTheme() },
@@ -90,7 +94,6 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
     // Copying keeps the menu open long enough to confirm; everything else closes it first.
     if (item.id === 'copy') {
       item.run();
-      window.setTimeout(onClose, 700);
       return;
     }
     onClose();
@@ -132,19 +135,18 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
             onKeyDown={onKey}
             placeholder="Search sections, projects, actions…"
             role="combobox"
+            aria-label="Search navigation and projects"
             aria-expanded="true"
             aria-controls="cmdk-list"
             aria-activedescendant={results[index] ? `cmdk-${results[index].id}` : undefined}
             aria-autocomplete="list"
             className="h-14 w-full bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none dark:text-white"
           />
-          <kbd className="hidden rounded-md border border-black/10 px-1.5 py-0.5 font-sans text-[11px] text-neutral-500 sm:block dark:border-white/15 dark:text-neutral-400">
-            Esc
-          </kbd>
+          <button type="button" onClick={onClose} aria-label="Close command menu" className="icon-button"><X size={18} aria-hidden /></button>
         </div>
 
         <ul ref={listRef} id="cmdk-list" role="listbox" aria-label="Commands" className="custom-scrollbar max-h-[min(60vh,420px)] overflow-y-auto p-2">
-          {results.length === 0 && <li className="px-3 py-8 text-center text-sm text-neutral-500">Nothing matches “{query}”.</li>}
+          {results.length === 0 && <li role="presentation" className="px-3 py-8 text-center text-sm text-neutral-500">Nothing matches “{query}”.</li>}
           {results.map((item, i) => {
             const header = item.group !== lastGroup;
             lastGroup = item.group;
@@ -164,16 +166,16 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
                   aria-selected={on}
                   onMouseMove={() => setIndex(i)}
                   onClick={() => choose(item)}
-                  className={`flex cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${
+                  className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-3 py-2.5 text-sm ${
                     on ? 'bg-neutral-100 text-neutral-950 dark:bg-white/10 dark:text-white' : 'text-neutral-700 dark:text-neutral-300'
                   }`}
                 >
                   <Icon className="h-4 w-4 shrink-0 text-neutral-500 dark:text-neutral-400" />
                   <span className="min-w-0 flex-1 truncate font-medium">{item.label}</span>
-                  {item.id === 'copy' && copied ? (
+                  {item.id === 'copy' && copyStatus === 'copied' ? (
                     <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Copied</span>
                   ) : (
-                    item.hint && <span className="shrink-0 truncate text-xs text-neutral-500 dark:text-neutral-400">{item.hint}</span>
+                    item.hint && <span className="max-w-[40%] shrink-0 truncate text-xs text-neutral-500 dark:text-neutral-400">{item.hint}</span>
                   )}
                   {on && (item.group === 'Elsewhere' || item.id === 'resume' ? <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-neutral-400" /> : <CornerDownLeft className="h-3.5 w-3.5 shrink-0 text-neutral-400" />)}
                 </li>
@@ -182,6 +184,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
           })}
         </ul>
 
+        <p role="status" className={copyStatus === 'failed' ? 'border-t border-black/10 px-5 py-3 text-sm text-neutral-700 dark:text-neutral-300' : 'sr-only'}>{copyStatus === 'copied' ? 'Email address copied.' : copyStatus === 'failed' ? `Copy is unavailable. You can email ${SITE.email}.` : ''}</p>
         <div className="flex items-center gap-4 border-t border-black/5 px-4 py-2.5 text-[11px] text-neutral-500 dark:border-white/10 dark:text-neutral-400">
           <span>
             <kbd className="font-sans">↑</kbd> <kbd className="font-sans">↓</kbd> to move

@@ -1,24 +1,33 @@
 /** Copy for the non-project sections. Edit freely: every list below can grow, and the layout adapts. */
 
 export const HERO = {
-  /** Under the giant name: what I am, then my focus in small mono text. (The name itself comes from SITE.) */
-  role: 'Software engineer',
+  /** Role beneath the name. Focus and motto also provide context to the profile assistant. */
+  role: 'Software engineering student. Builder at heart.',
   focus: 'Algorithms · Backend · Full-stack',
-  /** The "// ..." line: how I work, in one sentence. */
+  /** How I work, for the profile assistant. */
   motto: 'I write software that is correct first, then fast.',
   /**
    * Shown in grey right after the line above. Each sentence adds something the role line does not: who I am,
    * my foundation, what I'm after. About me, never about a specific project, so it stays true as projects change.
    */
   body:
-    'B.Tech CS student at IILM University (class of 2029, CGPA 8.79), working in Java, Python and TypeScript. I care about the whole job: solid data structures and algorithms, clean APIs, and code that is easy to test and change.'
+    'I turn complex problems into practical software, with a focus on thoughtful design, reliable systems and code that is easy to understand.'
+};
+
+
+/** Project-section copy is independent of the project list, ready for the next body of work. */
+export const WORK = {
+  title: 'Ideas into',
+  accent: 'working code.',
+  description: 'Interactive explorations of algorithms, data and useful interfaces. Try the demos, explore the code, or read the decisions behind each build.',
+  note: 'Every project includes a working demo and a closer look at the implementation.'
 };
 
 export const STORY = {
-  lead: "I'm a CS student who likes problems with a provably right answer.",
+  lead: "I like understanding why a solution works, then making it useful.",
   fade: ' I care about correctness, honest trade-offs and code the next engineer can read without asking me.',
   more:
-    "Underneath that are the fundamentals software engineering is built on: data structures and algorithms, object-oriented design, operating systems, databases and networks. I practise problem solving in Java, and for everything I build I write up the design, the trade-offs and what I would change next. Right now I'm going deeper into backend systems: concurrency, caching and system design."
+    "Building a Sudoku visualizer taught me how much the choice of the next cell changes a search. That is the part of engineering I enjoy: tracing an idea through the implementation, testing its limits, and explaining the trade-offs. I’m now taking that curiosity deeper into backend systems, concurrency and caching."
 };
 
 /**

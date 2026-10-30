@@ -76,6 +76,6 @@ export default defineConfig({
   plugins: [react(), seo(), devApi()],
   server: {
     port: 5173,
-    open: true
+    open: false
   }
 });

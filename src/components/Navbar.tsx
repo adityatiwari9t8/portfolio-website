@@ -2,208 +2,65 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Sun, Moon, ArrowUpRight, Menu, X, Sparkles } from 'lucide-react';
 import { SITE } from '../data/site';
 import { toggleTheme, useTheme } from '../lib/theme';
-import { scrollToSection } from '../lib/scroll';
 import { SECTIONS } from '../lib/sections';
 import { useActiveSection } from '../lib/useActiveSection';
 
-interface NavbarProps {
-  onOpenContact: () => void;
-  onOpenChat: () => void;
-}
-
-/**
- * Theme toggle button switching between dark and light modes.
- */
-const ThemeButton: React.FC<{ className: string }> = ({ className }) => {
-  const { dark } = useTheme();
-
-  const onClick = (e: React.MouseEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    toggleTheme({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
-  };
-
-  return (
-    <button
-      onClick={onClick}
-      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className={className}
-    >
-      {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-    </button>
-  );
-};
-
+interface NavbarProps { onOpenContact: () => void; onOpenChat: () => void; }
 const Navbar: React.FC<NavbarProps> = ({ onOpenContact, onOpenChat }) => {
   const active = useActiveSection();
+  const { dark } = useTheme();
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement | null>(null);
-  const [scrolled, setScrolled] = useState(false);
-  // On phones the big name in the hero already says who this is, so the bar shows a monogram until it scrolls away.
-  const [heroName, setHeroName] = useState(true);
-
-  useEffect(() => {
-    const el = document.getElementById('hero-name');
-    if (!el) {
-      setHeroName(false);
-      return;
-    }
-    const io = new IntersectionObserver(([e]) => setHeroName(e.isIntersecting), { rootMargin: '-64px 0px 0px 0px' });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  // The phone menu closes on Escape (handing focus back to its button), and by itself at desktop width.
+  const menu = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      setOpen(false);
-      toggle.current?.focus();
+      if (e.key === 'Escape') { setOpen(false); toggle.current?.focus(); }
+    };
+    const onFocus = (e: FocusEvent) => {
+      if (!menu.current?.contains(e.target as Node) && !toggle.current?.contains(e.target as Node)) setOpen(false);
     };
     const wide = window.matchMedia('(min-width: 1024px)');
-    const onWide = () => wide.matches && setOpen(false);
+    const onWide = () => { if (wide.matches) setOpen(false); };
     document.addEventListener('keydown', onKey);
+    document.addEventListener('focusin', onFocus);
     wide.addEventListener('change', onWide);
     return () => {
       document.removeEventListener('keydown', onKey);
+      document.removeEventListener('focusin', onFocus);
       wide.removeEventListener('change', onWide);
     };
   }, [open]);
-
-  const compact = heroName && !open;
-  const initials = SITE.name.split(' ').map((w) => w[0]);
-
-  const goTo = (id: string) => {
-    setOpen(false);
-    scrollToSection(id);
-  };
-
-  const icon =
-    'relative flex h-9 w-9 items-center justify-center rounded-full text-neutral-900 transition hover:bg-black/5 dark:text-neutral-100 dark:hover:bg-white/10';
-
-  const row =
-    'flex h-10 w-full items-center justify-between rounded-xl px-3 text-[15px] font-medium transition-colors';
-
   return (
     <>
-    {/* invisible layer: a tap anywhere outside the open menu closes it */}
-    {open && <div aria-hidden className="fixed inset-0 z-[35] lg:hidden" onClick={() => setOpen(false)} />}
-    <header
-      className={`fixed inset-x-0 top-0 z-40 transition-[background-color,border-color,backdrop-filter] duration-300 ${
-        scrolled
-          ? 'border-b border-black/10 bg-[#f4f4f2]/90 backdrop-blur-xl dark:border-white/10 dark:bg-[#0b0b0c]/85'
-          : // over the hero: still frosted, so the dotted background never runs through the links
-            'border-b border-transparent bg-[#f4f4f2]/75 backdrop-blur-md dark:bg-[#0b0b0c]/70'
-      }`}
-    >
-      <nav aria-label="Primary" className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-4 sm:px-6">
-        <button
-          onClick={() => goTo('home')}
-          aria-label={`${SITE.name}, back to top`}
-          className="whitespace-nowrap font-display text-[19px] font-bold uppercase tracking-[0.01em] text-neutral-950 dark:text-white"
-        >
-          <span aria-hidden className={`${compact ? 'fade-up flex md:hidden' : 'hidden'} h-9 w-9 items-center justify-center rounded-[10px] bg-neutral-950 text-[15px] tracking-[-0.02em] text-white dark:bg-white dark:text-neutral-950`}>
-            {initials[0]}
-            <span className="text-neutral-400 dark:text-neutral-500">{initials[1]}</span>
-          </span>
-          <span className={compact ? 'fade-up max-md:hidden' : 'fade-up'}>{SITE.name}</span>
-        </button>
-
-        <ul className="hidden items-center gap-7 lg:flex">
-          {SECTIONS.map((n) => (
-            <li key={n.id}>
-              <button
-                onClick={() => goTo(n.id)}
-                aria-current={active === n.id ? 'true' : undefined}
-                className={`font-mono text-[12.5px] font-semibold uppercase tracking-[0.06em] transition-colors ${
-                  active === n.id ? 'text-neutral-950 dark:text-white' : 'text-neutral-800 hover:text-neutral-950 dark:text-neutral-200 dark:hover:text-white'
-                }`}
-              >
-                {n.label}
-                <span
-                  aria-hidden
-                  className={`mt-1 block h-px origin-left bg-current transition-transform duration-300 ${active === n.id ? 'scale-x-100' : 'scale-x-0'}`}
-                />
-              </button>
-            </li>
-          ))}
-        </ul>
-
-        <div className="flex items-center gap-1">
-          <ThemeButton className={icon} />
-          <button
-            onClick={onOpenChat}
-            className="ai-ring ml-2 inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-neutral-900 transition hover:-translate-y-px max-sm:ml-1 max-sm:px-3 max-sm:py-1.5 max-sm:text-[10.5px] dark:text-white [--ring-fill:#f4f4f2] dark:[--ring-fill:#0b0b0c]"
-          >
-            <Sparkles className="h-3.5 w-3.5" aria-hidden />
-            Ask AI
-          </button>
-          <button
-            onClick={onOpenContact}
-            className="ml-1 hidden items-center gap-1.5 whitespace-nowrap rounded-full bg-neutral-950 px-4 py-2 font-mono text-[11.5px] font-semibold uppercase tracking-[0.06em] text-white transition hover:bg-neutral-800 sm:inline-flex dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-          >
-            Get in touch
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </button>
-          <button
-            ref={toggle}
-            onClick={() => setOpen((v) => !v)}
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-            aria-controls="phone-menu"
-            className={`${icon} lg:hidden ${open ? 'bg-black/5 dark:bg-white/10' : ''}`}
-          >
-            {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-          </button>
-        </div>
-      </nav>
-
-      {/* phone menu: a small card under the menu button, so the page stays visible beside it */}
-      {open && (
-        <div
-          id="phone-menu"
-          className="fade-up absolute right-3 top-[calc(100%+0.5rem)] w-56 rounded-2xl border border-black/10 bg-white p-1.5 shadow-[0_24px_50px_-12px_rgba(0,0,0,0.35)] sm:right-5 lg:hidden dark:border-white/10 dark:bg-neutral-900"
-        >
-          <ul>
-            {SECTIONS.map((n) => (
-              <li key={n.id}>
-                <button
-                  onClick={() => goTo(n.id)}
-                  aria-current={active === n.id ? 'true' : undefined}
-                  className={`${row} ${
-                    active === n.id
-                      ? 'bg-black/[0.06] text-neutral-950 dark:bg-white/10 dark:text-white'
-                      : 'text-neutral-700 hover:bg-black/[0.04] dark:text-neutral-300 dark:hover:bg-white/[0.06]'
-                  }`}
-                >
-                  {n.label}
-                  {active === n.id && <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
-                </button>
-              </li>
-            ))}
+      {open && <div aria-hidden className="fixed inset-0 z-[35] lg:hidden" onClick={() => setOpen(false)} />}
+      <header className="fixed inset-x-0 top-0 z-40 border-b border-black/10 bg-[#f4f4f2]/95 backdrop-blur-md dark:border-white/10 dark:bg-[#0b0b0c]/95">
+        <nav aria-label="Primary" className="mx-auto flex h-[72px] max-w-6xl items-center justify-between gap-3 px-5 sm:px-8">
+          <a href="#home" onClick={() => setOpen(false)} aria-label={`${SITE.name}, back to top`} className="flex min-h-11 items-center font-display text-xl font-bold uppercase tracking-tight">
+            <span className="sm:hidden">AT<span className="text-emerald-700 dark:text-emerald-400">.</span></span>
+            <span className="hidden sm:inline">{SITE.name}<span className="text-emerald-700 dark:text-emerald-400">.</span></span>
+          </a>
+          <ul className="hidden items-center gap-6 lg:flex">
+            {SECTIONS.filter((n) => n.id !== 'contact').map((n) => <li key={n.id}>
+              <a href={`#${n.id}`} aria-current={active === n.id ? 'location' : undefined} className={`nav-link text-link ${active === n.id ? 'nav-active' : ''}`}>{n.label}</a>
+            </li>)}
           </ul>
-          <button
-            onClick={() => {
-              setOpen(false);
-              onOpenContact();
-            }}
-            className="mt-1.5 flex h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-neutral-950 text-sm font-semibold text-white transition hover:bg-neutral-800 sm:hidden dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
-          >
-            Get in touch
-            <ArrowUpRight className="h-4 w-4" aria-hidden />
-          </button>
-        </div>
-      )}
-    </header>
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button onClick={onOpenChat} className="text-link mr-2 hidden text-xs lg:inline-flex"><Sparkles size={15} aria-hidden /> Ask AI</button>
+            <button onClick={(e) => { const r = e.currentTarget.getBoundingClientRect(); toggleTheme({ x: r.left + r.width / 2, y: r.top + r.height / 2 }); }} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} className="icon-button">{dark ? <Sun size={18} aria-hidden /> : <Moon size={18} aria-hidden />}</button>
+            <button onClick={onOpenContact} className="button-primary button-compact">Contact <ArrowUpRight size={14} aria-hidden /></button>
+            <button ref={toggle} onClick={() => setOpen((v) => !v)} aria-label={open ? 'Close menu' : 'Open menu'} aria-expanded={open} aria-controls="phone-menu" className="icon-button lg:hidden">{open ? <X size={20} aria-hidden /> : <Menu size={20} aria-hidden />}</button>
+          </div>
+          {open && <div ref={menu} id="phone-menu" className="surface absolute right-5 top-[80px] w-64 max-w-[calc(100vw-40px)] p-2 shadow-xl lg:hidden">
+            <ul>{SECTIONS.map((n) => <li key={n.id}><a href={`#${n.id}`} onClick={() => setOpen(false)} aria-current={active === n.id ? 'location' : undefined} className={`menu-link ${active === n.id ? 'nav-active' : ''}`}>{n.label}</a></li>)}</ul>
+            <div className="mt-2 border-t border-black/10 pt-2 dark:border-white/10">
+              <a href={SITE.resume} target="_blank" rel="noopener noreferrer" className="menu-link" onClick={() => setOpen(false)}>Resume (PDF) <ArrowUpRight size={16} aria-hidden /></a>
+              <button className="menu-link w-full" onClick={() => { toggle.current?.focus(); setOpen(false); onOpenChat(); }}>Ask about my work <Sparkles size={16} aria-hidden /></button>
+            </div>
+          </div>}
+        </nav>
+      </header>
     </>
   );
 };
-
 export default Navbar;

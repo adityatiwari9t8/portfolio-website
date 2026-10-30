@@ -13,7 +13,7 @@ const ELSEWHERE = [
 
 const heading = 'font-mono text-[11.5px] font-medium uppercase tracking-[0.12em] text-[#666] dark:text-neutral-400';
 const link =
-  'inline-flex items-center gap-1.5 text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white';
+  'inline-flex min-h-11 items-center gap-1.5 text-sm text-neutral-700 transition-colors hover:text-neutral-950 dark:text-neutral-300 dark:hover:text-white';
 
 interface FooterProps {
   onOpenContact: () => void;
@@ -26,7 +26,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
   };
 
   return (
-    <footer className="mx-auto max-w-6xl px-4 pb-8 pt-12 sm:px-6 sm:pt-16 lg:pb-6">
+    <footer className="mx-auto max-w-6xl px-5 pb-8 pt-12 sm:px-8 sm:pt-16 lg:pb-6">
       <div className="border-t border-black/10 pt-8 dark:border-white/10">
         <div className="grid grid-cols-2 gap-x-6 gap-y-7 lg:grid-cols-[1.6fr_0.8fr_0.8fr_1.2fr]">
           <div className="col-span-2 space-y-2 lg:col-span-1">
@@ -34,7 +34,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
               {SITE.firstName} <span className="text-neutral-500">{SITE.name.split(' ').slice(1).join(' ')}</span>
             </p>
             <p className="max-w-xs text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
-              Software engineer and CS student (class of 2029) focused on algorithms, correctness and clean backend code.
+              Software engineering student exploring algorithms, backend systems and useful software.
             </p>
           </div>
 
@@ -82,7 +82,7 @@ const Footer: React.FC<FooterProps> = ({ onOpenContact }) => {
         <div className="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 border-t border-black/5 pt-4 text-xs text-neutral-600 dark:border-white/10 dark:text-neutral-400">
           <p>&copy; {new Date().getFullYear()} {SITE.name}</p>
           <p className="order-last w-full sm:order-none sm:w-auto">Designed and built by me with React, TypeScript and Tailwind CSS.</p>
-          <button onClick={toTop} className="inline-flex items-center gap-1.5 font-medium transition-colors hover:text-neutral-950 dark:hover:text-white">
+          <button onClick={toTop} className="inline-flex min-h-11 items-center gap-1.5 font-medium transition-colors hover:text-neutral-950 dark:hover:text-white">
             Back to top <ArrowUp className="h-3.5 w-3.5" />
           </button>
         </div>

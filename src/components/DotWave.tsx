@@ -8,7 +8,7 @@ interface DotWaveProps {
   cy?: number;
 }
 
-const RINGS = 54;
+const RINGS = 36;
 const BUCKETS = 10;
 const TAU = Math.PI * 2;
 
@@ -34,7 +34,9 @@ const DotWave: React.FC<DotWaveProps> = ({ className = '', cx = 0.68, cy = 0.5 }
     const ctx = el?.getContext('2d');
     if (!el || !ctx) return;
 
-    const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const small = window.matchMedia('(max-width: 639px)');
+    let still = motion.matches || small.matches;
     // Precompute ring geometry once: radius, angle and per-point constants.
     const pts: { r: number; a: number; edge: number }[] = [];
     for (let i = 0; i < RINGS; i++) {
@@ -127,8 +129,9 @@ const DotWave: React.FC<DotWaveProps> = ({ className = '', cx = 0.68, cy = 0.5 }
     let running = false;
     let visible = true;
     const t0 = performance.now();
+    let lastFrame = 0;
     const loop = (now: number) => {
-      draw((now - t0) / 1000);
+      if (now - lastFrame >= 1000 / 30) { draw((now - t0) / 1000); lastFrame = now; }
       frame = requestAnimationFrame(loop);
     };
     const startLoop = () => {
@@ -160,12 +163,20 @@ const DotWave: React.FC<DotWaveProps> = ({ className = '', cx = 0.68, cy = 0.5 }
     document.addEventListener('visibilitychange', onVis);
     window.addEventListener('pointermove', onMove, { passive: true });
 
+    const onPreference = () => {
+      still = motion.matches || small.matches;
+      if (still) { stopLoop(); draw(6); } else startLoop();
+    };
+    motion.addEventListener('change', onPreference);
+    small.addEventListener('change', onPreference);
     resize();
     redraw.current();
     startLoop();
 
     return () => {
       stopLoop();
+      motion.removeEventListener('change', onPreference);
+      small.removeEventListener('change', onPreference);
       ro.disconnect();
       io.disconnect();
       document.removeEventListener('visibilitychange', onVis);

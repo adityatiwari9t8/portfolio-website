@@ -173,7 +173,7 @@ const CommandPalette: React.FC<CommandPaletteProps> = ({ open, onClose, onOpenCo
                   <Icon className="h-4 w-4 shrink-0 text-neutral-500 dark:text-neutral-400" />
                   <span className="min-w-0 flex-1 truncate font-medium">{item.label}</span>
                   {item.id === 'copy' && copyStatus === 'copied' ? (
-                    <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">Copied</span>
+                    <span className="text-xs font-medium text-blue-600 dark:text-blue-400">Copied</span>
                   ) : (
                     item.hint && <span className="max-w-[40%] shrink-0 truncate text-xs text-neutral-500 dark:text-neutral-400">{item.hint}</span>
                   )}

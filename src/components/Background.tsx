@@ -9,8 +9,8 @@ const Background: React.FC = () => {
   return (
     <div>
       <CertificateViewer cert={cert} onClose={() => setCert(null)} />
-      <SectionTitle label="03 / Background" before="The foundations" accent="behind the work." />
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+      <SectionTitle label="Background" before="A foundation" accent="to build on." />
+      <div className="mt-12 grid gap-8 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
         <div>
           <h3 className="eyebrow">Education & experience</h3>
           <ol className="mt-5 border-l border-black/15 pl-6 dark:border-white/15">

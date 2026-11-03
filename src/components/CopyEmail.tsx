@@ -18,7 +18,7 @@ const CopyEmail: React.FC<CopyEmailProps> = ({ className = '' }) => {
   return (
     <div className={`min-w-0 max-w-full ${className}`}>
       <button type="button" onClick={copy} aria-label={`Copy email address: ${SITE.email}`} className="text-link max-w-full rounded-lg px-3 text-left text-[13px]">
-        {status === 'copied' ? <Check className="h-4 w-4 shrink-0 text-emerald-700 dark:text-emerald-300" aria-hidden /> : <Copy className="h-4 w-4 shrink-0" aria-hidden />}
+        {status === 'copied' ? <Check className="h-4 w-4 shrink-0 text-blue-700 dark:text-blue-300" aria-hidden /> : <Copy className="h-4 w-4 shrink-0" aria-hidden />}
         <span className="break-all">{status === 'copied' ? 'Email address copied' : SITE.email}</span>
       </button>
       <p role="status" className={status === 'failed' ? 'mt-1 px-3 text-xs text-neutral-600 dark:text-neutral-400' : 'sr-only'}>

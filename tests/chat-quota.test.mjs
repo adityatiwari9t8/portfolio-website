@@ -125,7 +125,7 @@ test('shared provider exhaustion returns a friendly cooldown with Retry-After', 
 test('every load starts light regardless of prior preferences, without accessing storage', async () => {
   const html = await readFile('index.html', 'utf8');
   assert.match(html, /<html lang="en">/);
-  assert.match(html, /name="theme-color" content="#f4f4f2"/);
+  assert.match(html, /name="theme-color" content="#ffffff"/);
   const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
   for (const preference of [null, 'light', 'dark', 'blocked']) {
     let dark = true;

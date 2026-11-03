@@ -18,7 +18,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
       <div className="surface fade-up relative max-h-[90svh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-b-none p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:rounded-2xl sm:p-8">
         <button data-autofocus onClick={onClose} aria-label="Close contact" className="icon-button absolute right-3 top-3"><X size={20} aria-hidden /></button>
         <p className="eyebrow pr-10">Open to SWE internships</p>
-        <h2 id="contact-title" className="mt-4 font-display text-5xl font-bold uppercase tracking-tight">Let’s talk.</h2>
+        <h2 id="contact-title" className="mt-4 font-display text-5xl font-semibold tracking-tight">Let’s talk.</h2>
         <p id="contact-description" className="mt-4 text-base leading-relaxed text-neutral-600 dark:text-neutral-400">Have a role in mind, a project to collaborate on, or a question about my work? Reach me directly.</p>
         <a href={`mailto:${SITE.email}`} className="button-primary mt-6 w-full"><Mail size={18} aria-hidden /> Write an email <ArrowUpRight size={16} aria-hidden /></a>
         <p className="mt-2 text-center text-xs text-neutral-600 dark:text-neutral-400">Opens your email app.</p>

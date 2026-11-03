@@ -17,8 +17,6 @@ import { useStudyRoute } from './lib/route';
 import { closeStudy } from './lib/transition';
 import { PROJECTS, Project } from './data/projects';
 
-// Section spacing is separate from anchor offsets, so headings land below the fixed navbar.
-const section = 'mt-16 sm:mt-24';
 
 const App: React.FC = () => {
   const [contactOpen, setContactOpen] = useState(false);
@@ -48,8 +46,8 @@ const App: React.FC = () => {
   }, [study, studyProject]);
 
   return (
-    // Clip the decorative hero canvas without changing page scroll behavior.
-    <div className="relative min-h-screen overflow-x-clip bg-[#f4f4f2] font-sans text-neutral-950 transition-colors duration-300 dark:bg-[#0b0b0c] dark:text-neutral-100">
+    // Section backgrounds span the viewport; content shares a common container.
+    <div className="site-shell relative min-h-screen overflow-x-clip font-sans">
       <a href="#main" className="skip-link">
         Skip to content
       </a>
@@ -65,11 +63,11 @@ const App: React.FC = () => {
       <DemoOverlay project={demo} onClose={() => setDemo(null)} />
       <Navbar onOpenContact={openContact} onOpenChat={openChat} />
 
-      <main id="main" tabIndex={-1} className="mx-auto max-w-6xl px-5 pt-24 outline-none sm:px-8">
+      <main id="main" tabIndex={-1} className="outline-none">
         <Hero />
 
         {PROJECTS.length === 0 && (
-          <section id="building" className={`${section}`}>
+          <section id="building" className="section-space page-container">
             <Reveal>
               <Building />
             </Reveal>
@@ -77,29 +75,29 @@ const App: React.FC = () => {
         )}
 
         {PROJECTS.length > 0 && (
-          <section id="work" className="mt-14 sm:mt-16">
+          <section id="work" className="work-section section-space">
             <Projects onOpenDemo={setDemo} />
           </section>
         )}
 
-        <section id="story" className={`${section}`}>
+        <section id="story" className="about-section section-space">
           <Reveal>
             <Story />
           </Reveal>
         </section>
 
-        <section id="background" className={`${section}`}>
+        <section id="background" className="background-section section-space page-container">
           <Background />
         </section>
 
-        <section id="contact" className={`${section}`}>
+        <section id="contact" className="contact-band section-space">
           <Reveal>
             <CallToAction onOpenContact={openContact} />
           </Reveal>
         </section>
       </main>
 
-      <Footer onOpenContact={openContact} />
+      <Footer onOpenContact={openContact} onOpenChat={openChat} />
     </div>
   );
 };

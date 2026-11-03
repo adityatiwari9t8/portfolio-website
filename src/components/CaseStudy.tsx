@@ -48,8 +48,8 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ project, onClose, onOpenDemo, onO
   ];
   return (
     <div ref={root} role="dialog" aria-modal="true" aria-labelledby="case-title" tabIndex={-1}
-      className="custom-scrollbar fixed inset-0 z-[90] overflow-y-auto overscroll-contain bg-[#f4f4f2] text-neutral-950 outline-none dark:bg-[#0b0b0c] dark:text-neutral-100">
-      <header className="sticky top-0 z-10 border-b border-black/10 bg-[#f4f4f2]/95 backdrop-blur-md dark:border-white/10 dark:bg-[#0b0b0c]/95">
+      className="case-page custom-scrollbar fixed inset-0 z-[90] overflow-y-auto overscroll-contain outline-none">
+      <header className="case-header sticky top-0 z-10 border-b border-black/10 backdrop-blur-md dark:border-white/10">
         <div className="mx-auto flex h-16 max-w-4xl items-center justify-between px-4 sm:px-6">
           <button data-autofocus onClick={onClose} className="text-link"><ArrowLeft size={17} aria-hidden /> Back to work</button>
           <button onClick={onClose} aria-label="Close case study" className="icon-button"><X size={20} aria-hidden /></button>
@@ -61,7 +61,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ project, onClose, onOpenDemo, onO
 
       <article className="mx-auto max-w-4xl px-5 pb-16 pt-8 sm:px-6 sm:pt-12">
         <div className="eyebrow flex flex-wrap gap-3"><span>{project.category}</span>{project.year && <span>{project.year}</span>}{project.sample && <span>Concept project</span>}</div>
-        <h1 id="case-title" className="mt-4 max-w-3xl font-display text-4xl font-bold uppercase leading-none tracking-tight sm:text-6xl">{project.title}</h1>
+        <h1 id="case-title" className="mt-4 max-w-3xl font-display text-4xl font-semibold leading-[1.07] tracking-tight sm:text-6xl">{project.title}</h1>
         <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-600 sm:text-lg dark:text-neutral-300">{project.description}</p>
         <div className="mt-6 flex flex-wrap gap-3">
           {project.demo && <button onClick={() => onOpenDemo(project)} className="button-primary">Open live demo <Play size={15} aria-hidden /></button>}
@@ -76,7 +76,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ project, onClose, onOpenDemo, onO
           {project.tryIt && <figcaption className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400"><span className="font-medium text-neutral-900 dark:text-neutral-100">Try it: </span>{project.tryIt}</figcaption>}
         </figure>
         {project.sample && <p className="mt-4 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">A concept built to explore an idea, not a client project. Business details are illustrative.</p>}
-        <dl className="my-8 grid gap-5 sm:grid-cols-2">{project.highlights.map((highlight) => <div key={highlight.value} className="border-l-2 border-emerald-700 pl-4 dark:border-emerald-400">
+        <dl className="my-8 grid gap-5 sm:grid-cols-2">{project.highlights.map((highlight) => <div key={highlight.value} className="border-l-2 border-blue-700 pl-4 dark:border-blue-400">
           <dt className="text-base font-semibold">{highlight.value}</dt><dd className="mt-1 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{highlight.label}</dd>
         </div>)}</dl>
 
@@ -84,13 +84,13 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ project, onClose, onOpenDemo, onO
         {!!project.study.flow?.length && <section className="border-t border-black/10 py-8 dark:border-white/10">
           <h2 className="text-base font-semibold tracking-tight">How it works</h2>
           <ol className="mt-5 grid gap-4 sm:grid-cols-3">{project.study.flow.map((step, i) => <li key={step.title} className="surface relative p-5">
-            <span className="eyebrow text-emerald-800 dark:text-emerald-300">{String(i + 1).padStart(2, '0')}</span>
+            <span className="eyebrow text-blue-800 dark:text-blue-300">{String(i + 1).padStart(2, '0')}</span>
             <h3 className="mt-3 text-sm font-semibold">{step.title}</h3>
             <p className="mt-2 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">{step.description}</p>
             {i < project.study.flow!.length - 1 && <ArrowRight size={15} aria-hidden className="absolute right-5 top-5 text-neutral-500" />}
           </li>)}</ol>
         </section>}
-        <StudySection id="study-built" title="What I built"><ul className="list-disc space-y-4 pl-4 marker:text-emerald-700 dark:marker:text-emerald-400">{project.study.built.map((item) => <li key={item}>{item}</li>)}</ul></StudySection>
+        <StudySection id="study-built" title="What I built"><ul className="list-disc space-y-4 pl-4 marker:text-blue-700 dark:marker:text-blue-400">{project.study.built.map((item) => <li key={item}>{item}</li>)}</ul></StudySection>
         {!!project.study.evidence?.length && <StudySection id="study-evidence" title="Validation"><dl className="space-y-5">{project.study.evidence.map((item) => <div key={item.label}>
           <dt className="font-semibold text-neutral-900 dark:text-white">{item.label}</dt>
           <dd className="mt-1">{item.detail}{item.href && <a href={item.href} target="_blank" rel="noopener noreferrer" className="text-link mt-1">View evidence <ArrowUpRight size={14} aria-hidden /></a>}</dd>

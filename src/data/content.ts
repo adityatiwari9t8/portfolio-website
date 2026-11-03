@@ -1,8 +1,8 @@
 /** Copy for the non-project sections. Edit freely: every list below can grow, and the layout adapts. */
 
 export const HERO = {
-  /** Role beneath the name. Focus and motto also provide context to the profile assistant. */
-  role: 'Software engineering student. Builder at heart.',
+  /** Role beneath the hero headline. Focus and motto also give the profile assistant context. */
+  role: 'Software engineering student',
   focus: 'Algorithms · Backend · Full-stack',
   /** How I work, for the profile assistant. */
   motto: 'I write software that is correct first, then fast.',
@@ -11,23 +11,23 @@ export const HERO = {
    * my foundation, what I'm after. About me, never about a specific project, so it stays true as projects change.
    */
   body:
-    'I turn complex problems into practical software, with a focus on thoughtful design, reliable systems and code that is easy to understand.'
+    'I explore algorithms and backend systems by building tools you can use, inspect, and understand.'
 };
 
 
 /** Project-section copy is independent of the project list, ready for the next body of work. */
 export const WORK = {
-  title: 'Ideas into',
-  accent: 'working code.',
-  description: 'Interactive explorations of algorithms, data and useful interfaces. Try the demos, explore the code, or read the decisions behind each build.',
-  note: 'Every project includes a working demo and a closer look at the implementation.'
+  title: 'Selected work.',
+  accent: '',
+  description: 'A selection of my work, with a closer look at the ideas, decisions, and code behind it.',
+  note: 'Explore the implementation, trade-offs, and lessons behind the work.'
 };
 
 export const STORY = {
-  lead: "I like understanding why a solution works, then making it useful.",
+  lead: "I’m Aditya, a Computer Science student at IILM University in Gurugram. I learn best by taking an idea apart and building something with it.",
   fade: ' I care about correctness, honest trade-offs and code the next engineer can read without asking me.',
   more:
-    "Building a Sudoku visualizer taught me how much the choice of the next cell changes a search. That is the part of engineering I enjoy: tracing an idea through the implementation, testing its limits, and explaining the trade-offs. I’m now taking that curiosity deeper into backend systems, concurrency and caching."
+    "I’m drawn to the decisions beneath the interface: how data moves, what happens when requests arrive together, and where a system can fail. I’m developing that understanding through backend projects, studying the fundamentals, and making the reasoning behind my code explicit."
 };
 
 /**
@@ -81,8 +81,8 @@ export const EXPERIENCE: Experience[] = [
     org: 'SEMS Welfare Foundation, Noida',
     period: 'Jun to Jul 2026',
     points: [
-      'Researched cognitive bias and dual-process theory in strategic procurement decisions from secondary sources, and wrote a research synopsis with APA-cited references.',
-      'Wrote a 23-page internship report aligned to UN SDG 8 (Decent Work and Economic Growth).'
+      'Studied how cognitive bias influences procurement decisions and developed a research synopsis with APA-cited sources.',
+      'Produced a 23-page report connecting the research to UN SDG 8: Decent Work and Economic Growth.'
     ]
   }
 ];

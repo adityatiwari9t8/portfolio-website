@@ -31,7 +31,7 @@ const DemoOverlay: React.FC<DemoOverlayProps> = ({ project, onClose }) => {
       aria-modal="true"
       aria-label={`${project.title} live demo`}
       tabIndex={-1}
-      className="fixed inset-0 z-[100] flex flex-col overflow-hidden bg-[#f4f4f2] outline-none dark:bg-[#0b0b0c]"
+      className="fixed inset-0 z-[100] flex flex-col overflow-hidden bg-[#ffffff] outline-none dark:bg-[#000000]"
     >
       <div className="flex h-16 flex-none items-center justify-between border-b border-black/5 px-4 backdrop-blur-sm md:h-20 md:px-12 dark:border-white/10">
         <button
@@ -58,7 +58,7 @@ const DemoOverlay: React.FC<DemoOverlayProps> = ({ project, onClose }) => {
         </div>
       </div>
 
-      <div className="custom-scrollbar flex-1 overflow-y-auto overscroll-contain bg-[#f4f4f2] dark:bg-[#0b0b0c]">
+      <div className="custom-scrollbar flex-1 overflow-y-auto overscroll-contain bg-[#ffffff] dark:bg-[#000000]">
         <DemoBoundary key={project.id} repo={project.repo} onClose={onClose}>
         <Suspense
           fallback={

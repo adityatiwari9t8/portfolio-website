@@ -4,7 +4,7 @@
 
 **B.Tech Computer Science student at IILM University (class of 2029, CGPA 8.79), looking for a software engineering internship.**
 
-Every project runs live inside the page, links to its source, and has a case study on the design decisions, trade-offs and limits.
+Project entries can include live demos, source links, and case studies on the design decisions, trade-offs and limits. The collection can grow as new work is completed.
 
 [**Live site**](https://adityatiwari98.vercel.app) · [GitHub](https://github.com/adityatiwari9t8) · [LinkedIn](https://www.linkedin.com/in/adityatiwari9t8) · [Resume](https://adityatiwari98.vercel.app/resume.pdf)
 
@@ -38,7 +38,8 @@ Each project has a working demo embedded in the site and a case-study page (prob
 - **An optional AI assistant.** Available from the desktop navigation, mobile menu, or command menu. Answers stream through `api/chat.ts`; its profile comes from the same data files as the site. Starter questions use instant local quick answers. Custom questions are limited to four per rolling minute, with a friendly pause message before the fifth (no visible quota or countdown). The allowance persists across resets, panel closes and reloads; quick answers stay available. A matching API guard and provider-cooldown fallback protect the endpoint. The API guard is best-effort per IP within each serverless instance; Google’s project quota is shared across visitors.
 - **Keyboard command menu.** Cmd+K / Ctrl+K for navigation, projects, resume, contact, and theme.
 - **Light by default, with a dark toggle.** Every page load starts light; a toggle affects only the current document. Shared buttons, surfaces, typography, visible focus states, and short transitions keep both themes consistent. Content stays visible before scroll animations run.
-- **Self-hosted fonts and optional analytics.** Latin font subsets are bundled; cookie-less analytics are off by default.
+- **Native typography and optional analytics.** Native system typography, with self-hosted Inter as a fallback, keeps the portfolio clean and readable. Roboto Mono is reserved for technical content. Cookie-less analytics are off by default.
+- **A documented visual system.** See [DESIGN.md](DESIGN.md) for the palette, typography, layout, and writing principles.
 
 ## Run it locally
 

@@ -22,7 +22,7 @@ export function toggleTheme(origin?: { x: number; y: number }) {
   const next = !isDark();
   const apply = () => {
     document.documentElement.classList.toggle('dark', next);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next ? '#0b0b0c' : '#f4f4f2');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next ? '#000000' : '#ffffff');
     emit();
   };
   const x = origin?.x ?? window.innerWidth / 2;

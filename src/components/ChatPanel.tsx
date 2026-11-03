@@ -202,7 +202,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
     >
       <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-sm" onClick={close} />
 
-      <section className="fade-up relative flex h-[85svh] w-full flex-col overflow-hidden rounded-t-[1.75rem] border border-black/5 bg-[#f4f4f2] shadow-2xl sm:h-auto sm:max-w-[420px] sm:rounded-[1.75rem] dark:border-white/10 dark:bg-neutral-900">
+      <section className="fade-up relative flex h-[85svh] w-full flex-col overflow-hidden rounded-t-[1.75rem] border border-black/5 bg-[#ffffff] shadow-2xl sm:h-auto sm:max-w-[420px] sm:rounded-[1.75rem] dark:border-white/10 dark:bg-neutral-900">
         {/* grab handle, phones only */}
         <div aria-hidden className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-neutral-300 sm:hidden dark:bg-neutral-700" />
 
@@ -211,7 +211,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
             <Sparkles className="h-[18px] w-[18px]" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id="chat-title" className="font-display text-xl font-bold sm:text-2xl uppercase leading-none tracking-[-0.01em] text-neutral-950 dark:text-white">
+            <h2 id="chat-title" className="font-display text-xl font-semibold sm:text-2xl leading-tight tracking-[-0.01em] text-neutral-950 dark:text-white">
               Ask about <span className="text-neutral-500 dark:text-neutral-400">{SITE.firstName}</span>
             </h2>
             <p className="mt-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.1em] text-neutral-600 dark:text-neutral-400">
@@ -287,7 +287,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
         {turns.length > 0 && <div className="shrink-0 px-4 pb-3">
           <p className="mb-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">Keep exploring</p>
           <ul aria-label="Suggested questions" className="custom-scrollbar flex gap-2 overflow-x-auto pb-1">{QUICK_ANSWERS.map(({ question }) => <li key={question} className="shrink-0">
-            <button disabled={busy} onClick={() => ask(question)} className="min-h-11 max-w-[240px] rounded-xl border border-black/10 bg-white px-3 py-2 text-left text-xs leading-relaxed text-neutral-700 transition-colors hover:border-emerald-700/40 disabled:opacity-50 dark:border-white/15 dark:bg-white/[0.04] dark:text-neutral-300">{question}</button>
+            <button disabled={busy} onClick={() => ask(question)} className="min-h-11 max-w-[240px] rounded-xl border border-black/10 bg-white px-3 py-2 text-left text-xs leading-relaxed text-neutral-700 transition-colors hover:border-blue-700/40 disabled:opacity-50 dark:border-white/15 dark:bg-white/[0.04] dark:text-neutral-300">{question}</button>
           </li>)}</ul>
         </div>}
 
@@ -298,7 +298,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
           }}
           className="shrink-0 border-t border-black/5 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/10"
         >
-          {cooldownSeconds > 0 && <div className="mb-3 rounded-lg border border-emerald-700/20 bg-emerald-700/[0.05] px-3 py-2 text-sm text-emerald-900 dark:border-emerald-400/20 dark:text-emerald-200">
+          {cooldownSeconds > 0 && <div className="mb-3 rounded-lg border border-blue-700/20 bg-blue-700/[0.05] px-3 py-2 text-sm text-blue-900 dark:border-blue-400/20 dark:text-blue-200">
             <p role="status">Let’s take a little breather. I’ll be ready for your next question shortly.</p>
           </div>}
           <div className="flex items-end gap-2 rounded-2xl border border-black/10 bg-white p-1.5 pl-4 focus-within:border-neutral-950 dark:border-white/10 dark:bg-white/[0.04] dark:focus-within:border-white">

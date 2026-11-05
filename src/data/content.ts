@@ -88,7 +88,7 @@ export const EXPERIENCE: Experience[] = [
 ];
 
 /**
- * Certificates in the Background section, newest or most relevant first. The first six show, the rest sit behind "Show all".
+ * Entries for the Certifications section, newest or most relevant first.
  * `url` opens a verification page in a new tab; `image` (a file in /public/certificates) opens in a viewer on the page.
  * Give a certificate one or the other, or neither (then it has no button).
  */

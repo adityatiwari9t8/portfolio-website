@@ -31,40 +31,24 @@ const DemoOverlay: React.FC<DemoOverlayProps> = ({ project, onClose }) => {
       aria-modal="true"
       aria-label={`${project.title} live demo`}
       tabIndex={-1}
-      className="fixed inset-0 z-[100] flex flex-col overflow-hidden bg-[#ffffff] outline-none dark:bg-[#000000]"
+      className="demo-shell fixed inset-0 z-[100] flex flex-col overflow-hidden outline-none"
     >
-      <div className="flex h-16 flex-none items-center justify-between border-b border-black/5 px-4 backdrop-blur-sm md:h-20 md:px-12 dark:border-white/10">
-        <button
-          data-autofocus
-          onClick={onClose}
-          className="flex min-h-11 items-center gap-2 text-neutral-600 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-white"
-        >
-          <ArrowLeft className="h-5 w-5" />
-          <span className="hidden font-semibold sm:inline">Back</span>
-          <span className="text-xs font-semibold sm:hidden">Back</span>
+      <div className="demo-toolbar">
+        <button data-autofocus onClick={onClose} aria-label="Back to portfolio">
+          <ArrowLeft aria-hidden="true" /><span>Back</span>
         </button>
-
-        <div className="flex items-center gap-4 md:gap-8">
-          <span className="hidden text-[10px] font-black uppercase tracking-[0.3em] text-neutral-500 lg:block dark:text-neutral-400">
-            {project.title} &middot; live demo
-          </span>
-          <button
-            onClick={onClose}
-            aria-label="Close demo"
-            className="icon-button"
-          >
-            <X className="h-5 w-5" />
-          </button>
-        </div>
+        <span>{project.title}</span>
+        <button onClick={onClose} aria-label="Close demo" className="icon-button">
+          <X aria-hidden="true" />
+        </button>
       </div>
-
-      <div className="custom-scrollbar flex-1 overflow-y-auto overscroll-contain bg-[#ffffff] dark:bg-[#000000]">
+      <div className="demo-content custom-scrollbar flex-1 overflow-y-auto overscroll-contain">
         <DemoBoundary key={project.id} repo={project.repo} onClose={onClose}>
         <Suspense
           fallback={
             <div role="status" className="flex min-h-[60svh] flex-col items-center justify-center gap-4 text-neutral-600 dark:text-neutral-400">
               <Loader2 aria-hidden className="h-8 w-8 animate-spin" />
-              <p className="text-sm font-semibold uppercase tracking-widest">Loading demo</p>
+              <p className="text-sm font-normal">Loading demo</p>
             </div>
           }
         >

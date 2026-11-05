@@ -15,7 +15,7 @@ const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) => {
   return (
     <div ref={dialog} tabIndex={-1} className="fixed inset-0 z-[100] flex items-end justify-center outline-none sm:items-center sm:p-5" role="dialog" aria-modal="true" aria-labelledby="contact-title" aria-describedby="contact-description">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} aria-hidden />
-      <div className="surface fade-up relative max-h-[90svh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-b-none p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:rounded-2xl sm:p-8">
+      <div className="contact-sheet surface fade-up relative max-h-[90svh] w-full max-w-lg overflow-y-auto overscroll-contain rounded-b-none p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:rounded-2xl sm:p-8">
         <button data-autofocus onClick={onClose} aria-label="Close contact" className="icon-button absolute right-3 top-3"><X size={20} aria-hidden /></button>
         <p className="eyebrow pr-10">Open to SWE internships</p>
         <h2 id="contact-title" className="mt-4 font-display text-5xl font-semibold tracking-tight">Let’s talk.</h2>

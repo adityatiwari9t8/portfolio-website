@@ -30,16 +30,16 @@ Each project has a working demo embedded in the site and a case-study page (prob
 
 ## What's in the site
 
-- **A concise introduction.** Clear project and resume actions, visible contact, and a quiet dotted-wave illustration. The wave holds still on phones and for reduced motion, pauses off screen, and is capped at 30 fps on larger screens.
-- **A flexible project grid.** The three current applications are working examples while more substantial work is in progress. Each has a demo, source link, and case study. Only the current theme’s screenshot is loaded; walkthrough videos are played on request within case studies. A future main project can use `featured: true` for a full-width lead card.
-- **Readable case studies.** Section navigation, architecture flows, stack, implementation details, learning, and honest limitations, with shareable links at `#/work/<id>`.
-- **Compact background.** Education and experience in a timeline, grouped skills, current interests, and expandable certificates.
-- **Direct contact.** Email, copy-email, and LinkedIn actions. No form or implied delivery; email links explicitly open the visitor's email app. Failed clipboard writes show manual-copy guidance.
-- **An optional AI assistant.** Available from the desktop navigation, mobile menu, or command menu. Answers stream through `api/chat.ts`; its profile comes from the same data files as the site. Starter questions use instant local quick answers. Custom questions are limited to four per rolling minute, with a friendly pause message before the fifth (no visible quota or countdown). The allowance persists across resets, panel closes and reloads; quick answers stay available. A matching API guard and provider-cooldown fallback protect the endpoint. The API guard is best-effort per IP within each serverless instance; Google’s project quota is shared across visitors.
-- **Keyboard command menu.** Cmd+K / Ctrl+K for navigation, projects, resume, contact, and theme.
-- **Light by default, with a dark toggle.** Every page load starts light; a toggle affects only the current document. Shared buttons, surfaces, typography, visible focus states, and short transitions keep both themes consistent. Content stays visible before scroll animations run.
-- **Native typography and optional analytics.** Native system typography, with self-hosted Inter as a fallback, keeps the portfolio clean and readable. Roboto Mono is reserved for technical content. Cookie-less analytics are off by default.
-- **A documented visual system.** See [DESIGN.md](DESIGN.md) for the palette, typography, layout, and writing principles.
+- **Minimal, light by default.** White and graphite surfaces, system typography, centered desktop navigation, and responsive project previews. Light is the default. The header toggle remembers an explicit light/dark choice, applies it before the page paints, and themes the embedded demos and chatbot too.
+- **Depth on interaction.** Project previews tilt slightly toward the pointer. Opening a panel brings it forward, and buttons respond to a press. Reduced-motion preferences disable the animated transitions; there is no background renderer.
+- **Replaceable project content.** A filterable gallery with theme-matched screenshots, project dialogs, source links, and working demos. Edit `src/data/projects.ts`; shareable links remain `#/work/<id>`.
+- **About and toolkit.** Personal introduction, portrait, education, résumé, and expandable skill groups.
+- **Optional playground.** Collapsed by default to keep the page quiet. Expand it to explore simulated request caching or a live bubble sort.
+- **Direct contact.** Email, verified copy-email feedback, GitHub, and LinkedIn.
+- **Accessibility.** Keyboard navigation, visible focus, dialog focus management, mobile navigation, and native scrolling.
+- **Optional analytics.** Existing cookie-less analytics remain off by default. The profile chatbot is available from Ask AI in the navigation and the floating chat button, with local quick answers and streaming replies through the existing API.
+
+See [DESIGN.md](DESIGN.md) for the visual direction.
 
 ## Run it locally
 
@@ -51,7 +51,7 @@ npm run dev        # http://localhost:5173
 ```
 
 ```bash
-npm test           # quota, API fallback and default-theme regression checks (no Gemini calls)
+npm test           # quota, API fallback, clipboard and light-theme regression checks (no Gemini calls)
 npm run build      # type-check, then production build into dist/
 npm run preview    # serve the production build locally
 ```
@@ -67,7 +67,9 @@ src/
 │   ├── site.ts          name, email, social links, status line, nav order
 │   ├── content.ts       hero, about, photos, education, experience, skills, contact text
 │   └── projects.ts      the projects and their case studies
-├── components/          page sections and effects (DotWave, Tilt, Reveal, ...)
+├── studio.css           the minimal light visual system
+├── components/
+│   ├── studio/          interactive project previews and playground
 │   └── demos/           the embedded project demos
 └── lib/                 router, theme store, scroll and active-section helpers, cursor light, dialog helper, view transitions
 api/                     Vercel functions: chat.ts (the AI assistant) and _profile.ts (its instructions, built from src/data)
@@ -75,24 +77,22 @@ public/                  photos, project screenshots and demo videos, resume, so
 resume/                  source of the resume PDF
 ```
 
-All copy and links live in `src/data/`, so updating the site rarely means touching a component.
+Projects, profile details, education, and skills live in `src/data/`. The new editorial headings and navigation live in `src/App.tsx`.
 
 | To change… | Edit |
 | --- | --- |
 | Name, email, social links, status line | `src/data/site.ts` |
-| Hero, project introduction, about, education, experience, certificates, skills | `src/data/content.ts` |
+| Editorial headings and navigation | `src/App.tsx` |
+| About introduction, portrait, education, skills | `src/data/content.ts` |
 | Projects and case studies | `src/data/projects.ts` |
 | Resume | `resume/resume.html`, then save it as `public/resume.pdf` (see below) |
 
-### Adding experience, certificates or skills
+### Editing profile details
 
-Every list in `src/data/content.ts` can grow without touching a component:
-
-- **Experience:** add an object to `EXPERIENCE`, newest first. The first three show; the rest sit behind a "Show all" button.
-- **Certificates:** add an object to `CERTIFICATIONS`. Give it a `url` (opens in a new tab) or an `image` in `public/certificates/` (opens in a viewer on the page). The first six show; the rest fold away.
-- **Skills:** add to any group in `TOOLKIT`, or add a whole new group (`{ label: 'Cloud', items: [...] }`). CS fundamentals live in `EDUCATION.coursework` and show in the education card.
-- **Hero text:** `HERO` (role, focus line, the one-line motto and the short intro). The name and status line come from `SITE`, and the section order in the nav comes from `NAV`, both in `src/data/site.ts`.
-- **About portrait:** the first entry of `STORY_PHOTOS` supplies the portrait and alternative text. Both themes use the original photo with a consistent CSS treatment.
+- **Skills:** extend a `TOOLKIT` group or add another group. It becomes an expandable row.
+- **Education:** edit `EDUCATION` and the education label in `src/App.tsx`.
+- **About portrait:** the first entry of `STORY_PHOTOS` supplies the portrait and alternative text.
+- **Experience and certificates:** the prior data and components are retained for future use, but are not displayed in this design.
 
 ### Adding a project
 
@@ -127,6 +127,6 @@ Open to software engineering internships and second-year or early-career intern 
 
 Chat replies use a short loading state and buffered text reveal, with a Stop control and persistent suggested questions. Prepared answers remain local and labeled as profile content; reduced-motion preferences skip the text animation.
 
-The work section keeps current projects alongside the first in-progress entry from `BUILDING`. Its goals are presented as planned work; the callout disappears when a published project uses the same ID. Featured projects sort ahead of other entries automatically.
+The work section follows the order of `PROJECTS`. Mark an entry as featured to give its preview a full row.
 
 Demo failures are contained within the overlay, with reload, source-code and return controls. The command menu and contact actions share confirmed clipboard feedback, including a fallback inside active dialogs. `npm test` covers clipboard failure and cleanup alongside chat policy.

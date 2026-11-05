@@ -43,6 +43,7 @@ export interface Project {
   tryIt?: string;
   highlights: [{ value: string; label: string }, { value: string; label: string }];
   gradient: string; // tailwind gradient classes (light + dark)
+  imageAlt?: string;
   imageLight: string;
   imageDark: string;
   imageWidth: number;
@@ -62,10 +63,88 @@ export interface Project {
 
 export const PROJECTS: Project[] = [
   {
-    id: 'sudoku-visualizer',
+    id: 'anti-scam-sentinel',
     featured: true,
+    title: 'Omni-Channel Anti-Scam Sentinel',
+    category: 'Browser security',
+    summary: 'I built Sentinel, a Chrome extension that checks calls and email for signs of scams. It analyzes audio, video and text locally and shows risk signals in the browser.',
+    description: 'I built the full Sentinel extension, from capturing call media and checking email text to combining detector results and displaying alerts. I also built an offline harness to test how the extension responds to recorded inputs.',
+    repo: 'https://github.com/adityatiwari9t8/Omni-Channel-Anti-Scam-Sentinel',
+    highlights: [
+      { value: 'Local processing', label: 'captured call media is processed in the browser' },
+      { value: 'Offline harness', label: 'replays media and exercises pipeline behavior' }
+    ],
+    gradient: 'from-slate-100 to-white dark:from-neutral-800 dark:to-neutral-900',
+    imageLight: '/projects/scam-sentinel.webp', imageDark: '/projects/scam-sentinel.webp',
+    imageWidth: 1120, imageHeight: 760, imageAlt: 'Sentinel local validation harness with self-test and notification preview controls',
+    study: {
+      problem: 'Audio, video and text detectors produce different kinds of evidence. The browser interface needs to distinguish a risk signal from missing input.',
+      built: [
+        'Built the detection pipeline with shared TypeScript contracts for audio, video and text signals.',
+        'Connected the Chrome extension, in-call overlay and offline harness to the decision logic.',
+        'Added integration checks and build tooling to exercise the system outside a live call.'
+      ],
+      learned: 'Missing evidence needs its own state. A detector that has received no fresh input cannot support an all-clear result.',
+      limits: ['Live-call detection accuracy has not been validated on a labeled dataset. Risk signals and movement challenges do not establish identity.'],
+      ideas: [], stack: ['TypeScript', 'Chrome Manifest V3', 'ONNX Runtime Web', 'MediaPipe']
+    }
+  },
+  {
+    id: 'rfid-attendance',
+    title: 'Smart Attendance System with RFID',
+    category: 'Embedded systems',
+    summary: 'Tap a card to record classroom attendance. An ESP32 queues offline scans and sends them to Google Sheets when Wi-Fi returns.',
+    description: 'An RFID reader checks each tap against an enrolled roster. The device gives immediate feedback and records the original attendance time, even if the upload has to wait.',
+    repo: 'https://github.com/adityatiwari9t8/Smart-Attendance-System-with-RFID',
+    highlights: [
+      { value: '50 students', label: 'on-device roster capacity' },
+      { value: '60 taps', label: 'offline queue capacity' }
+    ],
+    gradient: 'from-stone-100 to-white dark:from-neutral-800 dark:to-neutral-900',
+    imageLight: '/projects/rfid-attendance.webp', imageDark: '/projects/rfid-attendance.webp',
+    imageWidth: 1120, imageHeight: 760, imageAlt: 'Wiring diagram connecting the ESP32, RFID reader, OLED, LEDs and buzzer',
+    study: {
+      problem: 'Classroom attendance needs to survive a network outage without counting the same student twice.',
+      built: [
+        'Match card identifiers to an enrolled roster and show scan results on the OLED, LEDs and buzzer.',
+        'Persist accepted taps to flash and retry uploads with their original timestamps.',
+        'Check for same-day duplicates on both the device and the Apps Script endpoint.'
+      ],
+      learned: 'Recording the tap time separately from the upload time keeps an offline scan on the correct attendance date.',
+      limits: ['The device rejects new taps when the offline queue is full. The reader requires compatible 13.56 MHz cards.'],
+      ideas: [], stack: ['ESP32', 'Arduino', 'MFRC522', 'Google Apps Script', 'Google Sheets']
+    }
+  },
+  {
+    id: 'nutrisync',
+    title: 'NutriSync',
+    category: 'Recommendation systems',
+    summary: 'Scan a pantry, correct the ingredient list, and find recipes that fit both the ingredients on hand and a daily macro target.',
+    description: 'A full-stack meal planner connects pantry recognition, recipe ranking and food logging in one workflow.',
+    repo: 'https://github.com/adityatiwari9t8/nutrisync',
+    highlights: [
+      { value: '50 recipes', label: 'seeded with ingredients, macros and instructions' },
+      { value: 'Pantry edits', label: 'saved between sessions' }
+    ],
+    gradient: 'from-emerald-50 to-white dark:from-neutral-800 dark:to-neutral-900',
+    imageLight: '/projects/nutrisync.webp', imageDark: '/projects/nutrisync.webp',
+    imageWidth: 1120, imageHeight: 760, imageAlt: 'NutriSync sign-in screen explaining the pantry-to-meal workflow',
+    study: {
+      problem: 'A meal recommendation has to account for what is in the kitchen as well as what the user wants to eat.',
+      built: [
+        'Accept uploaded photos or camera captures and let users edit and save the detected pantry ingredients.',
+        'Combine ingredient overlap and macro fit with content similarity and collaborative filtering to rank recipes.',
+        'Log meals, track daily totals, and cache USDA nutrition lookups in Redis.'
+      ],
+      learned: 'An editable pantry gives users a way to correct a recognition error before it influences the meal rankings.',
+      limits: ['Automated ingredient suggestions may need correction. Recommendations depend on the available recipe catalogue.'],
+      ideas: [], stack: ['React', 'FastAPI', 'Python', 'SQLAlchemy', 'Redis', 'CLIP']
+    }
+  },
+  {
+    id: 'sudoku-visualizer',
     title: 'Sudoku Algorithm Visualizer',
-    summary: 'One puzzle. Four ways through it. Watch search algorithms make decisions, retrace their steps, and reach a solution.',
+    summary: 'Run four solvers on the same Sudoku board and compare their backtracks. The animation and the benchmark use the same solver code.',
     category: 'Search algorithms',
     description:
       'An interactive view of how search algorithms think. Run DFS, BFS, greedy search, and MRV on the same Sudoku board, then compare the work each strategy performs.',
@@ -116,7 +195,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'academic-path',
     title: 'Academic Path Intelligence',
-    summary: 'A clearer answer to “what should I learn next?” A dependency graph turns existing skills into an ordered learning path.',
+    summary: 'Pick the skills you already have. The planner walks a dependency graph to put each prerequisite before the subject that needs it.',
     category: 'Graph algorithms',
     description:
       'Turns the skills you already have into an ordered learning roadmap. Subjects and their prerequisites form a graph, and a depth-first topological sort puts every prerequisite first.',
@@ -165,7 +244,7 @@ export const PROJECTS: Project[] = [
   {
     id: 'expense-pro',
     title: 'Expense Insight Pro',
-    summary: 'See where your money goes and how your balance is trending, with a regression model built from first principles.',
+    summary: 'Add a transaction to see how it changes your running balance. A least-squares fit shows how the balance would move if the same trend continued.',
     category: 'Data & statistics',
     description:
       'A personal-finance dashboard that connects transaction history to an illustrative 30-day balance trend. The least-squares regression is implemented from scratch, with the quality of its fit visible alongside the result.',
@@ -209,6 +288,32 @@ export const PROJECTS: Project[] = [
         'Recurring transactions, a monthly budget per category, and CSV import and export.'
       ],
       stack: ['React', 'TypeScript', 'Tailwind CSS', 'Recharts', 'Vite']
+    }
+  },
+  {
+    id: 'tic-tac-toe',
+    title: 'Tic Tac Toe Pro',
+    category: 'Browser games',
+    summary: 'Two players share a board, take turns, and keep score across rounds. The game highlights the winning line or records a draw.',
+    description: 'A local two-player browser game built with HTML, CSS and JavaScript. Move validation, win detection and scoring run entirely in the page.',
+    repo: 'https://github.com/adityatiwari9t8/TicTacToe',
+    highlights: [
+      { value: '8 winning lines', label: 'three rows, three columns and two diagonals' },
+      { value: '2 players', label: 'take turns on the same device' }
+    ],
+    gradient: 'from-slate-100 to-white dark:from-neutral-800 dark:to-neutral-900',
+    imageLight: '/projects/tic-tac-toe.webp', imageDark: '/projects/tic-tac-toe.webp',
+    imageWidth: 1120, imageHeight: 760, imageAlt: 'Tic Tac Toe Pro during a round with X in two corners and O in the centre',
+    study: {
+      problem: 'Each move should advance the turn exactly once, and a finished round should stop accepting moves.',
+      built: [
+        'Track occupied cells and compare each board state against the eight winning lines.',
+        'Highlight a win, detect a full-board draw, and update the scoreboard.',
+        'Reset the board independently of the session scores so the same players can start another round.'
+      ],
+      learned: 'Round state and score state have different lifetimes. Separating them makes a rematch straightforward.',
+      limits: ['Players share one device. Scores last for the current page session.'],
+      ideas: [], stack: ['JavaScript', 'HTML', 'CSS']
     }
   }
 ];

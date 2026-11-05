@@ -287,8 +287,8 @@ const SudokuVisualizerDemo: React.FC = () => {
   };
 
   const stat = (label: string, value: string) => (
-    <div className="rounded-2xl border border-black/5 bg-white p-4 dark:border-white/10 dark:bg-neutral-900">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">{label}</p>
+    <div className="rounded-[18px] border border-black/5 bg-white p-4 dark:border-white/10 dark:bg-neutral-900">
+      <p className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">{label}</p>
       <p className="mt-1 text-2xl font-semibold tabular-nums tracking-tight text-neutral-900 dark:text-white sm:text-3xl">{value}</p>
     </div>
   );
@@ -301,8 +301,8 @@ const SudokuVisualizerDemo: React.FC = () => {
     <div className="mx-auto max-w-6xl space-y-6 px-4 py-6 md:space-y-8 md:px-8 md:py-10">
       <header className="space-y-3 text-center">
         <h1 className="flex items-center justify-center gap-3 text-3xl font-medium tracking-[-0.03em] text-neutral-900 dark:text-white md:text-5xl">
-          <span className="rounded-xl bg-indigo-100 p-2 dark:bg-indigo-500/15">
-            <Grid3X3 className="h-6 w-6 text-indigo-700 dark:text-indigo-400 md:h-8 md:w-8" />
+          <span className="rounded-xl bg-blue-100 p-2 dark:bg-blue-500/15">
+            <Grid3X3 className="h-6 w-6 text-blue-700 dark:text-blue-400 md:h-8 md:w-8" />
           </span>
           <span>
             Sudoku <span className="accent text-[1.1em]">Visualizer</span>
@@ -313,9 +313,9 @@ const SudokuVisualizerDemo: React.FC = () => {
         </p>
         <div
           aria-live="polite"
-          className="mx-auto flex max-w-full items-start gap-2 rounded-2xl border border-black/5 bg-white px-4 py-2 text-left text-xs font-medium text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 sm:text-sm md:w-fit"
+          className="mx-auto flex max-w-full items-start gap-2 rounded-[18px] border border-black/5 bg-white px-4 py-2 text-left text-xs font-medium text-neutral-700 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-300 sm:text-sm md:w-fit"
         >
-          <Activity className={`mt-0.5 h-4 w-4 shrink-0 ${status === 'running' ? 'animate-pulse text-indigo-500' : 'text-neutral-400'}`} />
+          <Activity className={`mt-0.5 h-4 w-4 shrink-0 ${status === 'running' ? 'animate-pulse text-blue-500' : 'text-neutral-400'}`} />
           <span>{message}</span>
         </div>
       </header>
@@ -334,13 +334,13 @@ const SudokuVisualizerDemo: React.FC = () => {
                 const bottom = r === 8 ? '' : r % 3 === 2 ? 'border-b-2 border-b-neutral-900 dark:border-b-neutral-300' : 'border-b border-b-neutral-200 dark:border-b-white/10';
                 const right = c === 8 ? '' : c % 3 === 2 ? 'border-r-2 border-r-neutral-900 dark:border-r-neutral-300' : 'border-r border-r-neutral-200 dark:border-r-white/10';
                 let bg = '';
-                if (s.isActive) bg = 'bg-indigo-500 text-white';
+                if (s.isActive) bg = 'bg-blue-500 text-white';
                 else if (s.conflict) bg = 'bg-rose-100 dark:bg-rose-500/20';
                 else if (s.justRemoved) bg = 'bg-rose-100 dark:bg-rose-500/20';
-                else if (s.justPlaced) bg = 'bg-indigo-100 dark:bg-indigo-500/25';
-                else if (s.sameDigit) bg = 'bg-indigo-50 dark:bg-indigo-400/15';
+                else if (s.justPlaced) bg = 'bg-blue-100 dark:bg-blue-500/25';
+                else if (s.sameDigit) bg = 'bg-blue-50 dark:bg-blue-400/15';
                 else if (s.related) bg = 'bg-neutral-100 dark:bg-white/5';
-                let text = 'text-indigo-600 dark:text-indigo-300';
+                let text = 'text-blue-600 dark:text-blue-300';
                 if (s.isActive) text = 'text-white';
                 else if (s.conflict) text = 'text-rose-600 dark:text-rose-300';
                 else if (s.given) text = 'text-neutral-900 dark:text-white';
@@ -354,7 +354,7 @@ const SudokuVisualizerDemo: React.FC = () => {
                     onClick={() => setSelected([r, c])}
                     onFocus={() => setSelected([r, c])}
                     onKeyDown={(e) => onCellKey(e, r, c)}
-                    className={`flex items-center justify-center text-[clamp(1rem,4.8vw,1.7rem)] outline-none transition-colors ${bottom} ${right} ${bg} ${text} ${s.given ? 'font-semibold' : 'font-medium'} ${s.isSel ? 'relative z-10 ring-2 ring-inset ring-indigo-500' : ''} focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-indigo-500`}
+                    className={`flex items-center justify-center text-[clamp(1rem,4.8vw,1.7rem)] outline-none transition-colors ${bottom} ${right} ${bg} ${text} ${s.given ? 'font-semibold' : 'font-medium'} ${s.isSel ? 'relative z-10 ring-2 ring-inset ring-blue-500' : ''} focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500`}
                   >
                     {s.v !== 0 ? s.v : ''}
                   </button>
@@ -369,7 +369,7 @@ const SudokuVisualizerDemo: React.FC = () => {
                 <button
                   key={n}
                   onClick={() => setCell(selected[0], selected[1], n)}
-                  className="rounded-lg border border-black/5 bg-white py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-indigo-400 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-100"
+                  className="rounded-lg border border-black/5 bg-white py-2.5 text-sm font-semibold text-neutral-800 transition-colors hover:border-blue-400 dark:border-white/10 dark:bg-neutral-900 dark:text-neutral-100"
                 >
                   {n}
                 </button>
@@ -386,8 +386,8 @@ const SudokuVisualizerDemo: React.FC = () => {
 
           <ul className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-[11px] text-neutral-500 dark:text-neutral-400">
             <li className="flex items-center gap-1.5"><b className="font-semibold text-neutral-900 dark:text-white">5</b> given</li>
-            <li className="flex items-center gap-1.5"><b className="font-medium text-indigo-600 dark:text-indigo-300">5</b> placed by solver</li>
-            <li className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-sm bg-indigo-500" /> cell being examined</li>
+            <li className="flex items-center gap-1.5"><b className="font-medium text-blue-600 dark:text-blue-300">5</b> placed by solver</li>
+            <li className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-sm bg-blue-500" /> cell being examined</li>
             <li className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-sm bg-rose-300 dark:bg-rose-500/60" /> undone or conflicting</li>
           </ul>
         </div>
@@ -400,10 +400,10 @@ const SudokuVisualizerDemo: React.FC = () => {
             {stat('Time', `${(stats.ms / 1000).toFixed(1)}s`)}
           </div>
 
-          <section className="space-y-5 rounded-2xl border border-black/5 bg-white p-5 dark:border-white/10 dark:bg-neutral-900">
+          <section className="space-y-5 rounded-[18px] border border-black/5 bg-white p-5 dark:border-white/10 dark:bg-neutral-900">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Board</h3>
+                <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Board</h3>
                 <span className="text-[11px] text-neutral-500 dark:text-neutral-400">
                   {givens} givens · {81 - givens} empty
                 </span>
@@ -416,8 +416,8 @@ const SudokuVisualizerDemo: React.FC = () => {
                     onClick={() => loadBoard(shuffleBoard(PRESETS[level]), level, `Loaded a fresh ${level} board.`)}
                     className={`rounded-lg border py-2 text-xs font-semibold capitalize transition-colors disabled:opacity-50 ${
                       difficulty === level
-                        ? 'border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950'
-                        : 'border-black/5 bg-neutral-50 text-neutral-600 hover:border-indigo-400 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-300'
+                        ? 'demo-choice'
+                        : 'border-black/5 bg-neutral-50 text-neutral-600 hover:border-blue-400 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-300'
                     }`}
                   >
                     {level}
@@ -428,7 +428,7 @@ const SudokuVisualizerDemo: React.FC = () => {
                 <button
                   disabled={status === 'running'}
                   onClick={() => loadBoard(shuffleBoard(puzzle), difficulty, 'Same puzzle, relabelled and rearranged.')}
-                  className="flex items-center justify-center gap-2 rounded-lg border border-black/5 bg-neutral-50 py-2 text-xs font-semibold text-neutral-600 transition-colors hover:border-indigo-400 disabled:opacity-50 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-300"
+                  className="flex items-center justify-center gap-2 rounded-lg border border-black/5 bg-neutral-50 py-2 text-xs font-semibold text-neutral-600 transition-colors hover:border-blue-400 disabled:opacity-50 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-300"
                 >
                   <Shuffle className="h-3.5 w-3.5" /> Shuffle
                 </button>
@@ -443,7 +443,7 @@ const SudokuVisualizerDemo: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Strategy</h3>
+              <h3 className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">Strategy</h3>
               <div className="grid grid-cols-4 gap-2">
                 {ALGORITHMS.map((a) => (
                   <button
@@ -453,8 +453,8 @@ const SudokuVisualizerDemo: React.FC = () => {
                     onClick={() => selectAlgorithm(a.id)}
                     className={`rounded-lg border py-2 text-xs font-semibold transition-colors disabled:opacity-50 ${
                       algorithm === a.id
-                        ? 'border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950'
-                        : 'border-black/5 bg-neutral-50 text-neutral-600 hover:border-indigo-400 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-300'
+                        ? 'demo-choice'
+                        : 'border-black/5 bg-neutral-50 text-neutral-600 hover:border-blue-400 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-300'
                     }`}
                   >
                     {a.name}
@@ -466,7 +466,7 @@ const SudokuVisualizerDemo: React.FC = () => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="sudoku-speed" className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
+                <label htmlFor="sudoku-speed" className="text-xs font-semibold text-neutral-500 dark:text-neutral-400">
                   Speed
                 </label>
                 <span className="text-[11px] tabular-nums text-neutral-500 dark:text-neutral-400">
@@ -480,14 +480,14 @@ const SudokuVisualizerDemo: React.FC = () => {
                 max={100}
                 value={speed}
                 onChange={(e) => setSpeed(Number(e.target.value))}
-                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-200 accent-indigo-600 dark:bg-neutral-800"
+                className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-neutral-200 accent-[var(--blue)] dark:bg-neutral-800"
               />
             </div>
 
             <div className="grid grid-cols-[1fr_auto_auto] gap-2 border-t border-black/5 pt-4 dark:border-white/10">
               <button
                 onClick={onMain}
-                className="flex items-center justify-center gap-2 rounded-xl bg-neutral-950 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+                className="flex items-center justify-center gap-2 rounded-xl demo-action py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
               >
                 {status === 'running' ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current" />}
                 {mainLabel}
@@ -497,7 +497,7 @@ const SudokuVisualizerDemo: React.FC = () => {
                 disabled={status === 'running' || status === 'done'}
                 aria-label="Step one move"
                 title="Step one move"
-                className="flex items-center justify-center rounded-xl border border-black/5 bg-neutral-50 px-4 text-neutral-700 transition-colors hover:border-indigo-400 disabled:opacity-40 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-200"
+                className="flex items-center justify-center rounded-xl border border-black/5 bg-neutral-50 px-4 text-neutral-700 transition-colors hover:border-blue-400 disabled:opacity-40 dark:border-white/10 dark:bg-neutral-950 dark:text-neutral-200"
               >
                 <SkipForward className="h-4 w-4" />
               </button>
@@ -557,16 +557,16 @@ const Comparison: React.FC<{
   }
 
   return (
-    <section className="space-y-4 rounded-2xl border border-black/5 bg-white p-5 dark:border-white/10 dark:bg-neutral-900 md:p-6">
+    <section className="space-y-4 rounded-[18px] border border-black/5 bg-white p-5 dark:border-white/10 dark:bg-neutral-900 md:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
+          <BarChart3 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
           <h2 className="text-lg font-semibold text-neutral-900 dark:text-white">Compare all four strategies</h2>
         </div>
         <button
           onClick={onRun}
           disabled={comparing || busy || disabled}
-          className="rounded-xl bg-neutral-950 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 disabled:opacity-40 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+          className="rounded-xl demo-action px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 disabled:opacity-40 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
         >
           {comparing ? 'Running…' : results ? 'Run again' : 'Run comparison'}
         </button>
@@ -602,7 +602,7 @@ const Comparison: React.FC<{
                       <td className="py-3 pr-3">
                         <div className="flex items-center gap-3">
                           <div className="h-2 w-24 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-800 sm:w-40">
-                            <div className="h-full rounded-full bg-indigo-500" style={{ width: `${pct}%` }} />
+                            <div className="h-full rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
                           </div>
                           <span className="tabular-nums text-neutral-700 dark:text-neutral-300">
                             {s.steps.toLocaleString()}
@@ -626,7 +626,7 @@ const Comparison: React.FC<{
             <ul className="space-y-1.5 text-sm text-neutral-600 dark:text-neutral-300">
               {notes.map((n) => (
                 <li key={n} className="flex gap-2">
-                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-indigo-500" />
+                  <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-blue-500" />
                   <span>{n}</span>
                 </li>
               ))}

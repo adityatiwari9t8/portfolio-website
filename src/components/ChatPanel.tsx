@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUp, RotateCcw, Sparkles, Square, X } from 'lucide-react';
+import { ArrowUp, RotateCcw, MessageCircle, Square, X } from 'lucide-react';
 import { SITE } from '../data/site';
 import { CHAT } from '../data/content';
 import { QUICK_ANSWERS, getQuickAnswer } from '../data/quickAnswers';
@@ -195,26 +195,26 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
     <div
       ref={dialog}
       tabIndex={-1}
-      className="fixed inset-0 z-[100] flex items-end justify-end outline-none sm:items-stretch sm:p-3"
+      className="portfolio-chat fixed inset-0 z-[100] flex items-end justify-end outline-none sm:items-stretch sm:p-3"
       role="dialog"
       aria-modal="true"
       aria-labelledby="chat-title"
     >
       <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-sm" onClick={close} />
 
-      <section className="fade-up relative flex h-[85svh] w-full flex-col overflow-hidden rounded-t-[1.75rem] border border-black/5 bg-[#ffffff] shadow-2xl sm:h-auto sm:max-w-[420px] sm:rounded-[1.75rem] dark:border-white/10 dark:bg-neutral-900">
+      <section className="chat-sheet fade-up relative flex h-[85svh] w-full flex-col overflow-hidden rounded-t-[18px] border border-black/5 bg-[#ffffff] sm:h-auto sm:max-w-[420px] sm:rounded-[18px] dark:border-white/10 dark:bg-neutral-900">
         {/* grab handle, phones only */}
-        <div aria-hidden className="mx-auto mt-2.5 h-1 w-10 shrink-0 rounded-full bg-neutral-300 sm:hidden dark:bg-neutral-700" />
+        <div aria-hidden className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-neutral-300 sm:hidden dark:bg-neutral-700" />
 
         <header className="flex shrink-0 items-start gap-2 border-b border-black/5 px-5 pb-4 pt-3 sm:pt-5 dark:border-white/10">
           <span className="mt-0.5 hidden h-9 w-9 shrink-0 place-items-center min-[380px]:grid rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
-            <Sparkles className="h-[18px] w-[18px]" aria-hidden />
+            <MessageCircle className="h-[18px] w-[18px]" aria-hidden />
           </span>
           <div className="min-w-0 flex-1">
-            <h2 id="chat-title" className="font-display text-xl font-semibold sm:text-2xl leading-tight tracking-[-0.01em] text-neutral-950 dark:text-white">
+            <h2 id="chat-title" className="text-xl font-semibold sm:text-2xl leading-tight tracking-[-0.01em] text-neutral-950 dark:text-white">
               Ask about <span className="text-neutral-500 dark:text-neutral-400">{SITE.firstName}</span>
             </h2>
-            <p className="mt-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.1em] text-neutral-600 dark:text-neutral-400">
+            <p className="mt-2 text-xs font-normal text-neutral-600 dark:text-neutral-400">
               AI assistant
             </p>
           </div>
@@ -231,16 +231,16 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
         <div ref={scroller} className="flex-1 overflow-y-auto overscroll-contain px-5 py-5" onScroll={(e) => { const el = e.currentTarget; followLatest.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80; }}>
           {turns.length === 0 ? (
             <div>
-              <p className="text-[15px] leading-relaxed text-neutral-600 dark:text-neutral-400">{CHAT.intro}</p>
-              <p className="mt-6 font-mono text-[11px] font-medium uppercase tracking-[0.1em] text-neutral-600 dark:text-neutral-400">
+              <p className="text-[17px] leading-[1.47] text-neutral-600 dark:text-neutral-400">{CHAT.intro}</p>
+              <p className="mt-6 text-xs font-normal text-neutral-600 dark:text-neutral-400">
                 Try asking
               </p>
-              <ul className="mt-2.5 space-y-2">
+              <ul className="mt-2 space-y-2">
                 {QUICK_ANSWERS.map(({ question: s }) => (
                   <li key={s}>
                     <button
                       onClick={() => ask(s)}
-                      className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-left text-sm font-medium text-neutral-800 transition hover:border-black/20 hover:bg-neutral-50 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200 dark:hover:bg-white/[0.08]"
+                      className="w-full min-h-11 rounded-lg border border-black/10 bg-white px-4 py-3 text-left text-sm font-normal text-neutral-800 transition hover:border-black/20 hover:bg-neutral-50 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200 dark:hover:bg-white/[0.08]"
                     >
                       {s}
                     </button>
@@ -252,13 +252,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
             <ol className="space-y-4" aria-live="polite" aria-busy={busy}>
               {turns.map((t, i) =>
                 t.role === 'user' ? (
-                  <li key={i} className="ml-auto w-fit max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-tr-md bg-neutral-950 px-4 py-2.5 text-[15px] leading-relaxed text-white dark:bg-white dark:text-neutral-950">
+                  <li key={i} className="ml-auto w-fit max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-tr-md bg-neutral-950 px-4 py-3 text-[17px] leading-[1.47] text-white dark:bg-white dark:text-neutral-950">
                     {t.text}
                   </li>
                 ) : (
                   <li key={i} className="max-w-[92%]">
                     <div
-                      className={`whitespace-pre-wrap rounded-2xl rounded-tl-md px-4 py-3 text-[15px] leading-relaxed ${
+                      className={`whitespace-pre-wrap rounded-2xl rounded-tl-md px-4 py-3 text-[17px] leading-[1.47] ${
                         t.error
                           ? 'border border-amber-500/30 bg-amber-50 text-amber-900 dark:bg-amber-500/10 dark:text-amber-200'
                           : 'bg-white text-neutral-800 dark:bg-white/[0.06] dark:text-neutral-200'
@@ -274,7 +274,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
                       )}
                     </div>
                     {t.source && t.text && (
-                      <p className="mt-1.5 pl-1 font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-neutral-500 dark:text-neutral-400">
+                      <p className="mt-2 pl-1 text-xs font-normal text-neutral-500 dark:text-neutral-400">
                         {t.source === 'quick' ? 'Quick answer · from my profile' : 'AI answer'}
                       </p>
                     )}
@@ -287,7 +287,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
         {turns.length > 0 && <div className="shrink-0 px-4 pb-3">
           <p className="mb-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">Keep exploring</p>
           <ul aria-label="Suggested questions" className="custom-scrollbar flex gap-2 overflow-x-auto pb-1">{QUICK_ANSWERS.map(({ question }) => <li key={question} className="shrink-0">
-            <button disabled={busy} onClick={() => ask(question)} className="min-h-11 max-w-[240px] rounded-xl border border-black/10 bg-white px-3 py-2 text-left text-xs leading-relaxed text-neutral-700 transition-colors hover:border-blue-700/40 disabled:opacity-50 dark:border-white/15 dark:bg-white/[0.04] dark:text-neutral-300">{question}</button>
+            <button disabled={busy} onClick={() => ask(question)} className="min-h-11 max-w-[240px] rounded-xl border border-black/10 bg-white px-3 py-2 text-left text-xs leading-relaxed text-neutral-700 transition-colors hover:border-[var(--blue)] disabled:opacity-50 dark:border-white/15 dark:bg-white/[0.04] dark:text-neutral-300">{question}</button>
           </li>)}</ul>
         </div>}
 
@@ -298,10 +298,10 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
           }}
           className="shrink-0 border-t border-black/5 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/10"
         >
-          {cooldownSeconds > 0 && <div className="mb-3 rounded-lg border border-blue-700/20 bg-blue-700/[0.05] px-3 py-2 text-sm text-blue-900 dark:border-blue-400/20 dark:text-blue-200">
-            <p role="status">Let’s take a little breather. I’ll be ready for your next question shortly.</p>
+          {cooldownSeconds > 0 && <div className="mb-3 rounded-lg border border-[var(--line)] bg-[var(--subtle)] px-3 py-2 text-sm text-[var(--secondary)]">
+            <p role="status">Please wait a moment before your next question</p>
           </div>}
-          <div className="flex items-end gap-2 rounded-2xl border border-black/10 bg-white p-1.5 pl-4 focus-within:border-neutral-950 dark:border-white/10 dark:bg-white/[0.04] dark:focus-within:border-white">
+          <div className="chat-composer flex items-end gap-2 rounded-[22px] border border-black/10 bg-white p-2 pl-4 focus-within:border-neutral-950 dark:border-white/10 dark:bg-white/[0.04] dark:focus-within:border-white">
             <label htmlFor="chat-input" className="sr-only">
               Your question
             </label>
@@ -320,7 +320,7 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
               className="max-h-32 min-h-[44px] min-w-0 flex-1 resize-none bg-transparent py-2 text-[16px] text-neutral-950 placeholder:text-neutral-400 focus:outline-none sm:text-[15px] dark:text-white dark:placeholder:text-neutral-500"
             />
             {busy ? (
-              <button type="button" onClick={() => abort.current?.abort()} aria-label="Stop the answer" className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
+              <button type="button" onClick={() => abort.current?.abort()} aria-label="Stop the answer" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
                 <Square className="h-3.5 w-3.5 fill-current" />
               </button>
             ) : (
@@ -328,13 +328,13 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
                 type="submit"
                 disabled={!input.trim() || customPaused}
                 aria-label="Send"
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-neutral-950 text-white transition disabled:opacity-30 dark:bg-white dark:text-neutral-950"
+                className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-neutral-950 text-white transition disabled:opacity-30 dark:bg-white dark:text-neutral-950"
               >
                 <ArrowUp className="h-4 w-4" />
               </button>
             )}
           </div>
-          <p className="mt-2 px-1 text-[11px] leading-snug text-neutral-500 dark:text-neutral-400">{CHAT.note}</p>
+          <p className="mt-2 px-1 text-xs leading-snug text-neutral-500 dark:text-neutral-400">{CHAT.note}</p>
         </form>
       </section>
     </div>

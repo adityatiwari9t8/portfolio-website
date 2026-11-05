@@ -45,10 +45,10 @@ interface FormState {
   date: string;
 }
 
-const card = 'rounded-2xl border border-black/5 bg-white dark:border-white/10 dark:bg-neutral-900';
-const label = 'text-[11px] font-semibold uppercase tracking-widest text-neutral-500 dark:text-neutral-400';
+const card = 'rounded-[18px] border border-black/5 bg-white dark:border-white/10 dark:bg-neutral-900';
+const label = 'text-xs font-semibold text-neutral-500 dark:text-neutral-400';
 const input =
-  'w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 outline-none transition-colors focus:border-indigo-500 dark:border-white/10 dark:bg-neutral-950 dark:text-white';
+  'w-full rounded-xl border border-black/10 bg-neutral-50 px-4 py-3 text-sm text-neutral-900 outline-none transition-colors focus:border-[var(--focus)] dark:border-white/10 dark:bg-neutral-950 dark:text-white';
 
 const ExpenseProDemo: React.FC = () => {
   const initial = useMemo(load, []);
@@ -159,7 +159,7 @@ const ExpenseProDemo: React.FC = () => {
     if (!active || !payload?.length || t === undefined) return null;
     return (
       <div className="space-y-1.5 rounded-xl border border-black/5 bg-white p-3 shadow-lg dark:border-white/10 dark:bg-neutral-900">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-neutral-500">{formatDate(t)}</p>
+        <p className="text-xs font-semibold text-neutral-500">{formatDate(t)}</p>
         {payload.filter((p) => typeof p.value === 'number').map((p) => (
           <p key={p.name} className="flex items-center gap-2 text-xs font-semibold text-neutral-800 dark:text-white">
             <span className="h-2 w-2 rounded-full" style={{ background: p.color }} />
@@ -197,7 +197,7 @@ const ExpenseProDemo: React.FC = () => {
           </label>
           <button
             onClick={openAdd}
-            className="flex items-center gap-2 rounded-xl bg-neutral-950 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
+            className="flex items-center gap-2 rounded-xl demo-action px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200"
           >
             <Plus className="h-4 w-4" /> Add transaction
           </button>
@@ -205,10 +205,9 @@ const ExpenseProDemo: React.FC = () => {
       </header>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 to-violet-600 p-6 text-white">
-          <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/10 blur-2xl" />
+        <div className="relative overflow-hidden rounded-2xl bg-[#272729] p-6 text-white">
           <div className="relative space-y-4">
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-widest text-white/80">
+            <p className="flex items-center gap-2 text-xs font-semibold text-white/80">
               <Wallet className="h-4 w-4" /> Balance
             </p>
             <p className="truncate text-4xl font-semibold tracking-tight">{currency.symbol}{fmt(balance)}</p>
@@ -263,7 +262,7 @@ const ExpenseProDemo: React.FC = () => {
                 checked={showForecast && !!forecast}
                 disabled={!forecast}
                 onChange={(e) => setShowForecast(e.target.checked)}
-                className="h-4 w-4 accent-indigo-600"
+                className="h-4 w-4 accent-[var(--blue)]"
               />
               Show trend and forecast
             </label>
@@ -358,8 +357,8 @@ const ExpenseProDemo: React.FC = () => {
                 aria-pressed={filter === c}
                 className={`whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
                   filter === c
-                    ? 'border-neutral-950 bg-neutral-950 text-white dark:border-white dark:bg-white dark:text-neutral-950'
-                    : 'border-black/10 text-neutral-600 hover:border-indigo-400 dark:border-white/10 dark:text-neutral-300'
+                    ? 'demo-choice'
+                    : 'border-black/10 text-neutral-600 hover:border-blue-400 dark:border-white/10 dark:text-neutral-300'
                 }`}
               >
                 {c}
@@ -385,7 +384,7 @@ const ExpenseProDemo: React.FC = () => {
                   {signedFmt(signed(t))}
                 </p>
                 <div className="flex shrink-0 items-center">
-                  <button onClick={() => openEdit(t)} aria-label={`Edit ${t.name}`} className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-indigo-600 dark:hover:bg-white/10 dark:hover:text-indigo-400">
+                  <button onClick={() => openEdit(t)} aria-label={`Edit ${t.name}`} className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-blue-600 dark:hover:bg-white/10 dark:hover:text-blue-400">
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button onClick={() => remove(t)} aria-label={`Delete ${t.name}`} className="rounded-lg p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-rose-600 dark:hover:bg-white/10 dark:hover:text-rose-400">
@@ -410,7 +409,7 @@ const ExpenseProDemo: React.FC = () => {
       </section>
 
       {undo && (
-        <div role="status" className="fixed bottom-5 left-1/2 z-[130] flex -translate-x-1/2 items-center gap-4 rounded-xl bg-neutral-950 px-4 py-3 text-sm text-white shadow-xl dark:bg-white dark:text-neutral-950">
+        <div role="status" className="fixed bottom-5 left-1/2 z-[130] flex -translate-x-1/2 items-center gap-4 rounded-xl bg-neutral-950 px-4 py-3 text-sm text-white dark:bg-white dark:text-neutral-950">
           <span className="max-w-[14rem] truncate">Deleted {undo.name}</span>
           <button onClick={restore} className="font-semibold underline underline-offset-4">Undo</button>
         </div>
@@ -425,7 +424,7 @@ const ExpenseProDemo: React.FC = () => {
             aria-modal="true"
             aria-labelledby="tx-title"
             tabIndex={-1}
-            className="relative w-full max-w-md rounded-2xl border border-black/5 bg-white p-6 shadow-2xl outline-none dark:border-white/10 dark:bg-neutral-900"
+            className="relative w-full max-w-md rounded-[18px] border border-black/5 bg-white p-6 outline-none dark:border-white/10 dark:bg-neutral-900"
           >
             <div className="mb-5 flex items-center justify-between">
               <h3 id="tx-title" className="text-xl font-semibold text-neutral-900 dark:text-white">
@@ -492,7 +491,7 @@ const ExpenseProDemo: React.FC = () => {
                     Delete
                   </button>
                 )}
-                <button type="submit" className="flex-1 rounded-xl bg-neutral-950 py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200">
+                <button type="submit" className="flex-1 rounded-xl demo-action py-3 text-sm font-semibold text-white transition-colors hover:bg-neutral-800 dark:bg-white dark:text-neutral-950 dark:hover:bg-neutral-200">
                   {modal.mode === 'add' ? 'Save transaction' : 'Save changes'}
                 </button>
               </div>

@@ -1,3 +1,4 @@
+import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { test, after } from 'node:test';
 import { execFileSync } from 'node:child_process';
@@ -5,7 +6,6 @@ import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import vm from 'node:vm';
 
 // Compile the production policy and handler; replace only the external SDK transport.
 // No test ever loads .env.local or contacts Gemini.
@@ -122,19 +122,27 @@ test('shared provider exhaustion returns a friendly cooldown with Retry-After', 
   } finally { state.status = 0; }
 });
 
-test('every load starts light regardless of prior preferences, without accessing storage', async () => {
+test('theme defaults to light and restores only an explicit saved dark preference', async () => {
   const html = await readFile('index.html', 'utf8');
   assert.match(html, /<html lang="en">/);
-  assert.match(html, /name="theme-color" content="#ffffff"/);
-  const script = html.match(/<script>([\s\S]*?)<\/script>/)[1];
-  for (const preference of [null, 'light', 'dark', 'blocked']) {
-    let dark = true;
-    const context = {
-      localStorage: { getItem: () => { throw new Error('Theme must not read storage'); }, setItem: () => { throw new Error('Theme must not write storage'); } },
-      window: { addEventListener() {} },
-      document: { documentElement: { classList: { remove: () => { dark = false; } } }, querySelector: () => ({ setAttribute() {} }) }
-    };
-    vm.runInNewContext(script, context);
-    assert.equal(dark, false);
+  assert.match(html, /name="theme-color" content="#f8f9f6"/);
+  const script = html.match(/<script id="theme-init">([\s\S]*?)<\/script>/)[1];
+  for (const preference of [null, 'light', 'dark', 'invalid', 'blocked']) {
+    const root = { dark: true, style: {}, classList: { toggle(name, value) { root.dark = value; } } };
+    const meta = {};
+    vm.runInNewContext(script, {
+      localStorage: { getItem(key) {
+        assert.equal(key, 'portfolio-theme');
+        if (preference === 'blocked') throw new Error('Storage unavailable');
+        return preference;
+      } },
+      document: {
+        documentElement: root,
+        querySelector: selector => ({ setAttribute(name, value) { meta[selector] = value; } })
+      }
+    });
+    assert.equal(root.dark, preference === 'dark');
+    assert.equal(root.style.colorScheme, preference === 'dark' ? 'dark' : 'light');
+    assert.equal(meta['meta[name="theme-color"]'], preference === 'dark' ? '#151a17' : '#f8f9f6');
   }
 });

@@ -1,36 +1,37 @@
 import { useSyncExternalStore } from 'react';
-import { changeTheme } from './transition';
 
-/** Theme is held only in the current document. Every load starts light. */
-const subs = new Set<() => void>();
-const emit = () => subs.forEach((fn) => fn());
-if (typeof window !== 'undefined') window.addEventListener('theme-reset', emit);
-const subscribe = (fn: () => void) => {
-  subs.add(fn);
-  return () => {
-    subs.delete(fn);
-  };
-};
+const THEME_KEY = 'portfolio-theme';
+const listeners = new Set<() => void>();
+const emit = () => listeners.forEach(listener => listener());
+const isDark = () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
 
-const isDark = () => {
-  if (typeof document === 'undefined') return false;
-  return document.documentElement.classList.contains('dark');
-};
+function applyTheme(dark: boolean) {
+  document.documentElement.classList.toggle('dark', dark);
+  document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#151a17' : '#f8f9f6');
+  document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', dark ? 'dark' : 'light');
+  emit();
+}
 
-/** Switch theme. Pass the point the switch came from to spread the new theme out from there. */
-export function toggleTheme(origin?: { x: number; y: number }) {
-  const next = !isDark();
-  const apply = () => {
-    document.documentElement.classList.toggle('dark', next);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next ? '#000000' : '#ffffff');
-    emit();
-  };
-  const x = origin?.x ?? window.innerWidth / 2;
-  const y = origin?.y ?? 0;
-  changeTheme(apply, x, y);
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', event => {
+    if (event.key === THEME_KEY || event.key === null) applyTheme(event.newValue === 'dark');
+  });
+}
+
+// The optional origin keeps older callers compatible; switching is deliberately quiet.
+export function toggleTheme(_origin?: { x: number; y: number }) {
+  const dark = !isDark();
+  applyTheme(dark);
+  try { localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); }
+  catch { /* The toggle still works if browser storage is unavailable. */ }
 }
 
 export function useTheme() {
-  const dark = useSyncExternalStore(subscribe, isDark, () => false);
+  const dark = useSyncExternalStore(
+    listener => { listeners.add(listener); return () => listeners.delete(listener); },
+    isDark,
+    () => false,
+  );
   return { dark };
 }

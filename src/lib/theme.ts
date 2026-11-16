@@ -8,7 +8,7 @@ const isDark = () => typeof document !== 'undefined' && document.documentElement
 function applyTheme(dark: boolean) {
   document.documentElement.classList.toggle('dark', dark);
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#151a17' : '#f8f9f6');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#1c1224' : '#f6f3f9');
   document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', dark ? 'dark' : 'light');
   emit();
 }

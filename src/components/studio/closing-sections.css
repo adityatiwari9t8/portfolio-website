@@ -1,0 +1,124 @@
+.portfolio-contact {
+  border-top: 1px solid var(--line);
+  background: linear-gradient(to bottom, var(--canvas), var(--surface));
+  color: var(--ink);
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 240px);
+  align-items: start;
+  gap: clamp(28px, 4vw, 52px) clamp(40px, 8vw, 104px);
+  padding-block: clamp(42px, 6.5vw, 76px) 20px;
+}
+
+.studio .contact-intro h2 {
+  font: 540 clamp(34px, 3.7vw, 56px)/1.1 var(--font-display);
+  letter-spacing: -.04em;
+}
+
+.portfolio-email {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.portfolio-email a {
+  min-width: 0;
+  padding-block: 8px;
+  color: var(--secondary);
+  font-size: clamp(16px, 2.3vw, 29px);
+  letter-spacing: -.035em;
+  overflow-wrap: anywhere;
+}
+
+.portfolio-email a:hover {
+  color: var(--blue);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.studio .portfolio-email button {
+  display: grid;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--blue);
+  transition: background-color 160ms var(--ease-out);
+}
+
+.studio .portfolio-email button:hover {
+  background: var(--subtle);
+}
+
+.studio .contact-copy-status {
+  min-height: 18px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.contact-links {
+  --reveal-delay: 95ms;
+  display: grid;
+}
+
+.contact-links a,
+.contact-meta a {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 8px;
+}
+
+.contact-links a {
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  color: var(--secondary);
+  font-size: 15px;
+  font-weight: 550;
+}
+
+.contact-links a:hover,
+.contact-meta a:hover {
+  color: var(--blue);
+}
+
+.studio :is(.contact-links, .contact-meta) svg {
+  width: 15px;
+  height: 15px;
+  color: var(--muted);
+  transition: translate 240ms var(--ease-out);
+}
+
+.portfolio-contact a:is(:hover, :focus-visible) svg {
+  translate: 3px -2px;
+}
+
+.contact-meta {
+  display: flex;
+  grid-column: 1/-1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 16px;
+  padding-inline-end: 58px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .contact-meta {
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
+  }
+}

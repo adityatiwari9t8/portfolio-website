@@ -12,8 +12,8 @@ export default function Background() {
         </a>
       </header>
       <div className="background-columns">
-        <div className="background-history">
-          <section aria-labelledby="education-heading" data-scroll-reveal>
+        <div className="background-history" data-timeline>
+          <section aria-labelledby="education-heading" data-scroll-reveal="depth">
             <h3 id="education-heading">Education</h3>
             <article className="background-entry">
               <p className="mono profile-label">{EDUCATION.period}</p>
@@ -24,7 +24,7 @@ export default function Background() {
               </ul>
             </article>
           </section>
-          {EXPERIENCE.length > 0 && <section aria-labelledby="experience-heading" data-scroll-reveal>
+          {EXPERIENCE.length > 0 && <section aria-labelledby="experience-heading" data-scroll-reveal="depth">
             <h3 id="experience-heading">Experience</h3>
             {EXPERIENCE.map(item => <article className="background-entry" key={item.org + item.role}>
               <p className="mono profile-label">{item.period}</p>

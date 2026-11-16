@@ -2,8 +2,7 @@ import type React from 'react';
 import { flushSync } from 'react-dom';
 
 /**
- * Small wrappers around the View Transitions API (Chrome, Edge, Safari 18+). Where it is missing,
- * or the visitor prefers reduced motion, every function falls back to the plain, instant behaviour.
+ * Shared view transitions for the theme switch and project pages.
  */
 interface ViewTransition {
   ready: Promise<void>;
@@ -12,8 +11,9 @@ interface ViewTransition {
 type VTDocument = Document & { startViewTransition?: (cb: () => void | Promise<void>) => ViewTransition };
 
 const reduced = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-export const canTransition = () =>
-  typeof document !== 'undefined' && typeof (document as VTDocument).startViewTransition === 'function' && !reduced();
+const supportsViewTransition = () =>
+  typeof document !== 'undefined' && typeof (document as VTDocument).startViewTransition === 'function';
+export const canTransition = () => supportsViewTransition() && !reduced();
 const start = (cb: () => void | Promise<void>) => (document as VTDocument).startViewTransition!(cb);
 
 const setName = (el: HTMLElement | null, name: string) => el?.style.setProperty('view-transition-name', name);
@@ -24,30 +24,59 @@ const settle = () => new Promise<void>((res) => window.setTimeout(res, 60));
 /** Shared name for the preview that grows from a project card into its case-study page and back. */
 export const CASE_MEDIA = 'case-media';
 
-/** Light/dark switch that spreads outward from the toggle button like a ripple. */
-export function changeTheme(apply: () => void, x: number, y: number) {
-  if (!canTransition()) {
-    apply();
-    return;
-  }
+let themeChanging = false;
+
+/** Reveal the new theme outward from the switch. */
+export async function changeTheme(apply: () => void, canvasColor: string, origin?: { x: number; y: number }) {
+  if (themeChanging) return;
+  themeChanging = true;
   const root = document.documentElement;
-  const radius = Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y));
-  root.classList.add('vt-theme');
-  const t = start(() => flushSync(apply));
-  t.ready
-    .then(() => {
-      const options = {
-        duration: 300,
-        easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)',
-        pseudoElement: '::view-transition-new(root)'
-      };
-      root.animate(
-        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
-        options as KeyframeAnimationOptions
-      );
-    })
-    .catch(() => undefined);
-  t.finished.finally(() => root.classList.remove('vt-theme'));
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const toggle = origin ? null : document.querySelector('.theme-toggle')?.getBoundingClientRect();
+  const x = origin?.x ?? (toggle ? toggle.left + toggle.width / 2 : width / 2);
+  const y = origin?.y ?? (toggle ? toggle.top + toggle.height / 2 : height / 2);
+  const center = `${x}px ${y}px`;
+  const radius = Math.ceil(Math.hypot(Math.max(x, width - x), Math.max(y, height - y))) + 1;
+  let applied = false;
+  let cover: HTMLDivElement | undefined;
+  const commit = () => {
+    if (applied) return;
+    apply();
+    applied = true;
+  };
+
+  try {
+    if (supportsViewTransition()) {
+      root.style.setProperty('--theme-origin', center);
+      root.style.setProperty('--theme-radius', `${radius}px`);
+      root.classList.add('vt-theme');
+      const transition = start(() => flushSync(commit));
+      void transition.ready.catch(() => undefined);
+      await transition.finished;
+    } else if (typeof document.body.animate === 'function') {
+      cover = document.createElement('div');
+      cover.className = 'theme-transition-cover';
+      cover.setAttribute('aria-hidden', 'true');
+      cover.style.backgroundColor = canvasColor;
+      document.body.append(cover);
+
+      const fade = reduced();
+      const coverFrames = fade ? { opacity: [0, 1] } : { clipPath: [`circle(0px at ${center})`, `circle(${radius}px at ${center})`] };
+      await cover.animate(coverFrames, { duration: fade ? 75 : 490, easing: 'cubic-bezier(.3,.05,.25,1)', fill: 'forwards' }).finished;
+      flushSync(commit);
+      await cover.animate({ opacity: [1, 0] }, { duration: fade ? 100 : 150, easing: 'ease-out', fill: 'forwards' }).finished;
+    }
+  } catch {
+    // Complete the preference change even if capturing or animating the page fails.
+  } finally {
+    root.classList.remove('vt-theme');
+    root.style.removeProperty('--theme-origin');
+    root.style.removeProperty('--theme-radius');
+    cover?.remove();
+    themeChanging = false;
+    commit();
+  }
 }
 
 /** Open a case study: the card's preview window grows into the page. */

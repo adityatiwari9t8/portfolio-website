@@ -20,7 +20,7 @@ Project entries can include live demos, source links, and case studies on the de
 
 ## The projects
 
-Each project has a working demo embedded in the site and a case-study page (problem, what I built, what I learned, limits, stack) at `#/work/<id>`.
+Each project has a case study at `#/work/<id>`. The three projects below also have embedded demos.
 
 | | Project | What it does | Code |
 | --- | --- | --- | --- |
@@ -30,14 +30,14 @@ Each project has a working demo embedded in the site and a case-study page (prob
 
 ## What's in the site
 
-- **Minimal, light by default.** White and graphite surfaces, system typography, centered desktop navigation, and responsive project previews. Light is the default. The header toggle remembers an explicit light/dark choice, applies it before the page paints, and themes the embedded demos and chatbot too.
-- **Depth on interaction.** Project previews tilt slightly toward the pointer. Opening a panel brings it forward, and buttons respond to a press. Reduced-motion preferences disable the animated transitions; there is no background renderer.
-- **Replaceable project content.** A filterable gallery with theme-matched screenshots, project dialogs, source links, and working demos. Edit `src/data/projects.ts`; shareable links remain `#/work/<id>`.
-- **About and toolkit.** Personal introduction, portrait, education, résumé, and expandable skill groups.
-- **Optional playground.** Collapsed by default to keep the page quiet. Expand it to explore simulated request caching or a live bubble sort.
+- **Navy and silver palette.** Cool gray surfaces, system typography, centered desktop navigation, and responsive project previews. Light is the default. The header toggle remembers an explicit light/dark choice, applies it before the page paints, and themes the embedded demos and chatbot too.
+- **Depth on interaction.** The landing page responds to the pointer with soft light. Project previews rotate with native scrolling, and opening a project dialog brings it forward.
+- **Project showcase.** A scroll-driven gallery with theme-matched screenshots, case studies, source links, and demos. Edit `src/data/projects.ts` to update it.
+- **About and toolkit.** Personal introduction, portrait, education, résumé, and skill groups.
 - **Direct contact.** Email, verified copy-email feedback, GitHub, and LinkedIn.
 - **Accessibility.** Keyboard navigation, visible focus, dialog focus management, mobile navigation, and native scrolling.
-- **Optional analytics.** Existing cookie-less analytics remain off by default. The profile chatbot is available from Ask AI in the navigation and the floating chat button, with local quick answers and streaming replies through the existing API.
+- **Optional analytics.** Cookie-less analytics are off by default.
+- **Profile chat.** Open the chat from the floating button or mobile navigation for quick answers and streaming replies.
 
 See [DESIGN.md](DESIGN.md) for the visual direction.
 
@@ -69,7 +69,7 @@ src/
 │   └── projects.ts      the projects and their case studies
 ├── studio.css           the minimal light visual system
 ├── components/
-│   ├── studio/          interactive project previews and playground
+│   ├── studio/          portfolio sections and interactive project previews
 │   └── demos/           the embedded project demos
 └── lib/                 router, theme store, scroll and active-section helpers, cursor light, dialog helper, view transitions
 api/                     Vercel functions: chat.ts (the AI assistant) and _profile.ts (its instructions, built from src/data)
@@ -89,10 +89,10 @@ Projects, profile details, education, and skills live in `src/data/`. The new ed
 
 ### Editing profile details
 
-- **Skills:** extend a `TOOLKIT` group or add another group. It becomes an expandable row.
-- **Education:** edit `EDUCATION` and the education label in `src/App.tsx`.
+- **Skills:** extend a `TOOLKIT` group or add another group.
+- **Education:** edit `EDUCATION` in `src/data/content.ts`.
 - **About portrait:** the first entry of `STORY_PHOTOS` supplies the portrait and alternative text.
-- **Experience and certificates:** the prior data and components are retained for future use, but are not displayed in this design.
+- **Experience and certifications:** edit `EXPERIENCE` and `CERTIFICATIONS` in `src/data/content.ts`.
 
 ### Adding a project
 

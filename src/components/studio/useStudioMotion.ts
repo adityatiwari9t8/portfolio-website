@@ -1,38 +1,85 @@
 import { useEffect, type RefObject } from 'react';
 
-function observeScrollReveals(root: HTMLElement) {
-  if (typeof IntersectionObserver === 'undefined') return;
+const unit = (value: number) => Math.min(1, Math.max(0, value));
 
-  const elements = [...root.querySelectorAll<HTMLElement>('[data-scroll-reveal]')];
-  const viewport = window.innerHeight;
-  const belowViewport = elements.filter(element =>
-    element.getBoundingClientRect().top >= viewport && !element.contains(document.activeElement));
-  const observer = new IntersectionObserver(entries => {
-    for (const { target, isIntersecting } of entries) {
-      if (!isIntersecting) continue;
-      target.setAttribute('data-reveal-state', 'visible');
-      observer.unobserve(target);
-    }
-  }, { rootMargin: '0px 0px -8px' });
+function setProgress(element: HTMLElement, property: string, value: number) {
+  const rounded = value.toFixed(3);
+  if (element.style.getPropertyValue(property) !== rounded) element.style.setProperty(property, rounded);
+}
 
-  for (const element of belowViewport) {
-    element.setAttribute('data-reveal-state', 'pending');
-    observer.observe(element);
+// Layout offsets stay fixed while perspective changes the visible position of the element.
+function layoutTop(element: HTMLElement) {
+  let top = 0;
+  for (let node: HTMLElement | null = element; node; node = node.offsetParent as HTMLElement | null) {
+    top += node.offsetTop;
   }
+  return top;
+}
+
+function trackSectionMotion(root: HTMLElement) {
+  const hero = root.querySelector<HTMLElement>('[data-hero-depth]');
+  const timeline = root.querySelector<HTMLElement>('[data-timeline]');
+  const entrances = [...root.querySelectorAll<HTMLElement>('[data-scroll-reveal]')];
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let frame = 0;
+
+  const settle = (element: HTMLElement) => {
+    element.removeAttribute('data-reveal-active');
+    element.style.removeProperty('--reveal-distance');
+  };
+
+  const update = () => {
+    frame = 0;
+    const height = window.innerHeight;
+    const scroll = Math.max(0, window.scrollY);
+    const revealStart = height * .50;
+    const revealSpan = Math.max(1, height * .42);
+    const heroHeight = hero?.getBoundingClientRect().height;
+    const timelineBounds = timeline?.getBoundingClientRect();
+    const positions = entrances.map(element => [element, layoutTop(element) - scroll] as const);
+
+    for (const [element, top] of positions) {
+      const active = element.hasAttribute('data-reveal-active');
+      const distance = unit((top - revealStart) / revealSpan);
+      if (!distance || reducedMotion.matches || element.contains(document.activeElement)) {
+        if (active) settle(element);
+        continue;
+      }
+
+      // The same viewport position produces the same pose in either scroll direction.
+      if (!active) element.setAttribute('data-reveal-active', '');
+      setProgress(element, '--reveal-distance', distance * distance * (3 - 2 * distance));
+    }
+    if (hero && heroHeight) setProgress(hero, '--hero-depth', unit(scroll / (heroHeight * .82)));
+    if (timeline && timelineBounds) {
+      setProgress(timeline, '--timeline-progress', unit((height * .76 - timelineBounds.top) / Math.max(1, timelineBounds.height)));
+    }
+  };
+
+  const schedule = () => {
+    if (!frame) frame = requestAnimationFrame(update);
+  };
 
   const revealFocusedContent = (event: FocusEvent) => {
-    if (!(event.target instanceof Element)) return;
-    const element = event.target.closest('[data-reveal-state]');
-    if (!element) return;
-    observer.unobserve(element);
-    element.removeAttribute('data-reveal-state');
+    const element = event.target instanceof Element ? event.target.closest<HTMLElement>('[data-reveal-active]') : null;
+    if (element) settle(element);
   };
+
+  update();
   root.addEventListener('focusin', revealFocusedContent);
+  reducedMotion.addEventListener('change', schedule);
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule, { passive: true });
 
   return () => {
-    observer.disconnect();
     root.removeEventListener('focusin', revealFocusedContent);
-    for (const element of belowViewport) element.removeAttribute('data-reveal-state');
+    reducedMotion.removeEventListener('change', schedule);
+    window.removeEventListener('scroll', schedule);
+    window.removeEventListener('resize', schedule);
+    cancelAnimationFrame(frame);
+    for (const element of entrances) settle(element);
+    timeline?.style.removeProperty('--timeline-progress');
+    hero?.style.removeProperty('--hero-depth');
   };
 }
 
@@ -41,7 +88,7 @@ export function useStudioMotion(rootRef: RefObject<HTMLDivElement | null>) {
     const root = rootRef.current;
     if (!root) return;
 
-    const cleanUpReveals = observeScrollReveals(root);
+    const cleanUpScroll = trackSectionMotion(root);
     let pointerFrame = 0;
     let pointerSurface: HTMLElement | null = null;
     let pointerX = 0;
@@ -85,7 +132,7 @@ export function useStudioMotion(rootRef: RefObject<HTMLDivElement | null>) {
     root.addEventListener('pointerout', exitPointer);
 
     return () => {
-      cleanUpReveals?.();
+      cleanUpScroll();
       cancelAnimationFrame(pointerFrame);
       root.removeEventListener('pointermove', movePointer);
       root.removeEventListener('pointerout', exitPointer);

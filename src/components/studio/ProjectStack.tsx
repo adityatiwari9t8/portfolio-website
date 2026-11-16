@@ -20,11 +20,13 @@ export default function ProjectStack({ projects, dark, onRead, onDemo }: Props) 
   useLayoutEffect(() => {
     const track = trackRef.current;
     const panel = panelRef.current;
-    if (!track || !panel || count < 2) return;
+    if (!track || !panel || !count) return;
 
     let frame = 0;
     let stepLength = 1;
     let inset = 0;
+    let entryEnd = 0;
+    let entry = '';
     let progress = 0;
     let lastActive = -1;
     let previousTime = 0;
@@ -32,6 +34,13 @@ export default function ProjectStack({ projects, dark, onRead, onDemo }: Props) 
     const update = (time: number, snap = false) => {
       frame = 0;
       const bounds = track.getBoundingClientRect();
+      const viewport = window.innerHeight;
+      const approach = Math.min(1, Math.max(0, (bounds.top - entryEnd) / Math.max(1, viewport - entryEnd)));
+      const angleProgress = (approach * approach * (3 - 2 * approach)).toFixed(4);
+      if (angleProgress !== entry) {
+        panel.style.setProperty('--showcase-entry', angleProgress);
+        entry = angleProgress;
+      }
       const step = Math.min(count - 1, Math.max(0, (inset - bounds.top) / stepLength));
       const project = Math.floor(step);
       // Leave a short reading interval on either side of each turn.
@@ -39,7 +48,7 @@ export default function ProjectStack({ projects, dark, onRead, onDemo }: Props) 
       const target = project + turn ** 3 * (10 - 15 * turn + 6 * turn ** 2);
       const elapsed = previousTime ? Math.min(50, time - previousTime) : 16;
       const remaining = target - progress;
-      const offscreen = bounds.bottom <= inset || bounds.top >= window.innerHeight;
+      const offscreen = bounds.bottom <= inset || bounds.top >= viewport;
       const nextProgress = snap || offscreen || Math.abs(remaining) > 1.25 || Math.abs(remaining) < .002
         ? target
         : progress + remaining * (1 - Math.exp(-elapsed / 36));
@@ -71,6 +80,7 @@ export default function ProjectStack({ projects, dark, onRead, onDemo }: Props) 
       const headerHeight = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
       // Short viewports can scroll the top of the panel away while leaving its actions accessible.
       inset = Math.min(headerHeight + 12, window.innerHeight - panelHeight - 12);
+      entryEnd = Math.max(headerHeight + 12, window.innerHeight * .48);
       stepLength = Math.max(1, (track.getBoundingClientRect().height - panelHeight) / count);
       panel.style.top = `${inset}px`;
       window.cancelAnimationFrame(frame);
@@ -120,7 +130,8 @@ export default function ProjectStack({ projects, dark, onRead, onDemo }: Props) 
         </p>
         <div className="showcase-info">
           {projects.map((project, index) => (
-            <article className="showcase-detail" key={project.id} inert={index !== active} aria-hidden={index !== active}>
+            <article className="showcase-detail" key={project.id} inert={index !== active} aria-hidden={index !== active}
+              style={{ '--project-index': index } as CSSProperties}>
               <div className="showcase-story">
                 <p className="mono showcase-category">{project.category}</p>
                 <h3>{project.title}</h3>

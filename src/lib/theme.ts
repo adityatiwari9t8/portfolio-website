@@ -1,6 +1,8 @@
 import { useSyncExternalStore } from 'react';
+import { changeTheme } from './transition';
 
 const THEME_KEY = 'portfolio-theme';
+const THEME_COLORS = { light: '#edf0ef', dark: '#06141b' } as const;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach(listener => listener());
 const isDark = () => typeof document !== 'undefined' && document.documentElement.classList.contains('dark');
@@ -8,7 +10,7 @@ const isDark = () => typeof document !== 'undefined' && document.documentElement
 function applyTheme(dark: boolean) {
   document.documentElement.classList.toggle('dark', dark);
   document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#1c1224' : '#f6f3f9');
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', THEME_COLORS[dark ? 'dark' : 'light']);
   document.querySelector('meta[name="color-scheme"]')?.setAttribute('content', dark ? 'dark' : 'light');
   emit();
 }
@@ -19,12 +21,14 @@ if (typeof window !== 'undefined') {
   });
 }
 
-// The optional origin keeps older callers compatible; switching is deliberately quiet.
-export function toggleTheme(_origin?: { x: number; y: number }) {
+export function toggleTheme(origin?: { x: number; y: number }) {
   const dark = !isDark();
-  applyTheme(dark);
-  try { localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light'); }
-  catch { /* The toggle still works if browser storage is unavailable. */ }
+  const theme = dark ? 'dark' : 'light';
+  void changeTheme(() => {
+    applyTheme(dark);
+    try { localStorage.setItem(THEME_KEY, theme); }
+    catch { /* The toggle still works if browser storage is unavailable. */ }
+  }, THEME_COLORS[theme], origin);
 }
 
 export function useTheme() {

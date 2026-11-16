@@ -161,8 +161,8 @@ export const CASE_CTA = {
  * the starter questions and their instant answers are in quickAnswers.ts.
  */
 export const CHAT = {
-  intro: 'Ask about my skills, projects, education or availability. The answers come only from my resume and this site.',
-  note: "AI answers can be wrong, so email me to confirm anything important. Questions are sent to Google's Gemini API."
+  intro: 'Ask about Aditya’s projects, skills, education, or internship availability.',
+  note: 'Custom questions go to Google Gemini. Confirm important details with Aditya.'
 };
 
 /** Optional faster ways to reach me (shown next to the main button when present). */

@@ -1,7 +1,12 @@
 .portfolio-contact {
+  margin-block-start: var(--section-space);
   border-top: 1px solid var(--line);
-  background: linear-gradient(to bottom, var(--canvas), var(--surface));
+  background: var(--surface);
   color: var(--ink);
+}
+
+.dark .portfolio-contact {
+  background: radial-gradient(ellipse at 95% 100%, var(--ambient-light), transparent 68%), var(--surface);
 }
 
 .contact-layout {
@@ -13,7 +18,7 @@
 }
 
 .studio .contact-intro h2 {
-  font: 540 clamp(34px, 3.7vw, 56px)/1.1 var(--font-display);
+  font: var(--section-heading);
   letter-spacing: -.04em;
 }
 
@@ -48,7 +53,10 @@
   border: 1px solid var(--line);
   border-radius: 50%;
   color: var(--blue);
-  transition: background-color 160ms var(--ease-out);
+}
+
+.studio .portfolio-email button:active:not(:disabled) {
+  transform: none;
 }
 
 .studio .portfolio-email button:hover {
@@ -63,7 +71,6 @@
 }
 
 .contact-links {
-  --reveal-delay: 95ms;
   display: grid;
 }
 
@@ -92,11 +99,6 @@
   width: 15px;
   height: 15px;
   color: var(--muted);
-  transition: translate 240ms var(--ease-out);
-}
-
-.portfolio-contact a:is(:hover, :focus-visible) svg {
-  translate: 3px -2px;
 }
 
 .contact-meta {

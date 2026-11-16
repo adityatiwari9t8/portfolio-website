@@ -289,31 +289,5 @@ export const PROJECTS: Project[] = [
       ],
       stack: ['React', 'TypeScript', 'Tailwind CSS', 'Recharts', 'Vite']
     }
-  },
-  {
-    id: 'tic-tac-toe',
-    title: 'Tic Tac Toe Pro',
-    category: 'Browser games',
-    summary: 'Two players share a board, take turns, and keep score across rounds. The game highlights the winning line or records a draw.',
-    description: 'A local two-player browser game built with HTML, CSS and JavaScript. Move validation, win detection and scoring run entirely in the page.',
-    repo: 'https://github.com/adityatiwari9t8/TicTacToe',
-    highlights: [
-      { value: '8 winning lines', label: 'three rows, three columns and two diagonals' },
-      { value: '2 players', label: 'take turns on the same device' }
-    ],
-    gradient: 'from-slate-100 to-white dark:from-neutral-800 dark:to-neutral-900',
-    imageLight: '/projects/tic-tac-toe.webp', imageDark: '/projects/tic-tac-toe.webp',
-    imageWidth: 1120, imageHeight: 760, imageAlt: 'Tic Tac Toe Pro during a round with X in two corners and O in the centre',
-    study: {
-      problem: 'Each move should advance the turn exactly once, and a finished round should stop accepting moves.',
-      built: [
-        'Track occupied cells and compare each board state against the eight winning lines.',
-        'Highlight a win, detect a full-board draw, and update the scoreboard.',
-        'Reset the board independently of the session scores so the same players can start another round.'
-      ],
-      learned: 'Round state and score state have different lifetimes. Separating them makes a rematch straightforward.',
-      limits: ['Players share one device. Scores last for the current page session.'],
-      ideas: [], stack: ['JavaScript', 'HTML', 'CSS']
-    }
   }
 ];

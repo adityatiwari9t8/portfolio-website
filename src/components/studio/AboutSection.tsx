@@ -8,7 +8,7 @@ export default function AboutSection() {
     <section id="story" className="profile-about" aria-labelledby="about-heading">
       <span id="about" className="about-anchor" aria-hidden="true" />
       <div className="content-width about-spread">
-        <div className="about-content" data-scroll-reveal>
+        <div className="about-content" data-scroll-reveal="depth">
           <p className="mono profile-label">About me</p>
           <h2 id="about-heading">
             <span>Curious by nature.</span>{' '}

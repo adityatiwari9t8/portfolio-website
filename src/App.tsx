@@ -12,7 +12,6 @@ import ContactModal from './components/ContactModal';
 import LandingHero from './components/studio/LandingHero';
 import AboutSection from './components/studio/AboutSection';
 import ContactSection from './components/studio/ContactSection';
-import PathfindingSection from './components/studio/PathfindingSection';
 import ChatPanel from './components/ChatPanel';
 import WorkIndex from './components/studio/WorkIndex';
 import { useStudioMotion } from './components/studio/useStudioMotion';
@@ -107,7 +106,12 @@ function App() {
         <div className="header-tools">
           <a className="header-resume" href={SITE.resume} target="_blank" rel="noreferrer">Résumé <ArrowUpRight aria-hidden="true" /></a>
           <button className="header-contact" onClick={openContact}>Let’s talk</button>
-          <button className="theme-toggle" onClick={() => toggleTheme()} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} title={dark ? 'Light mode' : 'Dark mode'}>{dark ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}</button>
+          <button className="theme-toggle" onClick={({ currentTarget }) => {
+            const { left, top, width, height } = currentTarget.getBoundingClientRect();
+            toggleTheme({ x: left + width / 2, y: top + height / 2 });
+          }} aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'} title={dark ? 'Light mode' : 'Dark mode'}>
+            {dark ? <Sun size={18} strokeWidth={1.5} /> : <Moon size={18} strokeWidth={1.5} />}
+          </button>
         <button id="mobile-menu-button" className="mobile-menu-button" aria-label={menu ? 'Close navigation' : 'Open navigation'} aria-expanded={menu} aria-controls="mobile-nav" onClick={() => setMenu(!menu)}>{menu ? <X size={18} /> : <Menu size={18} />}</button>
         </div>
       </div>
@@ -120,7 +124,7 @@ function App() {
     <main id="main" tabIndex={-1}>
       <LandingHero />
 
-      {!PROJECTS.length && <section id="building" className="studio-container minimal-section"><Building /></section>}
+      {!PROJECTS.length && <section id="building" className="studio-container minimal-section" data-scroll-reveal="depth"><Building /></section>}
       <WorkIndex dark={dark} onRead={openProject} onDemo={setDemo} />
 
       <AboutSection />
@@ -128,7 +132,6 @@ function App() {
         <Background />
       </section>
       <Certifications />
-      <PathfindingSection />
     </main>
     <ContactSection />
     <button className="chat-launcher" onClick={openChat} aria-label="Ask AI about Aditya" aria-haspopup="dialog" title="Ask AI about Aditya"><MessageCircle size={18} strokeWidth={1.5} /></button>

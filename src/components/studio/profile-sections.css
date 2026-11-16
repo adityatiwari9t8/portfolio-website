@@ -5,6 +5,13 @@
   border-block: 1px solid var(--line);
 }
 
+.dark .profile-about {
+  border-color: color-mix(in srgb, var(--line) 53%, transparent);
+  background:
+    radial-gradient(ellipse at 10% 46%, var(--ambient-light), transparent 67%),
+    linear-gradient(to bottom, var(--canvas), var(--surface) 46%, var(--canvas));
+}
+
 .about-anchor {
   position: absolute;
   inset-block-start: 0;
@@ -19,7 +26,10 @@
 }
 
 .about-content {
-  --reveal-x: 14px;
+  --reveal-x: 83px;
+  --reveal-travel: 27px;
+  --reveal-yaw: -23deg;
+  --reveal-origin: right center;
   grid-area: copy;
 }
 
@@ -29,8 +39,8 @@
 
 .studio .about-content h2 {
   margin-block: 14px 19px;
-  font: 560 clamp(39px, 4.8vw, 70px) / 1.04 var(--font-display);
-  letter-spacing: -.055em;
+  font: var(--section-heading);
+  letter-spacing: -.04em;
 }
 
 .about-content h2 span {
@@ -87,8 +97,11 @@
 }
 
 .portrait-stage {
-  --reveal-x: -14px;
-  --reveal-delay: 85ms;
+  --reveal-x: -83px;
+  --reveal-travel: 20px;
+  --reveal-yaw: 25deg;
+  --reveal-roll: -4deg;
+  --reveal-origin: left bottom;
   grid-area: portrait;
   width: min(100%, 400px);
   perspective: 1000px;
@@ -129,7 +142,7 @@
 }
 
 .studio .profile-section-heading h2 {
-  font: 540 clamp(34px, 3.7vw, 56px) / 1.1 var(--font-display);
+  font: var(--section-heading);
   letter-spacing: -.04em;
 }
 
@@ -147,20 +160,53 @@
   letter-spacing: -.025em;
 }
 
+.background-history {
+  --timeline-gutter: 24px;
+  position: relative;
+  padding-inline-start: var(--timeline-gutter);
+}
+
+.background-history::before,
+.background-history::after {
+  position: absolute;
+  inset-block: .65em 0;
+  inset-inline-start: 4px;
+  width: 1px;
+  background: var(--line);
+  content: '';
+}
+
+.background-history::after {
+  background: var(--blue);
+  transform: scaleY(var(--timeline-progress, 1));
+  transform-origin: center top;
+}
+
 .background-history section + section {
   margin-top: clamp(32px, 4vw, 53px);
 }
 
+.background-history > section[data-scroll-reveal] {
+  --reveal-x: -60px;
+  --reveal-travel: 36px;
+  --reveal-yaw: 21deg;
+  --reveal-origin: left center;
+}
+
+.background-history > section + section[data-scroll-reveal] {
+  --reveal-x: -27px;
+  --reveal-travel: 52px;
+}
+
 .background-entry {
   position: relative;
-  padding-inline-start: 19px;
-  border-inline-start: 1px solid var(--line);
 }
 
 .background-entry::before {
   position: absolute;
   inset-block-start: 5px;
-  inset-inline-start: -4px;
+  inset-inline-start: calc(1px - var(--timeline-gutter));
+  z-index: 1;
   width: 7px;
   height: 7px;
   border-radius: 50%;
@@ -222,7 +268,15 @@
   border-radius: var(--card-radius);
   background: linear-gradient(140deg, var(--raised), var(--surface));
   box-shadow: 0 16px 36px -24px var(--shadow), 0 5px 0 -1px var(--subtle), 0 6px 0 -1px var(--line);
-  --reveal-delay: 100ms;
+  --reveal-x: 64px;
+  --reveal-travel: -38px;
+  --reveal-yaw: -21deg;
+  --reveal-roll: 3deg;
+  --reveal-origin: right top;
+}
+
+.dark .background-toolkit {
+  background: radial-gradient(ellipse at 100% 0%, var(--ambient-light), transparent 73%), var(--surface);
 }
 
 .background-toolkit dl,
@@ -270,6 +324,8 @@
 }
 
 .credentials > li {
+  --reveal-x: -52px;
+  --reveal-yaw: 17deg;
   position: relative;
   isolation: isolate;
   display: grid;
@@ -278,6 +334,12 @@
   gap: 7px clamp(18px, 3.3vw, 44px);
   margin-top: 10px;
   padding: clamp(19px, 2.5vw, 30px) clamp(16px, 3vw, 34px);
+}
+
+.credentials > li:nth-child(even) {
+  --reveal-x: 52px;
+  --reveal-travel: -23px;
+  --reveal-yaw: -17deg;
 }
 
 .credentials > li::before {
@@ -290,6 +352,10 @@
   box-shadow: 0 10px 22px -22px var(--shadow);
   transition: border-color 230ms var(--ease-out), box-shadow 230ms var(--ease-out);
   content: '';
+}
+
+.dark .credentials > li::before {
+  background: linear-gradient(120deg, var(--raised), var(--surface));
 }
 
 .credentials > li:has(.profile-action:is(:hover, :focus-visible))::before {
@@ -339,11 +405,8 @@
 }
 
 @media (max-width: 680px) {
-  .about-content,
-  .portrait-stage {
-    --reveal-x: 0px;
-    --reveal-delay: 0ms;
-  }
+  .about-content { --reveal-x: 30px; }
+  .portrait-stage { --reveal-x: -30px; }
 
   .about-spread {
     grid-template-columns: minmax(0, 1fr);
@@ -353,7 +416,6 @@
 
   .studio .about-content h2 {
     margin-block: 10px 13px;
-    font-size: clamp(34px, 8.3vw, 55px);
   }
 
   .about-content h2 span {

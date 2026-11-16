@@ -164,15 +164,29 @@ p { text-wrap: pretty; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: #a3a3a3; border-radius: 10px; }
 .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #525252; }
+.vt-theme::view-transition-group(root) { animation: none; }
 .vt-theme::view-transition-old(root), .vt-theme::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
-.vt-theme::view-transition-new(root) { z-index: 2; }
+.vt-theme::view-transition-new(root) {
+  z-index: 2;
+  animation: theme-radial-reveal 640ms cubic-bezier(.3,.05,.25,1) both;
+}
 .vt-theme *, .vt-theme *::before, .vt-theme *::after { transition: none !important; }
+@keyframes theme-radial-reveal {
+  from { clip-path: circle(0px at var(--theme-origin)); }
+  to { clip-path: circle(var(--theme-radius) at var(--theme-origin)); }
+}
+@keyframes theme-crossfade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.theme-transition-cover { position: fixed; z-index: 1000; inset: 0; pointer-events: none; }
 ::view-transition-group(case-media) { animation-duration: 240ms; animation-timing-function: ease-out; }
 ::view-transition-old(case-media), ::view-transition-new(case-media) { height: 100%; object-fit: cover; }
 ::view-transition-old(root), ::view-transition-new(root) { animation-duration: 200ms; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+  .vt-theme::view-transition-new(root) { animation: theme-crossfade 150ms ease-out both; }
 }
 @media (forced-colors: active) {
   .button-primary, .button-secondary, .icon-button { border: 1px solid ButtonText; }

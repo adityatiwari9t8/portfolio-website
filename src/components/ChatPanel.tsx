@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ArrowUp, RotateCcw, MessageCircle, Square, X } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUp, Check, ChevronDown, Copy, MessageCircle, RotateCcw, Square, X } from 'lucide-react';
 import { SITE } from '../data/site';
 import { CHAT } from '../data/content';
 import { QUICK_ANSWERS, getQuickAnswer } from '../data/quickAnswers';
 import { CHAT_QUOTA_KEY, chatQuota } from '../lib/chatQuota';
 import { useDialog } from '../lib/useDialog';
+import { copyText } from '../lib/clipboard';
+import './chat-panel.css';
 
 interface ChatPanelProps {
   open: boolean;
@@ -40,6 +42,21 @@ const linkify = (text: string) =>
     );
   });
 
+function SuggestedQuestions({ onAsk, busy }: { onAsk: (question: string) => void; busy: boolean }) {
+  return (
+    <ul className="chat-questions" aria-label="Suggested questions" role="list">
+      {QUICK_ANSWERS.map(({ question }) => (
+        <li key={question}>
+          <button type="button" disabled={busy} onClick={() => onAsk(question)}>
+            <span>{question}</span>
+            <ArrowRight aria-hidden="true" />
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /**
  * "Ask AI": a chat with an assistant that answers questions about me from the site's own data.
  * A side panel on larger screens, a bottom sheet on phones. Answers stream in from /api/chat.
@@ -48,10 +65,15 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
   const [turns, setTurns] = useState<Turn[]>([]);
   const [input, setInput] = useState('');
   const [busy, setBusy] = useState(false);
+  const [promptsOpen, setPromptsOpen] = useState(false);
+  const [awayFromLatest, setAwayFromLatest] = useState(false);
+  const [copyFeedback, setCopyFeedback] = useState<{ index: number; copied: boolean } | null>(null);
   const inFlight = useRef(false);
+  const copyRequest = useRef(0);
   const [, refreshQuota] = useState(0);
   const cooldownSeconds = Math.ceil(chatQuota.read().retryAfterMs / 1000);
   const customPaused = cooldownSeconds > 0 && !getQuickAnswer(input);
+  const cooldownTime = `${Math.floor(cooldownSeconds / 60)}:${String(cooldownSeconds % 60).padStart(2, '0')}`;
   const dialog = useRef<HTMLDivElement | null>(null);
   const scroller = useRef<HTMLDivElement | null>(null);
   const field = useRef<HTMLTextAreaElement | null>(null);
@@ -61,6 +83,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
   // Closing the panel cancels transport and any remaining text animation.
   const close = () => {
     abort.current?.abort();
+    copyRequest.current++;
+    setPromptsOpen(false);
     onClose();
   };
   useDialog(open, close, dialog);
@@ -68,6 +92,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
   // The allowance survives clearing the conversation. Refresh eligibility and cross-tab changes.
   useEffect(() => {
     if (!open) return;
+    followLatest.current = true;
+    setAwayFromLatest(false);
     const refresh = () => refreshQuota((n) => n + 1);
     const onStorage = (e: StorageEvent) => { if (e.key === CHAT_QUOTA_KEY) refresh(); };
     refresh();
@@ -76,11 +102,29 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
     return () => { window.clearInterval(timer); window.removeEventListener('storage', onStorage); };
   }, [open]);
 
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const overlay = dialog.current;
+    if (!open || !viewport || !overlay) return;
+    const sync = () => {
+      overlay.style.setProperty('--chat-viewport', `${viewport.height}px`);
+      overlay.style.setProperty('--chat-top', `${viewport.offsetTop}px`);
+      if (scroller.current && followLatest.current) scroller.current.scrollTop = scroller.current.scrollHeight;
+    };
+    sync();
+    viewport.addEventListener('resize', sync);
+    viewport.addEventListener('scroll', sync);
+    return () => {
+      viewport.removeEventListener('resize', sync);
+      viewport.removeEventListener('scroll', sync);
+    };
+  }, [open]);
+
   // Keep the newest text in view while an answer streams in.
   useEffect(() => {
     const el = scroller.current;
     if (el && followLatest.current) el.scrollTop = el.scrollHeight;
-  }, [turns]);
+  }, [open, turns, promptsOpen]);
 
   useEffect(() => () => abort.current?.abort(), []);
 
@@ -93,12 +137,16 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
       refreshQuota((n) => n + 1);
       if (!quota.accepted) return;
     }
-    inFlight.current = true;
     followLatest.current = true;
-    const history = [...turns.filter((t) => !t.error && t.text), { role: 'user', text: q }];
-    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: '', source: prepared ? 'quick' : 'ai' }]);
+    setAwayFromLatest(false);
+    setPromptsOpen(false);
+    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: prepared ?? '', source: prepared ? 'quick' : 'ai' }]);
     setInput('');
     if (field.current) field.current.style.height = '';
+    if (prepared) return;
+
+    const history = [...turns.filter((t) => !t.error && t.text), { role: 'user', text: q }];
+    inFlight.current = true;
     setBusy(true);
     const controller = new AbortController();
     abort.current = controller;
@@ -107,16 +155,15 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
     let finished = false;
     let discarded = false;
     let failed = false;
-    const started = Date.now();
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const render = (text: string) => setTurns((t) => [...t.slice(0, -1), {
-      role: 'model', text, source: failed ? undefined : prepared ? 'quick' : 'ai', error: failed
+      role: 'model', text, source: failed ? undefined : 'ai', error: failed
     }]);
-    // Buffer network bursts so both prepared and streamed replies have a readable rhythm.
+    // Buffer network bursts so streamed replies have a readable rhythm.
     // Keep transport and presentation independent: stopping cancels both immediately.
     const presentation = (async () => {
       while (!controller.signal.aborted && !discarded) {
-        if ((reducedMotion || Date.now() - started >= 450) && answer.length > shown.length) {
+        if (answer.length > shown.length) {
           const step = reducedMotion ? answer.length : Math.max(4, Math.ceil((answer.length - shown.length) / 35));
           shown = answer.slice(0, shown.length + step);
           render(shown);
@@ -126,38 +173,34 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
       }
     })();
     try {
-      if (prepared) {
-        answer = prepared;
+      const response = await fetch('/api/chat', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: history.map(({ role, text }) => ({ role, text })) }),
+        signal: controller.signal
+      });
+      if (response.status === 429) {
+        const retry = Number(response.headers.get('Retry-After'));
+        chatQuota.backoff(Number.isFinite(retry) && retry > 0 ? retry : 60);
+        refreshQuota((n) => n + 1);
+        discarded = true;
+        setTurns((t) => t.slice(0, -2));
+        setInput(q);
+        return;
+      }
+      const isText = response.headers.get('Content-Type')?.startsWith('text/plain');
+      if (!response.ok || !response.body || !isText) {
+        failed = true;
+        answer = isText ? (await response.text()) || FALLBACK : FALLBACK;
       } else {
-        const response = await fetch('/api/chat', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: history.map(({ role, text }) => ({ role, text })) }),
-          signal: controller.signal
-        });
-        if (response.status === 429) {
-          const retry = Number(response.headers.get('Retry-After'));
-          chatQuota.backoff(Number.isFinite(retry) && retry > 0 ? retry : 60);
-          refreshQuota((n) => n + 1);
-          discarded = true;
-          setTurns((t) => t.slice(0, -2));
-          setInput(q);
-          return;
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        for (;;) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          answer += decoder.decode(value, { stream: true });
         }
-        const isText = response.headers.get('Content-Type')?.startsWith('text/plain');
-        if (!response.ok || !response.body || !isText) {
-          failed = true;
-          answer = isText ? (await response.text()) || FALLBACK : FALLBACK;
-        } else {
-          const reader = response.body.getReader();
-          const decoder = new TextDecoder();
-          for (;;) {
-            const { done, value } = await reader.read();
-            if (done) break;
-            answer += decoder.decode(value, { stream: true });
-          }
-          answer += decoder.decode();
-          if (!answer.trim()) { failed = true; answer = FALLBACK; }
-        }
+        answer += decoder.decode();
+        if (!answer.trim()) { failed = true; answer = FALLBACK; }
       }
     } catch {
       if (!controller.signal.aborted) { failed = true; answer = FALLBACK; shown = ''; }
@@ -188,153 +231,153 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
     el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
   };
 
-  const iconButton =
-    'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-black/5 text-neutral-600 transition hover:bg-black/10 dark:bg-white/10 dark:text-neutral-300 dark:hover:bg-white/20';
+  const scrollToLatest = () => {
+    followLatest.current = true;
+    setAwayFromLatest(false);
+    if (scroller.current) scroller.current.scrollTop = scroller.current.scrollHeight;
+  };
+
+  const askSuggested = (question: string) => {
+    scroller.current?.focus({ preventScroll: true });
+    void ask(question);
+  };
+
+  const reset = () => {
+    copyRequest.current++;
+    scroller.current?.focus({ preventScroll: true });
+    setTurns([]);
+    setCopyFeedback(null);
+    setPromptsOpen(false);
+    scrollToLatest();
+  };
+
+  const copyAnswer = async (index: number, answer: string) => {
+    const request = ++copyRequest.current;
+    const copied = await copyText(plain(answer));
+    if (request === copyRequest.current) setCopyFeedback({ index, copied });
+  };
 
   return (
-    <div
-      ref={dialog}
-      tabIndex={-1}
-      className="portfolio-chat fixed inset-0 z-[100] flex items-end justify-end outline-none sm:items-stretch sm:p-3"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="chat-title"
-    >
-      <div className="absolute inset-0 bg-neutral-950/40 backdrop-blur-sm" onClick={close} />
+    <div ref={dialog} tabIndex={-1} className="portfolio-chat"
+      role="dialog" aria-modal="true" aria-labelledby="chat-title">
+      <div className="chat-backdrop" aria-hidden="true" onClick={close} />
 
-      <section className="chat-sheet fade-up relative flex h-[85svh] w-full flex-col overflow-hidden rounded-t-[18px] border border-black/5 bg-[#ffffff] sm:h-auto sm:max-w-[420px] sm:rounded-[18px] dark:border-white/10 dark:bg-neutral-900">
-        {/* grab handle, phones only */}
-        <div aria-hidden className="mx-auto mt-2 h-1 w-10 shrink-0 rounded-full bg-neutral-300 sm:hidden dark:bg-neutral-700" />
-
-        <header className="flex shrink-0 items-start gap-2 border-b border-black/5 px-5 pb-4 pt-3 sm:pt-5 dark:border-white/10">
-          <span className="mt-0.5 hidden h-9 w-9 shrink-0 place-items-center min-[380px]:grid rounded-xl bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
-            <MessageCircle className="h-[18px] w-[18px]" aria-hidden />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h2 id="chat-title" className="text-xl font-semibold sm:text-2xl leading-tight tracking-[-0.01em] text-neutral-950 dark:text-white">
-              Ask about <span className="text-neutral-500 dark:text-neutral-400">{SITE.firstName}</span>
-            </h2>
-            <p className="mt-2 text-xs font-normal text-neutral-600 dark:text-neutral-400">
-              AI assistant
-            </p>
+      <section className="chat-sheet">
+        <header className="chat-header">
+          <span className="chat-avatar" aria-hidden="true"><MessageCircle /></span>
+          <div className="chat-heading">
+            <h2 id="chat-title">Ask about {SITE.firstName}</h2>
+            <p>Portfolio assistant</p>
           </div>
           {turns.length > 0 && (
-            <button onClick={() => !busy && setTurns([])} disabled={busy} aria-label="Start over" className={`${iconButton} disabled:opacity-40`}>
-              <RotateCcw className="h-4 w-4" />
+            <button type="button" onClick={reset} disabled={busy} aria-label="Start a new conversation"
+              title="Start a new conversation" className="chat-icon-button">
+              <RotateCcw aria-hidden="true" />
             </button>
           )}
-          <button data-autofocus onClick={close} aria-label="Close" className={iconButton}>
-            <X className="h-4 w-4" />
+          <button type="button" data-autofocus onClick={close} aria-label="Close chat" className="chat-icon-button">
+            <X aria-hidden="true" />
           </button>
         </header>
 
-        <div ref={scroller} className="flex-1 overflow-y-auto overscroll-contain px-5 py-5" onScroll={(e) => { const el = e.currentTarget; followLatest.current = el.scrollHeight - el.scrollTop - el.clientHeight < 80; }}>
-          {turns.length === 0 ? (
-            <div>
-              <p className="text-[17px] leading-[1.47] text-neutral-600 dark:text-neutral-400">{CHAT.intro}</p>
-              <p className="mt-6 text-xs font-normal text-neutral-600 dark:text-neutral-400">
-                Try asking
-              </p>
-              <ul className="mt-2 space-y-2">
-                {QUICK_ANSWERS.map(({ question: s }) => (
-                  <li key={s}>
-                    <button
-                      onClick={() => ask(s)}
-                      className="w-full min-h-11 rounded-lg border border-black/10 bg-white px-4 py-3 text-left text-sm font-normal text-neutral-800 transition hover:border-black/20 hover:bg-neutral-50 dark:border-white/10 dark:bg-white/[0.04] dark:text-neutral-200 dark:hover:bg-white/[0.08]"
-                    >
-                      {s}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <ol className="space-y-4" aria-live="polite" aria-busy={busy}>
-              {turns.map((t, i) =>
-                t.role === 'user' ? (
-                  <li key={i} className="ml-auto w-fit max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-tr-md bg-neutral-950 px-4 py-3 text-[17px] leading-[1.47] text-white dark:bg-white dark:text-neutral-950">
-                    {t.text}
-                  </li>
-                ) : (
-                  <li key={i} className="max-w-[92%]">
-                    <div
-                      className={`whitespace-pre-wrap rounded-2xl rounded-tl-md px-4 py-3 text-[17px] leading-[1.47] ${
-                        t.error
-                          ? 'border border-amber-500/30 bg-amber-50 text-amber-900 dark:bg-amber-500/10 dark:text-amber-200'
-                          : 'bg-white text-neutral-800 dark:bg-white/[0.06] dark:text-neutral-200'
-                      }`}
-                    >
-                      {t.text ? (
-                        <>{linkify(t.text)}{busy && i === turns.length - 1 && <span aria-hidden className="chat-caret" />}</>
-                      ) : (
-                        <span className="inline-flex items-center gap-2 text-sm text-neutral-500 dark:text-neutral-400">
-                          <span aria-hidden className="chat-thinking"><span /><span /><span /></span>
-                          {t.source === 'quick' ? 'Finding that in my profile…' : 'Thinking…'}
-                        </span>
+        <div className="chat-thread">
+          <div ref={scroller} tabIndex={-1} className="chat-feed" onScroll={event => {
+            const el = event.currentTarget;
+            const nearLatest = el.scrollHeight - el.scrollTop - el.clientHeight < 64;
+            followLatest.current = nearLatest;
+            setAwayFromLatest(!nearLatest);
+          }}>
+            {turns.length === 0 ? (
+              <div className="chat-welcome">
+                <p>{CHAT.intro}</p>
+                <SuggestedQuestions onAsk={askSuggested} busy={busy} />
+              </div>
+            ) : (
+              <ol className="chat-messages" aria-label="Conversation" aria-live="polite" aria-busy={busy} role="list">
+                {turns.map((turn, index) => {
+                  const streaming = busy && index === turns.length - 1;
+                  const copyStatus = copyFeedback?.index === index ? copyFeedback.copied : null;
+                  return (
+                    <li key={index} className="chat-message" data-role={turn.role}>
+                      <span className="sr-only">{turn.role === 'user' ? 'You' : 'Portfolio assistant'}</span>
+                      <div className="chat-bubble" data-error={turn.error || undefined}>
+                        {turn.text ? (
+                          <>{streaming ? plain(turn.text) : linkify(turn.text)}{streaming && <span aria-hidden="true" className="chat-caret" />}</>
+                        ) : (
+                          <span className="chat-loading" role="status">
+                            <span aria-hidden="true" className="chat-thinking"><span /><span /><span /></span>
+                            Looking up an answer…
+                          </span>
+                        )}
+                      </div>
+                      {turn.role === 'model' && turn.text && !streaming && !turn.error && (
+                        <div className="chat-answer-actions">
+                          <span>{turn.source === 'quick' ? 'From the portfolio' : 'AI answer'}</span>
+                          <button type="button" onClick={() => void copyAnswer(index, turn.text)} aria-label="Copy answer">
+                            {copyStatus === true ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
+                            {copyStatus === true ? 'Copied' : 'Copy'}
+                          </button>
+                        </div>
                       )}
-                    </div>
-                    {t.source && t.text && (
-                      <p className="mt-2 pl-1 text-xs font-normal text-neutral-500 dark:text-neutral-400">
-                        {t.source === 'quick' ? 'Quick answer · from my profile' : 'AI answer'}
-                      </p>
-                    )}
-                  </li>
-                )
-              )}
-            </ol>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+
+            {turns.length > 0 && promptsOpen && (
+              <div id="chat-suggestions" className="chat-more-questions">
+                <SuggestedQuestions onAsk={askSuggested} busy={busy} />
+              </div>
+            )}
+          </div>
+
+          {turns.length > 0 && awayFromLatest && (
+            <button type="button" className="chat-jump" onClick={() => {
+              scroller.current?.focus({ preventScroll: true });
+              scrollToLatest();
+            }}>
+              <ArrowDown aria-hidden="true" /> Latest reply
+            </button>
           )}
         </div>
-        {turns.length > 0 && <div className="shrink-0 px-4 pb-3">
-          <p className="mb-2 text-xs font-medium text-neutral-500 dark:text-neutral-400">Keep exploring</p>
-          <ul aria-label="Suggested questions" className="custom-scrollbar flex gap-2 overflow-x-auto pb-1">{QUICK_ANSWERS.map(({ question }) => <li key={question} className="shrink-0">
-            <button disabled={busy} onClick={() => ask(question)} className="min-h-11 max-w-[240px] rounded-xl border border-black/10 bg-white px-3 py-2 text-left text-xs leading-relaxed text-neutral-700 transition-colors hover:border-[var(--blue)] disabled:opacity-50 dark:border-white/15 dark:bg-white/[0.04] dark:text-neutral-300">{question}</button>
-          </li>)}</ul>
-        </div>}
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            ask(input);
-          }}
-          className="shrink-0 border-t border-black/5 px-4 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3 dark:border-white/10"
-        >
-          {cooldownSeconds > 0 && <div className="mb-3 rounded-lg border border-[var(--line)] bg-[var(--subtle)] px-3 py-2 text-sm text-[var(--secondary)]">
-            <p role="status">Please wait a moment before your next question</p>
-          </div>}
-          <div className="chat-composer flex items-end gap-2 rounded-[22px] border border-black/10 bg-white p-2 pl-4 focus-within:border-neutral-950 dark:border-white/10 dark:bg-white/[0.04] dark:focus-within:border-white">
-            <label htmlFor="chat-input" className="sr-only">
-              Your question
-            </label>
-            <textarea
-              id="chat-input"
-              ref={field}
-              rows={1}
-              maxLength={MAX_CHARS}
-              value={input}
-              onChange={(e) => {
-                setInput(e.target.value);
-                grow(e.target);
-              }}
-              onKeyDown={onKeyDown}
-              placeholder={`Ask about ${SITE.firstName}…`}
-              className="max-h-32 min-h-[44px] min-w-0 flex-1 resize-none bg-transparent py-2 text-[16px] text-neutral-950 placeholder:text-neutral-400 focus:outline-none sm:text-[15px] dark:text-white dark:placeholder:text-neutral-500"
-            />
+        <form className="chat-form" onSubmit={event => { event.preventDefault(); void ask(input); }}>
+          {(turns.length > 0 || cooldownSeconds > 0) && (
+            <div className="chat-form-tools">
+              {turns.length > 0 && (
+                <button type="button" className="chat-suggestions-toggle" disabled={busy} aria-expanded={promptsOpen}
+                  aria-controls={promptsOpen ? 'chat-suggestions' : undefined} onClick={() => {
+                    scrollToLatest();
+                    setPromptsOpen(current => !current);
+                  }}>
+                  Suggested questions <ChevronDown aria-hidden="true" />
+                </button>
+              )}
+              {cooldownSeconds > 0 && (
+                <p className="chat-cooldown" role="status">
+                  Custom questions paused <span aria-hidden="true">{cooldownTime}</span>
+                </p>
+              )}
+            </div>
+          )}
+          <div className="chat-composer">
+            <label htmlFor="chat-input" className="sr-only">Your question</label>
+            <textarea id="chat-input" ref={field} rows={1} maxLength={MAX_CHARS} value={input} enterKeyHint="send"
+              onChange={event => { setInput(event.target.value); grow(event.target); }}
+              onKeyDown={onKeyDown} placeholder={`Ask about ${SITE.firstName}…`} />
             {busy ? (
-              <button type="button" onClick={() => abort.current?.abort()} aria-label="Stop the answer" className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-neutral-950 text-white dark:bg-white dark:text-neutral-950">
-                <Square className="h-3.5 w-3.5 fill-current" />
+              <button type="button" className="chat-send" onClick={() => abort.current?.abort()} aria-label="Stop the answer">
+                <Square aria-hidden="true" />
               </button>
             ) : (
-              <button
-                type="submit"
-                disabled={!input.trim() || customPaused}
-                aria-label="Send"
-                className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-neutral-950 text-white transition disabled:opacity-30 dark:bg-white dark:text-neutral-950"
-              >
-                <ArrowUp className="h-4 w-4" />
+              <button type="submit" className="chat-send" disabled={!input.trim() || customPaused} aria-label="Send">
+                <ArrowUp aria-hidden="true" />
               </button>
             )}
           </div>
-          <p className="mt-2 px-1 text-xs leading-snug text-neutral-500 dark:text-neutral-400">{CHAT.note}</p>
+          <p className="chat-note">{CHAT.note}</p>
+          <p className="sr-only" role="status">{copyFeedback ? (copyFeedback.copied ? 'Answer copied.' : 'Copy unavailable. You can select the answer text.') : ''}</p>
         </form>
       </section>
     </div>

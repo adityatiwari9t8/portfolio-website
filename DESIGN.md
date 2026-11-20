@@ -5,7 +5,7 @@ A recruiter should be able to inspect a project, try it, and find Aditya’s rea
 | Pass | Decision |
 | --- | --- |
 | Spacing | Align the sections on shared page rails. Give each section a clear boundary and keep its actions close to the related content. |
-| Color | Silver-tinted surfaces (#edf0ef) and slate actions (#253745) in light mode. Dark mode layers slate gradients over deep navy (#06141b) with silver accents (#9ba8ab, #ccd0cf). Restore the saved theme before first paint. Manual theme switches spread outward from the toggle, with a short fade for reduced motion. |
+| Color | Silver-tinted surfaces (#edf0ef) and slate actions (#253745) in light mode. Dark mode layers slate gradients over deep navy (#06141b) with silver accents (#9ba8ab, #ccd0cf). Each page load starts in light mode. Manual theme switches spread outward from the toggle. With reduced motion enabled, the theme changes immediately. |
 | Icons | Use small, consistent line icons next to words. Give icon-only controls accessible names. |
 | Copy | Describe what each experiment does and distinguish simulated timing from measured comparisons. Keep project limits visible in the detail panel. |
 | Type | System display headings and system sans serif for controls and reading text. Use size and weight to separate headings from supporting information. |

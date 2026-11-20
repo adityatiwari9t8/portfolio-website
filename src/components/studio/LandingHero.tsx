@@ -1,7 +1,13 @@
+import { lazy, Suspense, useState } from 'react';
 import { SITE } from '../../data/site';
 
+const TypographyPreview = import.meta.env.DEV
+  ? lazy(() => import('./typography-preview/TypographyPreview'))
+  : null;
+const previewEnabled = import.meta.env.DEV && new URLSearchParams(window.location.search).has('type-preview');
+
 export default function LandingHero() {
-  const [firstName, ...lastName] = SITE.name.split(' ');
+  const [typography, setTypography] = useState(previewEnabled ? 'archivo' : 'current');
   const [availability] = SITE.status.split(' · ');
 
   return (
@@ -9,8 +15,9 @@ export default function LandingHero() {
       <div className="hero-light" aria-hidden="true" />
       <div className="content-width hero-content">
         <div className="hero-name-stage">
-          <h1 id="cover-title" className="hero-name">
-            <span>{firstName}</span>{' '}<span>{lastName.join(' ')}</span>
+          <h1 id="cover-title" className="hero-title" data-type-preview={previewEnabled && typography !== 'current' ? typography : undefined}>
+            <span className="hero-greeting">Hey, I’m</span>{' '}
+            <span className="hero-name">{SITE.firstName}</span>
           </h1>
         </div>
         <div className="hero-divider" aria-hidden="true" />
@@ -19,6 +26,11 @@ export default function LandingHero() {
           <a className="hero-primary" href="#work">View projects</a>
           <a className="hero-resume" href={SITE.resume} target="_blank" rel="noreferrer">Résumé</a>
         </div>
+        {previewEnabled && TypographyPreview && (
+          <Suspense fallback={null}>
+            <TypographyPreview selected={typography} onSelect={setTypography} />
+          </Suspense>
+        )}
       </div>
     </section>
   );

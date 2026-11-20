@@ -1,4 +1,3 @@
-import vm from 'node:vm';
 import assert from 'node:assert/strict';
 import { test, after } from 'node:test';
 import { execFileSync } from 'node:child_process';
@@ -122,27 +121,14 @@ test('shared provider exhaustion returns a friendly cooldown with Retry-After', 
   } finally { state.status = 0; }
 });
 
-test('theme defaults to light and restores only an explicit saved dark preference', async () => {
-  const html = await readFile('index.html', 'utf8');
+test('every page load starts in light mode without restoring or saving a theme', async () => {
+  const [html, theme] = await Promise.all([
+    readFile('index.html', 'utf8'),
+    readFile('src/lib/theme.ts', 'utf8'),
+  ]);
   assert.match(html, /<html lang="en">/);
   assert.match(html, /name="theme-color" content="#edf0ef"/);
-  const script = html.match(/<script id="theme-init">([\s\S]*?)<\/script>/)[1];
-  for (const preference of [null, 'light', 'dark', 'invalid', 'blocked']) {
-    const root = { dark: true, style: {}, classList: { toggle(name, value) { root.dark = value; } } };
-    const meta = {};
-    vm.runInNewContext(script, {
-      localStorage: { getItem(key) {
-        assert.equal(key, 'portfolio-theme');
-        if (preference === 'blocked') throw new Error('Storage unavailable');
-        return preference;
-      } },
-      document: {
-        documentElement: root,
-        querySelector: selector => ({ setAttribute(name, value) { meta[selector] = value; } })
-      }
-    });
-    assert.equal(root.dark, preference === 'dark');
-    assert.equal(root.style.colorScheme, preference === 'dark' ? 'dark' : 'light');
-    assert.equal(meta['meta[name="theme-color"]'], preference === 'dark' ? '#06141b' : '#edf0ef');
-  }
+  assert.match(html, /name="color-scheme" content="light"/);
+  assert.doesNotMatch(html, /theme-init|portfolio-theme/);
+  assert.doesNotMatch(theme, /localStorage|sessionStorage|portfolio-theme/);
 });

@@ -13,18 +13,15 @@ interface ChatPanelProps {
   onClose: () => void;
 }
 
-/**
- * One message. `source` says where an answer came from: a prepared quick answer or the AI.
- * `error` turns are shown to the visitor but never sent back to the model as history.
- */
+/** Error turns are shown to the visitor and excluded from model history. */
 interface Turn {
   role: 'user' | 'model';
   text: string;
-  source?: 'quick' | 'ai';
   error?: boolean;
 }
 
 const MAX_CHARS = 1000;
+const QUICK_REPLY_DELAY_MS = 420;
 const FALLBACK = `The assistant isn't reachable right now. Email ${SITE.firstName} at ${SITE.email} and you'll get a direct answer.`;
 
 /** Turns URLs, email addresses and the resume path in an answer into links. Everything else stays plain text. */
@@ -59,7 +56,7 @@ function SuggestedQuestions({ onAsk, busy }: { onAsk: (question: string) => void
 
 /**
  * "Ask AI": a chat with an assistant that answers questions about me from the site's own data.
- * A side panel on larger screens, a bottom sheet on phones. Answers stream in from /api/chat.
+ * A side panel on larger screens, a bottom sheet on phones. Local and live replies share a renderer.
  */
 const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -140,30 +137,27 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
     followLatest.current = true;
     setAwayFromLatest(false);
     setPromptsOpen(false);
-    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: prepared ?? '', source: prepared ? 'quick' : 'ai' }]);
+    setTurns([...turns, { role: 'user', text: q }, { role: 'model', text: '' }]);
     setInput('');
     if (field.current) field.current.style.height = '';
-    if (prepared) return;
 
-    const history = [...turns.filter((t) => !t.error && t.text), { role: 'user', text: q }];
     inFlight.current = true;
     setBusy(true);
     const controller = new AbortController();
     abort.current = controller;
-    let answer = '';
+    let answer = prepared ?? '';
     let shown = '';
     let finished = false;
     let discarded = false;
     let failed = false;
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const render = (text: string) => setTurns((t) => [...t.slice(0, -1), {
-      role: 'model', text, source: failed ? undefined : 'ai', error: failed
-    }]);
-    // Buffer network bursts so streamed replies have a readable rhythm.
+    const revealAfter = prepared && !reducedMotion ? performance.now() + QUICK_REPLY_DELAY_MS : 0;
+    const render = (text: string) => setTurns((t) => [...t.slice(0, -1), { role: 'model', text, error: failed }]);
+    // Pace buffered text consistently whether it was ready locally or arrived over the network.
     // Keep transport and presentation independent: stopping cancels both immediately.
     const presentation = (async () => {
       while (!controller.signal.aborted && !discarded) {
-        if (answer.length > shown.length) {
+        if (answer.length > shown.length && performance.now() >= revealAfter) {
           const step = reducedMotion ? answer.length : Math.max(4, Math.ceil((answer.length - shown.length) / 35));
           shown = answer.slice(0, shown.length + step);
           render(shown);
@@ -173,6 +167,8 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
       }
     })();
     try {
+      if (prepared) return;
+      const history = [...turns.filter((t) => !t.error && t.text), { role: 'user', text: q }];
       const response = await fetch('/api/chat', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: history.map(({ role, text }) => ({ role, text })) }),
@@ -306,13 +302,12 @@ const ChatPanel: React.FC<ChatPanelProps> = ({ open, onClose }) => {
                         ) : (
                           <span className="chat-loading" role="status">
                             <span aria-hidden="true" className="chat-thinking"><span /><span /><span /></span>
-                            Looking up an answer…
+                            Preparing a reply…
                           </span>
                         )}
                       </div>
                       {turn.role === 'model' && turn.text && !streaming && !turn.error && (
                         <div className="chat-answer-actions">
-                          <span>{turn.source === 'quick' ? 'From the portfolio' : 'AI answer'}</span>
                           <button type="button" onClick={() => void copyAnswer(index, turn.text)} aria-label="Copy answer">
                             {copyStatus === true ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
                             {copyStatus === true ? 'Copied' : 'Copy'}

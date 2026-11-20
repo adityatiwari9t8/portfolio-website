@@ -9,17 +9,6 @@
   <meta name="author" content="Aditya Tiwari" />
   <meta name="theme-color" content="#edf0ef" />
   <meta name="color-scheme" content="light" />
-  <script id="theme-init">
-    // Apply only an explicit saved choice; first-time visitors always start light.
-    (function () {
-      var dark = false;
-      try { dark = localStorage.getItem('portfolio-theme') === 'dark'; } catch (_) {}
-      document.documentElement.classList.toggle('dark', dark);
-      document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-      document.querySelector('meta[name="theme-color"]').setAttribute('content', dark ? '#06141b' : '#edf0ef');
-      document.querySelector('meta[name="color-scheme"]').setAttribute('content', dark ? 'dark' : 'light');
-    })();
-  </script>
   <link rel="canonical" href="__SITE_URL__/" />
 
   <link rel="preload" href="/node_modules/@fontsource-variable/inter/files/inter-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />

@@ -198,14 +198,15 @@
   background: var(--subtle);
 }
 
-.chat-loading,
-.chat-answer-actions {
+.chat-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   color: var(--muted);
   font-size: 12px;
 }
 
-.chat-loading { display: inline-flex; align-items: center; gap: 8px; }
-.chat-answer-actions { display: flex; align-items: center; justify-content: space-between; padding-inline: 3px; }
+.chat-answer-actions { display: flex; justify-content: flex-end; padding-inline: 3px; }
 .chat-more-questions { margin-top: 15px; }
 
 .chat-answer-actions button,

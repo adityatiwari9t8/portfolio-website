@@ -30,7 +30,7 @@ Each project has a case study at `#/work/<id>`. The three projects below also ha
 
 ## What's in the site
 
-- **Navy and silver palette.** Cool gray surfaces, system typography, centered desktop navigation, and responsive project previews. Light is the default. The header toggle remembers an explicit light/dark choice, applies it before the page paints, and themes the embedded demos and chatbot too.
+- **Navy and silver palette.** Cool gray surfaces, system typography, centered desktop navigation, and responsive project previews. Each page load starts in light mode. The header toggle switches themes with a 1.4-second ink spread.
 - **Depth on interaction.** The landing page responds to the pointer with soft light. Project previews rotate with native scrolling, and opening a project dialog brings it forward.
 - **Project showcase.** A scroll-driven gallery with theme-matched screenshots, case studies, source links, and demos. Edit `src/data/projects.ts` to update it.
 - **About and toolkit.** Personal introduction, portrait, education, résumé, and skill groups.
@@ -125,7 +125,7 @@ The site is a plain Vite app, so Vercel needs no extra settings: import the repo
 
 Open to software engineering internships and second-year or early-career intern programs, on backend or full-stack teams. Remote, hybrid or on-site, anywhere.
 
-Chat replies use a short loading state and buffered text reveal, with a Stop control and persistent suggested questions. Prepared answers remain local and labeled as profile content; reduced-motion preferences skip the text animation.
+Chat replies use a short loading state and buffered text reveal, with a Stop control and persistent suggested questions. Prepared answers stay local. Reduced motion skips the text animation.
 
 The work section follows the order of `PROJECTS`. Mark an entry as featured to give its preview a full row.
 

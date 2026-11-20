@@ -1,7 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { changeTheme } from './transition';
 
-const THEME_KEY = 'portfolio-theme';
 const THEME_COLORS = { light: '#edf0ef', dark: '#06141b' } as const;
 const listeners = new Set<() => void>();
 const emit = () => listeners.forEach(listener => listener());
@@ -16,19 +15,14 @@ function applyTheme(dark: boolean) {
 }
 
 if (typeof window !== 'undefined') {
-  window.addEventListener('storage', event => {
-    if (event.key === THEME_KEY || event.key === null) applyTheme(event.newValue === 'dark');
+  window.addEventListener('pageshow', event => {
+    if (event.persisted && isDark()) applyTheme(false);
   });
 }
 
 export function toggleTheme(origin?: { x: number; y: number }) {
   const dark = !isDark();
-  const theme = dark ? 'dark' : 'light';
-  void changeTheme(() => {
-    applyTheme(dark);
-    try { localStorage.setItem(THEME_KEY, theme); }
-    catch { /* The toggle still works if browser storage is unavailable. */ }
-  }, THEME_COLORS[theme], origin);
+  void changeTheme(() => applyTheme(dark), origin);
 }
 
 export function useTheme() {

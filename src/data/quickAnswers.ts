@@ -1,9 +1,7 @@
 /**
  * The starter questions in the "Ask AI" panel and their prepared answers. The answers are written from the
- * same data the page shows, so they stay right as projects, skills or plans change, and they never call the
- * AI (no API request or quota usage). The panel labels them "Quick answer" so they are never passed off as AI replies.
- *
- * Shared by the client and endpoint so predefined questions never consume the AI allowance.
+ * same data the page shows, so they stay right as projects, skills or plans change. The site answers them
+ * locally without an API request, and the endpoint also checks them before reserving any AI allowance.
  */
 import { SITE } from './site.js';
 import { EDUCATION, NOW, OPEN_TO, TOOLKIT } from './content.js';

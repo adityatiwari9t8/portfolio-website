@@ -1,5 +1,6 @@
 import type React from 'react';
 import { flushSync } from 'react-dom';
+import { createThemeInk, preloadThemeInk } from './themeInk';
 
 /**
  * Shared view transitions for the theme switch and project pages.
@@ -16,6 +17,8 @@ const supportsViewTransition = () =>
 export const canTransition = () => supportsViewTransition() && !reduced();
 const start = (cb: () => void | Promise<void>) => (document as VTDocument).startViewTransition!(cb);
 
+if (canTransition()) preloadThemeInk();
+
 const setName = (el: HTMLElement | null, name: string) => el?.style.setProperty('view-transition-name', name);
 const frame = (id: string) => document.querySelector<HTMLElement>(`[data-vt="${id}"]`);
 // While a view transition prepares its update the page is not painted, so animation frames never fire: use a timer.
@@ -26,20 +29,18 @@ export const CASE_MEDIA = 'case-media';
 
 let themeChanging = false;
 
-/** Reveal the new theme outward from the switch. */
-export async function changeTheme(apply: () => void, canvasColor: string, origin?: { x: number; y: number }) {
+/** Reveal the new theme under a spreading ink mask. */
+export async function changeTheme(apply: () => void, origin?: { x: number; y: number }) {
   if (themeChanging) return;
+  if (!canTransition()) {
+    apply();
+    return;
+  }
+
   themeChanging = true;
   const root = document.documentElement;
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const toggle = origin ? null : document.querySelector('.theme-toggle')?.getBoundingClientRect();
-  const x = origin?.x ?? (toggle ? toggle.left + toggle.width / 2 : width / 2);
-  const y = origin?.y ?? (toggle ? toggle.top + toggle.height / 2 : height / 2);
-  const center = `${x}px ${y}px`;
-  const radius = Math.ceil(Math.hypot(Math.max(x, width - x), Math.max(y, height - y))) + 1;
   let applied = false;
-  let cover: HTMLDivElement | undefined;
+  let removeInk: ReturnType<typeof createThemeInk>;
   const commit = () => {
     if (applied) return;
     apply();
@@ -47,33 +48,17 @@ export async function changeTheme(apply: () => void, canvasColor: string, origin
   };
 
   try {
-    if (supportsViewTransition()) {
-      root.style.setProperty('--theme-origin', center);
-      root.style.setProperty('--theme-radius', `${radius}px`);
-      root.classList.add('vt-theme');
-      const transition = start(() => flushSync(commit));
-      void transition.ready.catch(() => undefined);
-      await transition.finished;
-    } else if (typeof document.body.animate === 'function') {
-      cover = document.createElement('div');
-      cover.className = 'theme-transition-cover';
-      cover.setAttribute('aria-hidden', 'true');
-      cover.style.backgroundColor = canvasColor;
-      document.body.append(cover);
-
-      const fade = reduced();
-      const coverFrames = fade ? { opacity: [0, 1] } : { clipPath: [`circle(0px at ${center})`, `circle(${radius}px at ${center})`] };
-      await cover.animate(coverFrames, { duration: fade ? 75 : 490, easing: 'cubic-bezier(.3,.05,.25,1)', fill: 'forwards' }).finished;
-      flushSync(commit);
-      await cover.animate({ opacity: [1, 0] }, { duration: fade ? 100 : 150, easing: 'ease-out', fill: 'forwards' }).finished;
-    }
+    removeInk = createThemeInk(origin);
+    root.classList.add('vt-theme');
+    if (removeInk) root.classList.add('vt-theme-ink');
+    const transition = start(() => flushSync(commit));
+    void transition.ready.catch(() => undefined);
+    await transition.finished;
   } catch {
     // Complete the preference change even if capturing or animating the page fails.
   } finally {
-    root.classList.remove('vt-theme');
-    root.style.removeProperty('--theme-origin');
-    root.style.removeProperty('--theme-radius');
-    cover?.remove();
+    root.classList.remove('vt-theme', 'vt-theme-ink');
+    removeInk?.();
     themeChanging = false;
     commit();
   }

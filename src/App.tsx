@@ -99,7 +99,10 @@ function App() {
     <a href="#main" className="studio-skip">Skip to content</a>
     <header className="minimal-header">
       <div className="studio-container minimal-header-inner">
-        <a href="#home" className="minimal-brand" aria-label="Aditya Tiwari home"><span className="brand-initials" aria-hidden="true">AT</span><span className="brand-name">{SITE.name}</span></a>
+        <a href="#home" className="minimal-brand" aria-label={`${SITE.firstName} home`}>
+          <span className="brand-initials" aria-hidden="true">{SITE.firstName[0]}</span>
+          <span className="brand-name">{SITE.firstName}</span>
+        </a>
         <nav className="minimal-nav" aria-label="Main navigation">
           {NAV.map(({ id, label }) => <a key={id} aria-current={active === id ? 'location' : undefined} className={active === id ? 'is-active' : ''} href={`#${id}`}>{label}</a>)}
         </nav>

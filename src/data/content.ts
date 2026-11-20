@@ -158,7 +158,7 @@ export const CASE_CTA = {
 
 /**
  * The "Ask AI" chat panel's own text. The assistant answers from the data in this folder (see api/_profile.ts);
- * the starter questions and their instant answers are in quickAnswers.ts.
+ * the starter questions and their prepared answers are in quickAnswers.ts.
  */
 export const CHAT = {
   intro: 'Ask about Aditya’s projects, skills, education, or internship availability.',

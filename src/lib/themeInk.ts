@@ -1,7 +1,7 @@
 import inkFieldUrl from './theme-ink.webp';
 
-const COLUMNS = 10;
-const ROWS = 6;
+const COLUMNS = 9;
+const ROWS = 9;
 const FRAME_COUNT = COLUMNS * ROWS;
 let inkFieldReady = false;
 let inkFieldLoading = false;
@@ -31,7 +31,7 @@ export function createThemeInk(origin?: { x: number; y: number }) {
   const diameter = radius * 2;
   const style = document.createElement('style');
 
-  // Bitmap frames let WebKit animate a CSS mask without repainting an inline SVG filter.
+  // A CSS mask lets WebKit reveal the site’s actual view-transition snapshots.
   const frames = Array.from({ length: FRAME_COUNT }, (_, index) => {
     const left = x - radius - (index % COLUMNS) * diameter;
     const top = y - radius - Math.floor(index / COLUMNS) * diameter;
